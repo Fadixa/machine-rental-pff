@@ -1,49 +1,48 @@
 <?php
 
 namespace App\Models;
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    use HasApiTokens, HasFactory, Notifiable;
+
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'email', 'password', 'role', 'phone',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
+            'password'          => 'hashed',
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
     }
+
+    // Relations
+    public function machines()
+    {
+        return $this->hasMany(Machine::class, 'owner_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'client_id');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'client_id');
+    }
+
+    public function isOwner(): bool { return $this->role === 'owner'; }
+    public function isClient(): bool { return $this->role === 'client'; }
+
+// ✅ CORRECTION 3 : } sans point-virgule à la fin
 }
