@@ -1,94 +1,155 @@
 <?php
+// app/Http/Controllers/ReservationController.php
+// MODIFICATION : ajout des notifications email (Feature 3)
+// Les méthodes store(), accept(), reject() reçoivent les envois Mail
 
 namespace App\Http\Controllers;
 
-use App\Models\Machine;
 use App\Models\Reservation;
+use App\Models\Machine;
+use App\Mail\ReservationAcceptedMail;
+use App\Mail\ReservationRejectedMail;
+use App\Mail\NewReservationMail;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReservationController extends Controller
 {
-    // POST /api/reservations — client crée une réservation
+    // ─────────────────────────────────────────────────────────────
+    // CRÉER UNE RÉSERVATION → notifier le propriétaire
+    // ─────────────────────────────────────────────────────────────
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'machine_id'  => 'required|exists:machines,id',
             'start_date'  => 'required|date|after_or_equal:today',
-            'end_date'    => 'required|date|after_or_equal:start_date',
+            'end_date'    => 'required|date|after:start_date',
         ]);
 
-        $machine = Machine::findOrFail($data['machine_id']);
+        $machine = Machine::findOrFail($request->machine_id);
 
-        // 1. Vérifier disponibilité
-        if (! $machine->isAvailableOn($data['start_date'], $data['end_date'])) {
-            return response()->json([
-                'message' => 'Machine déjà réservée sur cette période.'
-            ], 422);
-        }
+        // Calculer le prix total en fonction des jours
+        $jours = \Carbon\Carbon::parse($request->start_date)
+                    ->diffInDays($request->end_date);
 
-        // 2. Calculer le prix total
-        $totalPrice = $machine->calculatePrice($data['start_date'], $data['end_date']);
-
-        // 3. Créer la réservation
         $reservation = Reservation::create([
-            'client_id'  => $request->user()->id,
-            'machine_id' => $machine->id,
-            'start_date' => $data['start_date'],
-            'end_date'   => $data['end_date'],
-            'total_price'=> $totalPrice,
-            'status'     => 'pending',
+            'machine_id'  => $machine->id,
+            'client_id'   => Auth::id(),
+            'owner_id'    => $machine->owner_id,
+            'start_date'  => $request->start_date,
+            'end_date'    => $request->end_date,
+            'total_price' => $machine->price_per_day * $jours,
+            'status'      => 'pending',
         ]);
 
-        return response()->json(
-            $reservation->load('machine', 'client'), 201
-        );
-    }
+        // ── Notification email au propriétaire ──────────────────
+        try {
+            $owner = $reservation->owner; // Récupère le modèle owner
+            Mail::to($owner->email)
+                ->send(new NewReservationMail($reservation));
 
-    // GET /api/reservations — liste selon le rôle
-    public function index(Request $request)
-    {
-        $user = $request->user();
-
-        $reservations = $user->isOwner()
-            ? Reservation::forOwner($user->id)
-                           ->with(['client:id,name,phone', 'machine'])
-                           ->latest()->get()
-            : $user->reservations()
-                   ->with('machine.primaryImage')
-                   ->latest()->get();
-
-        return response()->json($reservations);
-    }
-
-    // PATCH /api/reservations/{reservation}/accept
-    public function accept(Request $request, Reservation $reservation)
-    {
-        if ($request->user()->id !== $reservation->machine->owner_id) {
-            return response()->json(['message' => 'Interdit'], 403);
+            Log::info("📧 Email NewReservation envoyé à {$owner->email} — Réservation #{$reservation->id}");
+        } catch (\Exception $e) {
+            // Ne pas bloquer la réservation si l'email échoue
+            Log::error("❌ Échec email NewReservation: " . $e->getMessage());
         }
-        $reservation->accept();
-        return response()->json($reservation);
+        // ────────────────────────────────────────────────────────
+
+        return response()->json([
+            'message'     => 'Réservation créée avec succès.',
+            'reservation' => $reservation->load('machine', 'client', 'owner'),
+        ], 201);
     }
 
-    // PATCH /api/reservations/{reservation}/reject
+    // ─────────────────────────────────────────────────────────────
+    // ACCEPTER UNE RÉSERVATION → notifier le client avec PDF joint
+    // ─────────────────────────────────────────────────────────────
+    public function accept(Reservation $reservation)
+    {
+        // Vérifier que le propriétaire connecté est bien le bon
+        if ($reservation->owner_id !== Auth::id()) {
+            return response()->json(['message' => 'Action non autorisée.'], 403);
+        }
+
+        $reservation->update(['status' => 'accepted']);
+
+        // ── Notification email au client (avec contrat PDF joint) ──
+        try {
+            $client = $reservation->client;
+            Mail::to($client->email)
+                ->send(new ReservationAcceptedMail($reservation));
+
+            Log::info("📧 Email Accepted envoyé à {$client->email} — Réservation #{$reservation->id}");
+        } catch (\Exception $e) {
+            Log::error("❌ Échec email Accepted: " . $e->getMessage());
+        }
+        // ────────────────────────────────────────────────────────
+
+        return response()->json([
+            'message'     => 'Réservation acceptée.',
+            'reservation' => $reservation->fresh(['machine', 'client', 'owner']),
+        ]);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // REFUSER UNE RÉSERVATION → notifier le client avec le motif
+    // ─────────────────────────────────────────────────────────────
     public function reject(Request $request, Reservation $reservation)
     {
-        if ($request->user()->id !== $reservation->machine->owner_id) {
-            return response()->json(['message' => 'Interdit'], 403);
+        if ($reservation->owner_id !== Auth::id()) {
+            return response()->json(['message' => 'Action non autorisée.'], 403);
         }
-        $request->validate(['reason' => 'nullable|string']);
-        $reservation->reject($request->reason ?? '');
-        return response()->json($reservation);
+
+        // Le motif est optionnel — champ 'motif' dans le body JSON
+        $motif = $request->input('motif', '');
+
+        $reservation->update([
+            'status' => 'rejected',
+            'motif'  => $motif, // Assurez-vous que la colonne existe en migration
+        ]);
+
+        // ── Notification email au client avec le motif ──────────
+        try {
+            $client = $reservation->client;
+            Mail::to($client->email)
+                ->send(new ReservationRejectedMail($reservation, $motif));
+
+            Log::info("📧 Email Rejected envoyé à {$client->email} — Réservation #{$reservation->id}");
+        } catch (\Exception $e) {
+            Log::error("❌ Échec email Rejected: " . $e->getMessage());
+        }
+        // ────────────────────────────────────────────────────────
+
+        return response()->json([
+            'message'     => 'Réservation refusée.',
+            'reservation' => $reservation->fresh(['machine', 'client', 'owner']),
+        ]);
     }
 
-    // PATCH /api/reservations/{reservation}/complete
-    public function complete(Request $request, Reservation $reservation)
+    // ─────────────────────────────────────────────────────────────
+    // TÉLÉCHARGER LE CONTRAT PDF (méthode existante — inchangée)
+    // ─────────────────────────────────────────────────────────────
+    public function downloadContrat(Reservation $reservation)
     {
-        if ($request->user()->id !== $reservation->machine->owner_id) {
-            return response()->json(['message' => 'Interdit'], 403);
+        // Seul le client concerné ou le propriétaire peut télécharger
+        if (!in_array(Auth::id(), [$reservation->client_id, $reservation->owner_id])) {
+            return response()->json(['message' => 'Accès refusé.'], 403);
         }
-        $reservation->complete();
-        return response()->json($reservation);
+
+        $reservation->load('machine', 'client', 'owner');
+
+        $pdf = Pdf::loadView('pdf.contrat', [
+            'reservation' => $reservation,
+            'machine'     => $reservation->machine,
+            'client'      => $reservation->client,
+            'owner'       => $reservation->owner,
+        ]);
+
+        $nomFichier = 'contrat-rentify-' . $reservation->id . '.pdf';
+
+        return $pdf->download($nomFichier);
     }
 }

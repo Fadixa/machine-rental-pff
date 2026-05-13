@@ -6,95 +6,107 @@ return [
     |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
-    |
-    | This option controls the default mailer that is used to send all email
-    | messages unless another mailer is explicitly specified when sending
-    | the message. All additional mailers can be configured within the
-    | "mailers" array. Examples of each type of mailer are provided.
-    |
+    | Mailer par défaut utilisé par Laravel. Change selon l'environnement.
     */
-
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure all of the mailers used by your application plus
-    | their respective settings. Several examples have been configured for
-    | you and you are free to add your own as your application requires.
-    |
-    | Laravel supports a variety of mail "transport" drivers that can be used
-    | when delivering an email. You may specify which one you're using for
-    | your mailers below. You may also add additional mailers if needed.
-    |
-    | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
-    |            "postmark", "resend", "log", "array",
-    |            "failover", "roundrobin"
-    |
+    | Configuration de tous les drivers d'envoi d'email.
     */
 
     'mailers' => [
 
+        /* ============================================================
+           SMTP — DRIVER PAR DÉFAUT (compatible Bird/SparkPost/Gmail/etc.)
+           ============================================================ */
         'smtp' => [
             'transport' => 'smtp',
-            'scheme' => env('MAIL_SCHEME'),
-            'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', '127.0.0.1'),
-            'port' => env('MAIL_PORT', 2525),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'scheme' => env('MAIL_SCHEME'),           // null, 'tls', 'ssl'
+            'url' => env('MAIL_URL'),                   // URL complète optionnelle
+            'host' => env('MAIL_HOST', 'smtp.sparkpostmail.com'),  // ← Bird SMTP
+            'port' => env('MAIL_PORT', 587),           // ← Port TLS standard
+            'username' => env('MAIL_USERNAME', 'SMTP_Injection'),  // ← Bird
+            'password' => env('MAIL_PASSWORD'),         // ← Ta clé API Bird
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        /* ============================================================
+           SES — Amazon Simple Email Service
+           ============================================================ */
         'ses' => [
             'transport' => 'ses',
         ],
 
+        /* ============================================================
+           MAILGUN — via Symfony Mailer
+           ============================================================ */
+        'mailgun' => [
+            'transport' => 'mailgun',
+        ],
+
+        /* ============================================================
+           POSTMARK — via Symfony Mailer
+           ============================================================ */
         'postmark' => [
             'transport' => 'postmark',
-            // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
         ],
 
-        'resend' => [
-            'transport' => 'resend',
-        ],
-
+        /* ============================================================
+           SENDMAIL — via ligne de commande (serveur local)
+           ============================================================ */
         'sendmail' => [
             'transport' => 'sendmail',
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
         ],
 
+        /* ============================================================
+           LOG — Écrit les emails dans les logs (utile pour debug)
+           ============================================================ */
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),
         ],
 
+        /* ============================================================
+           ARRAY — Stocke en mémoire (tests unitaires)
+           ============================================================ */
         'array' => [
             'transport' => 'array',
         ],
 
+        /* ============================================================
+           FAILOVER — Bascule automatique vers un backup SMTP
+           ============================================================ */
         'failover' => [
             'transport' => 'failover',
             'mailers' => [
                 'smtp',
                 'log',
             ],
-            'retry_after' => 60,
         ],
 
+        /* ============================================================
+           ROUNDROBIN — Répartit la charge entre plusieurs mailers
+           ============================================================ */
         'roundrobin' => [
             'transport' => 'roundrobin',
             'mailers' => [
                 'ses',
                 'postmark',
             ],
-            'retry_after' => 60,
+        ],
+
+        /* ============================================================
+           MAILPIT / MAILTRAP — Pour le développement local
+           ============================================================ */
+        'mailpit' => [
+            'transport' => 'smtp',
+            'host' => env('MAILPIT_HOST', '127.0.0.1'),
+            'port' => env('MAILPIT_PORT', 1025),
         ],
 
     ],
@@ -103,16 +115,26 @@ return [
     |--------------------------------------------------------------------------
     | Global "From" Address
     |--------------------------------------------------------------------------
-    |
-    | You may wish for all emails sent by your application to be sent from
-    | the same address. Here you may specify a name and address that is
-    | used globally for all emails that are sent by your application.
-    |
+    | Adresse d'expédition par défaut pour tous les emails.
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
+        'address' => env('MAIL_FROM_ADDRESS', 'noreply@rentify.ma'),
+        'name' => env('MAIL_FROM_NAME', 'Rentify Maroc'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Markdown Mail Settings
+    |--------------------------------------------------------------------------
+    | Configuration pour les emails Markdown (thème + chemins).
+    */
+
+    'markdown' => [
+        'theme' => 'default',
+        'paths' => [
+            resource_path('views/vendor/mail'),
+        ],
     ],
 
 ];

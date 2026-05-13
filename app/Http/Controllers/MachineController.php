@@ -118,4 +118,48 @@ class MachineController extends Controller
             ->get();
         return response()->json($machines);
     }
+
+
+
+    public function renderIndex()
+{
+    
+    $machines = Machine::with('owner')->paginate(12);
+
+    
+    return view('machines.index', compact('machines'));
+}
+
+
+
+
+public function getMapData()
+{
+    // جيب الآلات اللي عندهم إحداثيات + متاحة
+    $machines = Machine::with('images')
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->where('status', 'available')   // ← هنا كان الغلط
+        ->get()
+        ->map(function ($machine) {
+            return [
+                'id'        => $machine->id,
+                'name'      => $machine->name,
+                'category'  => $machine->type,
+                'city'      => $machine->city,
+                'price'     => $machine->price_per_day,
+                'latitude'  => (float) $machine->latitude,
+                'longitude' => (float) $machine->longitude,
+                'image'     => $machine->images->first()
+                                ? asset('storage/' . $machine->images->first()->image_url)
+                                : null,
+                'url'       => url('/machines/' . $machine->id),
+            ];
+        });
+
+    return response()->json($machines);
+}
+
+
+
 }
