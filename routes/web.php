@@ -32,8 +32,8 @@ Route::get('/dashboard/client',  fn() => view('dashboard.client'));
 Route::get('/dashboard/owner',   fn() => view('dashboard.owner'));
 
 /* ── FALLBACK 404 ── */
-Route::fallback(function () {
-    return response()->view('errors.404', [], 404);
+Route::fallback(function() {
+    abort(404, 'Page introuvable');
 });
 
 

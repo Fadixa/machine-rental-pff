@@ -135,11 +135,11 @@ class MachineController extends Controller
 
 public function getMapData()
 {
-    // جيب الآلات اللي عندهم إحداثيات + متاحة
+    
     $machines = Machine::with('images')
         ->whereNotNull('latitude')
         ->whereNotNull('longitude')
-        ->where('status', 'available')   // ← هنا كان الغلط
+        ->where('status', 'available')   
         ->get()
         ->map(function ($machine) {
             return [
@@ -154,6 +154,7 @@ public function getMapData()
                                 ? asset('storage/' . $machine->images->first()->image_url)
                                 : null,
                 'url'       => url('/machines/' . $machine->id),
+                
             ];
         });
 

@@ -401,5 +401,17 @@ if (getToken()) {
     const u = getUser();
     window.location.href = u?.role === 'owner' ? '/dashboard/owner' : '/dashboard/client';
 }
+
+
+(function() {
+    const token = getToken();
+    const user  = getUser();
+
+    if (token && user && user.role) {
+        window.location.replace(
+            user.role === 'owner' ? '/dashboard/owner' : '/dashboard/client'
+        );
+    }
+})();
 </script>
 @endpush

@@ -642,10 +642,18 @@
             return h;
         },
         async get(url) {
-            const r = await fetch(url, { headers: this.headers() });
-            if (r.status === 401) { window.location.href = '/login'; return null; }
-            return r.json();
-        },
+    const r = await fetch(url, { headers: this.headers() });
+
+    if (r.status === 401) {
+        
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        window.location.replace('/login'); 
+        return null;
+    }
+
+    return r.json();
+},
         async post(url, body) {
             const r = await fetch(url, { method: 'POST', headers: this.headers(), body: JSON.stringify(body) });
             return { ok: r.ok, status: r.status, data: await r.json() };
