@@ -145,7 +145,7 @@
 <script>
 (function () {
 
-    /* ── حماية الصفحة ── */
+    
  if (!getToken() || !getUser()) {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
@@ -159,7 +159,7 @@ if (user?.role === 'owner') {
 }
  
 
-    /* ── تحميل الداشبورد ── */
+    
     async function loadClientDash() {
         const root      = document.getElementById('dash-root');
         const initial   = (user?.name || 'C').charAt(0).toUpperCase();
@@ -198,9 +198,9 @@ if (user?.role === 'owner') {
                     <i class="fas fa-search"></i> Chercher un engin
                 </a>
                 <div class="dash-nav-sep"></div>
-                <a href="/dashboard/client" class="dash-nav-item">
-                    <i class="fas fa-user"></i> Mon profil
-                </a>
+            <a href="/profile" class="dash-nav-item">
+    <i class="fas fa-user"></i> Mon profil
+</a>
                 <button class="btn-logout" onclick="doLogout()">
                     <i class="fas fa-sign-out-alt"></i> Déconnexion
                 </button>

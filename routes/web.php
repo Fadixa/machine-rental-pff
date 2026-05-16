@@ -45,3 +45,28 @@ Route::get('/contact', function () {
 Route::post('/contact', function (Illuminate\Http\Request $request) {
          return back()->with('success', 'Votre message a été envoyé avec succès !');
 });
+
+
+Route::get('/dashboard/driver', function () {
+    return view('dashboard.driver');
+})->name('dashboard.driver');
+ 
+// Admin — gestion chauffeurs
+Route::get('/admin/drivers', function () {
+    return view('admin.drivers');
+})->name('admin.drivers');
+
+// Dashboard Admin
+Route::get('/dashboard/admin', function () {
+    return view('admin.dashboard');
+})->name('dashboard.admin');
+
+
+
+Route::get('/profile', function () {
+    return view('profile.index');
+})->name('profile');
+
+Route::get('/machines/{id}', function($id) {
+    return view('machines.show');
+});

@@ -413,5 +413,14 @@ if (getToken()) {
         );
     }
 })();
+
+
+if (user.role === 'admin') {
+    window.location.replace('/dashboard/admin');
+} else if (user.role === 'owner') {
+    window.location.replace('/dashboard/owner');
+} else {
+    window.location.replace('/dashboard/client');
+}
 </script>
 @endpush

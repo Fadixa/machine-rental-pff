@@ -3,904 +3,1123 @@
 
 @push('styles')
 <style>
-.show-header {
-    background: var(--navy); padding: 20px 0 16px;
-    border-bottom: 1px solid var(--border);
+/* ═══════════════════════════════════════════════
+   VARIABLES & BASE
+═══════════════════════════════════════════════ */
+:root {
+  --navy:   #0F1B2D;
+  --navy2:  #1a2d45;
+  --navy3:  #243752;
+  --orange: #F59E0B;
+  --orange2:#d97706;
+  --green:  #10b981;
+  --red:    #ef4444;
+  --gray:   #6b7280;
+  --border: #e2e8f0;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(15,27,45,.10);
 }
-.back-link {
-    color: rgba(255,255,255,.5); font-size: 13px; font-weight: 500;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-    transition: color .2s;
-}
-.back-link:hover { color: var(--orange); }
 
-.show-body {
-    max-width: 1280px; margin: 0 auto; padding: 28px 32px;
-    display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: start;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.show-wrap {
+  max-width: 1280px; margin: 0 auto;
+  padding: 28px 24px; display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px; align-items: start;
 }
 
-/* ── Gallery ── */
-.gallery-main {
-    border-radius: var(--radius-lg); overflow: hidden;
-    height: 360px; background: var(--navy-light);
-    position: relative; cursor: zoom-in;
+/* ═══════════════════════════════════════════════
+   3D IMAGE VIEWER
+═══════════════════════════════════════════════ */
+.viewer-section {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
 }
-.gallery-main-img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform .4s ease;
-}
-.gallery-main:hover .gallery-main-img { transform: scale(1.04); }
-.gallery-placeholder {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 72px;
-}
-.gallery-nav {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    display: flex; justify-content: space-between; width: 100%; padding: 0 12px;
-    pointer-events: none;
-}
-.gallery-btn {
-    width: 36px; height: 36px;
-    background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
-    border-radius: 50%; border: none; color: #fff;
-    cursor: pointer; pointer-events: all;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; transition: background .15s;
-}
-.gallery-btn:hover { background: var(--orange); }
-.gallery-thumbs {
-    display: flex; gap: 8px; margin-top: 10px;
-}
-.gallery-thumb {
-    width: 72px; height: 56px; border-radius: 8px; overflow: hidden;
-    border: 2px solid transparent; cursor: pointer; transition: border-color .15s;
-    background: var(--navy-light); flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 24px;
-}
-.gallery-thumb.active { border-color: var(--orange); }
-.gallery-thumb:hover   { border-color: rgba(245,158,11,.5); }
 
-/* ── Machine info ── */
-.machine-info { margin-top: 20px; }
-.info-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.3);
-    color: var(--orange); font-size: 10px; font-weight: 800;
-    padding: 4px 12px; border-radius: 100px; letter-spacing: .5px;
-    text-transform: uppercase; margin-bottom: 10px;
+.viewer-3d-wrap {
+  position: relative; height: 420px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, var(--navy3) 100%);
+  overflow: hidden; perspective: 1000px;
+  cursor: grab;
 }
+.viewer-3d-wrap:active { cursor: grabbing; }
+
+/* Grille décorative */
+.viewer-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,158,11,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,158,11,.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridMove 8s linear infinite;
+}
+@keyframes gridMove {
+  0%   { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+/* Halo orange */
+.viewer-halo {
+  position: absolute; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(245,158,11,.15) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1); opacity: .6; }
+  50%      { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
+}
+
+/* Stage 3D */
+.stage-3d {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform .05s linear;
+}
+
+/* Image principale */
+.main-img {
+  width: 340px; height: 280px;
+  object-fit: contain; border-radius: 12px;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,.5));
+  transform: translateZ(40px);
+  transition: opacity .4s ease;
+  user-select: none; pointer-events: none;
+}
+.main-img.loading { opacity: 0; }
+
+/* Badge status */
+.status-badge-3d {
+  position: absolute; top: 20px; left: 20px;
+  padding: 6px 16px; border-radius: 100px;
+  font-size: 11px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; backdrop-filter: blur(8px);
+}
+.status-available { background: rgba(16,185,129,.2); color: #10b981; border: 1px solid rgba(16,185,129,.3); }
+.status-rented    { background: rgba(245,158,11,.2);  color: #F59E0B;  border: 1px solid rgba(245,158,11,.3); }
+.status-maintenance { background: rgba(239,68,68,.2); color: #ef4444; border: 1px solid rgba(239,68,68,.3); }
+
+/* Compteur rotation */
+.rotation-hint {
+  position: absolute; bottom: 16px; right: 16px;
+  background: rgba(255,255,255,.1); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.7); font-size: 11px;
+  padding: 6px 12px; border-radius: 100px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* Flèches nav */
+.viewer-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.2);
+  color: white; font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; z-index: 5;
+}
+.viewer-arrow:hover { background: var(--orange); border-color: var(--orange); }
+.viewer-arrow.prev { left: 16px; }
+.viewer-arrow.next { right: 16px; }
+
+/* Thumbnails */
+.viewer-thumbs {
+  display: flex; gap: 10px; padding: 14px 16px;
+  overflow-x: auto; background: #fafafa;
+  border-top: 1px solid var(--border);
+}
+.thumb {
+  width: 72px; height: 56px; border-radius: 10px;
+  object-fit: cover; cursor: pointer; flex-shrink: 0;
+  border: 2px solid transparent;
+  transition: all .2s; opacity: .6;
+}
+.thumb.active { border-color: var(--orange); opacity: 1; }
+.thumb-placeholder {
+  width: 72px; height: 56px; border-radius: 10px;
+  background: var(--navy); border: 2px solid transparent;
+  cursor: pointer; flex-shrink: 0; opacity: .6;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.3); font-size: 20px;
+  transition: all .2s;
+}
+.thumb-placeholder.active { border-color: var(--orange); opacity: 1; }
+
+/* ═══════════════════════════════════════════════
+   INFOS MACHINE
+═══════════════════════════════════════════════ */
+.machine-info { padding: 24px; }
+
+.machine-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.badge-type {
+  background: rgba(245,158,11,.1); color: var(--orange);
+  font-size: 10px; font-weight: 800; padding: 4px 12px;
+  border-radius: 100px; letter-spacing: 1px; text-transform: uppercase;
+}
+.badge-city {
+  background: #f1f5f9; color: var(--gray);
+  font-size: 11px; font-weight: 600; padding: 4px 12px;
+  border-radius: 100px; display: flex; align-items: center; gap: 4px;
+}
+
 .machine-title {
-    font-size: 26px; font-weight: 900; color: var(--navy);
-    letter-spacing: -.6px; margin-bottom: 8px;
-}
-.machine-meta {
-    display: flex; align-items: center; gap: 16px;
-    flex-wrap: wrap; margin-bottom: 14px;
-}
-.meta-rating { display: flex; align-items: center; gap: 5px; }
-.meta-rating i { color: var(--orange); font-size: 13px; }
-.meta-rating span { font-size: 14px; font-weight: 800; color: var(--navy); }
-.meta-rating small { font-size: 12px; color: var(--text-light); }
-.meta-dispo {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: 700;
-}
-.dispo-dot { width: 8px; height: 8px; border-radius: 50%; }
-.machine-desc {
-    font-size: 14px; color: var(--text-gray); line-height: 1.7;
-    margin-bottom: 20px;
+  font-size: 26px; font-weight: 900; color: var(--navy);
+  letter-spacing: -.5px; line-height: 1.2; margin-bottom: 8px;
 }
 
-/* Specs */
+.machine-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.stars { color: var(--orange); font-size: 14px; }
+.rating-val { font-weight: 800; color: var(--navy); font-size: 14px; }
+.rating-count { color: var(--gray); font-size: 13px; }
+
+.machine-desc {
+  color: var(--gray); font-size: 14px; line-height: 1.7;
+  margin-bottom: 20px; padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Specs grid */
 .specs-grid {
-    display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
-    margin-bottom: 20px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 20px;
 }
 .spec-card {
-    background: #F9FAFB; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-md); padding: 14px 12px; text-align: center;
+  background: #f8fafc; border-radius: 12px; padding: 14px 12px;
+  text-align: center;
 }
-.spec-icon { font-size: 20px; margin-bottom: 6px; color: var(--orange); }
-.spec-label { font-size: 10px; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
-.spec-value { font-size: 14px; font-weight: 800; color: var(--navy); }
+.spec-icon { font-size: 20px; margin-bottom: 6px; }
+.spec-val { font-size: 13px; font-weight: 800; color: var(--navy); }
+.spec-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
 
-/* Equipements */
-.equip-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+/* Prix section */
+.price-section {
+  display: flex; align-items: center; gap: 20px;
+  padding: 16px; background: var(--navy); border-radius: 14px;
+  margin-bottom: 20px;
 }
-.equip-item {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px; color: var(--text-gray);
-}
-.equip-item i { color: #10B981; font-size: 12px; }
+.price-item { text-align: center; flex: 1; }
+.price-label { font-size: 10px; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+.price-val { font-size: 22px; font-weight: 900; color: var(--orange); }
+.price-unit { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.price-sep { width: 1px; height: 40px; background: rgba(255,255,255,.1); }
 
-/* Calendar */
-.availability-cal {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); padding: 18px; margin-top: 20px;
-}
-.cal-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
-}
-.cal-title { font-size: 14px; font-weight: 800; color: var(--navy); }
-.cal-nav { display: flex; gap: 6px; }
-.cal-nav-btn {
-    width: 28px; height: 28px; border: 1px solid #E5E7EB;
-    border-radius: 6px; background: #fff; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; color: var(--text-gray); transition: all .15s;
-}
-.cal-nav-btn:hover { border-color: var(--orange); color: var(--orange); }
-.cal-days-header {
-    display: grid; grid-template-columns: repeat(7,1fr);
-    gap: 2px; margin-bottom: 6px;
-}
-.cal-day-hdr { text-align: center; font-size: 10px; font-weight: 700; color: var(--text-light); padding: 3px; }
-.cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
-.cal-day {
-    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 500; border-radius: 5px;
-    cursor: default; color: var(--navy);
-}
-.cal-day.reserved { background: #FEE2E2; color: #991B1B; }
-.cal-day.available { background: #D1FAE5; color: #065F46; cursor: pointer; }
-.cal-day.available:hover { background: var(--orange); color: #fff; }
-.cal-day.empty { visibility: hidden; }
-.cal-legend { display: flex; gap: 16px; margin-top: 10px; }
-.cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-gray); }
-.leg-dot { width: 10px; height: 10px; border-radius: 3px; }
-
-/* ── Booking sidebar ── */
-.booking-sidebar {
-    position: sticky; top: 90px;
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); overflow: hidden;
-}
-.booking-price-header {
-    background: var(--navy); padding: 20px 22px;
-}
-.booking-price-main {
-    font-size: 34px; font-weight: 900; color: #fff; letter-spacing: -1.5px; line-height: 1;
-}
-.booking-price-main span { color: var(--orange); font-size: 18px; font-weight: 600; }
-.booking-price-sub { color: rgba(255,255,255,.4); font-size: 12px; margin-top: 4px; }
-.booking-body { padding: 18px 20px; }
-.booking-label {
-    font-size: 10px; font-weight: 800; color: var(--text-light);
-    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+/* ═══════════════════════════════════════════════
+   BOOKING SIDEBAR
+═══════════════════════════════════════════════ */
+.booking-card {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
+  position: sticky; top: 90px;
 }
 
-/* Mode tabs */
-.mode-tabs {
-    display: flex; background: #F3F4F6; border-radius: 8px;
-    padding: 3px; margin-bottom: 16px;
+.booking-header {
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+  padding: 20px 22px;
 }
-.mode-tab {
-    flex: 1; text-align: center; padding: 7px 4px;
-    font-size: 12px; font-weight: 600; color: var(--text-gray);
-    border-radius: 6px; cursor: pointer; transition: all .15s;
-}
-.mode-tab.active { background: #fff; color: var(--navy); box-shadow: var(--shadow-sm); }
+.booking-price-main { font-size: 28px; font-weight: 900; color: var(--orange); }
+.booking-price-sub  { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 2px; }
 
-/* Date input */
-.booking-date-input {
-    width: 100%; padding: 10px 12px;
-    border: 1.5px solid #E5E7EB; border-radius: var(--radius-md);
-    font-size: 13px; font-weight: 500; color: var(--navy);
-    outline: none; transition: border-color .2s;
-    font-family: 'Inter', sans-serif; margin-bottom: 14px;
-}
-.booking-date-input:focus { border-color: var(--orange); }
+.booking-body { padding: 20px 22px; }
 
-/* Duration stepper */
-.duration-stepper {
-    display: flex; align-items: center; justify-content: space-between;
-    border: 1.5px solid #E5E7EB; border-radius: var(--radius-md);
-    overflow: hidden; margin-bottom: 16px;
+.form-group { margin-bottom: 16px; }
+.form-label-custom {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--gray); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 6px;
 }
-.step-btn {
-    width: 40px; height: 40px; background: #F9FAFB;
-    border: none; cursor: pointer; font-size: 18px;
-    color: var(--navy); transition: background .15s;
-    display: flex; align-items: center; justify-content: center;
+.form-control-custom {
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); font-size: 14px;
+  color: var(--navy); background: #fff; outline: none;
+  transition: border-color .2s;
 }
-.step-btn:hover { background: var(--orange); color: #fff; }
-.step-val {
-    font-size: 18px; font-weight: 900; color: var(--navy); min-width: 40px; text-align: center;
+.form-control-custom:focus { border-color: var(--orange); }
+
+/* Mode location toggle */
+.mode-toggle {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; background: #f1f5f9; border-radius: 10px; padding: 4px;
+  margin-bottom: 16px;
+}
+.mode-btn {
+  padding: 8px; border: none; border-radius: 8px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  background: transparent; color: var(--gray); transition: all .2s;
+}
+.mode-btn.active { background: #fff; color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+/* Counter durée */
+.duration-ctrl {
+  display: flex; align-items: center; gap: 0;
+  border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden;
+}
+.duration-btn {
+  width: 42px; height: 42px; border: none; background: #f8fafc;
+  font-size: 18px; cursor: pointer; color: var(--navy);
+  transition: background .2s; flex-shrink: 0;
+}
+.duration-btn:hover { background: var(--orange); color: white; }
+.duration-input {
+  flex: 1; text-align: center; border: none; outline: none;
+  font-size: 16px; font-weight: 800; color: var(--navy);
+  background: white;
 }
 
-/* Price breakdown */
-.price-breakdown {
-    background: #F9FAFB; border-radius: var(--radius-md);
-    padding: 14px; margin-bottom: 14px; font-size: 13px;
+/* Récap prix */
+.price-recap {
+  background: #f8fafc; border-radius: 12px; padding: 14px;
+  margin-bottom: 16px;
 }
-.pb-row {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 7px; color: var(--text-gray);
+.price-line {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--gray); margin-bottom: 8px;
 }
-.pb-row:last-child { margin-bottom: 0; padding-top: 7px; border-top: 1px solid #E5E7EB; }
-.pb-row:last-child span { color: var(--navy); font-size: 16px; font-weight: 900; }
-.pb-row:last-child strong { color: var(--navy); }
+.price-line.total {
+  font-size: 15px; font-weight: 800; color: var(--navy);
+  padding-top: 8px; border-top: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.price-line.total span:last-child { color: var(--orange); }
+
+/* CTA buttons */
+.btn-reserver {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: var(--orange); border: none; color: white;
+  font-size: 15px; font-weight: 800; cursor: pointer;
+  transition: all .2s; margin-bottom: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-reserver:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,158,11,.4); }
+.btn-devis {
+  width: 100%; padding: 12px; border-radius: 12px;
+  background: transparent; border: 1.5px solid var(--border);
+  color: var(--navy); font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-devis:hover { border-color: var(--navy); background: #f8fafc; }
 
 /* Owner card */
-.owner-card {
-    display: flex; align-items: center; gap: 12px;
-    background: #F9FAFB; border-radius: var(--radius-md);
-    padding: 12px 14px; margin-bottom: 14px;
+.owner-section {
+  border-top: 1px solid var(--border); padding: 16px 22px;
 }
+.owner-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .owner-avatar {
-    width: 40px; height: 40px; background: var(--orange);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 800; color: #111; flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--orange); display: flex; align-items: center;
+  justify-content: center; font-size: 16px; font-weight: 800; color: white;
+  flex-shrink: 0;
 }
-.owner-name { font-size: 13px; font-weight: 700; color: var(--navy); }
-.owner-meta { font-size: 11px; color: var(--text-light); }
-.owner-badge {
-    font-size: 10px; font-weight: 700; color: #10B981;
-    display: inline-flex; align-items: center; gap: 3px;
-}
-.owner-actions { display: flex; gap: 7px; }
+.owner-name { font-size: 14px; font-weight: 800; color: var(--navy); }
+.owner-badge { font-size: 11px; color: var(--green); font-weight: 600; }
+.owner-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .btn-whatsapp {
-    flex: 1; background: #25D366; color: #fff;
-    font-size: 12px; font-weight: 700; border: none;
-    border-radius: var(--radius-md); padding: 9px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
-    transition: opacity .15s; text-decoration: none;
+  padding: 10px; border-radius: 10px; border: none;
+  background: #25D366; color: white; font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: opacity .2s;
 }
-.btn-whatsapp:hover { opacity: .9; color: #fff; }
-.btn-call {
-    flex: 1; background: #3B82F6; color: #fff;
-    font-size: 12px; font-weight: 700; border: none;
-    border-radius: var(--radius-md); padding: 9px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
-    transition: opacity .15s; text-decoration: none;
+.btn-whatsapp:hover { opacity: .85; }
+.btn-appeler {
+  padding: 10px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: white;
+  color: var(--navy); font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all .2s;
 }
-.btn-call:hover { opacity: .9; color: #fff; }
+.btn-appeler:hover { border-color: var(--navy); }
 
-/* Tracking timeline */
-.tracking {
-    border-top: 1px solid #F0F0F0; padding-top: 16px; margin-top: 16px;
+/* ═══════════════════════════════════════════════
+   CALENDRIER DISPO
+═══════════════════════════════════════════════ */
+.section-card {
+  background: #fff; border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 24px; margin-top: 20px;
 }
-.tracking-title { font-size: 11px; font-weight: 800; color: var(--text-light); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
-.track-item {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 10px; font-size: 12px;
+.section-title {
+  font-size: 18px; font-weight: 900; color: var(--navy);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
 }
-.track-dot {
-    width: 22px; height: 22px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; flex-shrink: 0;
-}
-.track-done { background: #10B981; color: #fff; }
-.track-active { background: var(--orange); color: #fff; animation: trackPulse 1.5s ease infinite; }
-.track-pending { background: #F0F0F0; color: var(--text-light); }
-@keyframes trackPulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,.4); }
-    50%      { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
-}
-.track-label { color: var(--navy); font-weight: 600; }
-.track-sub { color: var(--text-light); font-size: 11px; }
+.section-title i { color: var(--orange); }
 
-/* ── Ratings section ── */
-.ratings-section {
-    max-width: 1280px; margin: 0 auto;
-    padding: 0 32px 40px; margin-top: -8px;
+/* ═══════════════════════════════════════════════
+   RATINGS
+═══════════════════════════════════════════════ */
+.rating-summary {
+  display: flex; gap: 20px; align-items: center;
+  padding: 20px; background: var(--navy); border-radius: 14px;
+  margin-bottom: 20px;
 }
-.ratings-card {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); padding: 24px 28px;
-}
-.ratings-header {
-    display: flex; align-items: flex-start;
-    justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;
-}
-.ratings-title { font-size: 18px; font-weight: 900; color: var(--navy); margin-bottom: 3px; }
-.ratings-count { font-size: 13px; color: var(--text-light); }
-.ratings-scores { display: flex; gap: 28px; }
-.score-block { text-align: center; }
-.score-num { font-size: 32px; font-weight: 900; color: var(--orange); letter-spacing: -1.5px; line-height: 1; }
-.score-stars { color: var(--orange); font-size: 13px; letter-spacing: -1px; }
-.score-label { font-size: 11px; color: var(--text-light); font-weight: 600; margin-top: 2px; }
+.rating-big { font-size: 48px; font-weight: 900; color: var(--orange); line-height: 1; }
+.rating-stars-big { color: var(--orange); font-size: 18px; letter-spacing: 2px; }
+.rating-total { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 4px; }
 
-/* Leave review button */
-.btn-leave-review {
-    width: 100%; padding: 13px;
-    background: var(--orange); color: #111;
-    font-size: 14px; font-weight: 800; border: none;
-    border-radius: var(--radius-md); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: background .15s, transform .15s; margin-bottom: 20px;
+.review-card {
+  padding: 16px; border: 1px solid var(--border); border-radius: 12px;
+  margin-bottom: 12px; transition: box-shadow .2s;
 }
-.btn-leave-review:hover { background: var(--orange-dark); transform: translateY(-1px); }
+.review-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+.review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.reviewer-name { font-weight: 700; color: var(--navy); font-size: 14px; }
+.reviewer-date { font-size: 11px; color: var(--gray); }
+.review-stars { color: var(--orange); font-size: 12px; margin-bottom: 6px; }
+.review-text { font-size: 13px; color: var(--gray); line-height: 1.6; }
 
-/* Review form */
-.review-form {
-    background: #F9FAFB; border: 1px solid #EFEFEF;
-    border-radius: var(--radius-lg); padding: 20px 22px;
-    margin-bottom: 20px; display: none;
-    animation: fadeDown .3s ease;
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+#showToast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  padding: 14px 20px; border-radius: 14px;
+  color: white; font-weight: 700; font-size: 14px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.2);
+  transform: translateY(20px); opacity: 0;
+  transition: all .3s ease; pointer-events: none;
 }
-.review-form.open { display: block; }
-@keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-.review-form-title { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 16px; }
-.review-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px; }
-.review-field-label {
-    font-size: 10px; font-weight: 800; color: var(--text-light);
-    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
-}
-/* Star picker */
-.star-picker { display: flex; gap: 4px; }
-.star-pick {
-    font-size: 22px; cursor: pointer; color: #D1D5DB;
-    transition: color .1s, transform .1s; line-height: 1;
-}
-.star-pick:hover, .star-pick.on { color: var(--orange); transform: scale(1.15); }
-.review-textarea {
-    width: 100%; padding: 11px 14px;
-    border: 1.5px solid #E5E7EB; border-radius: var(--radius-md);
-    font-size: 13px; color: var(--navy); font-family: 'Inter', sans-serif;
-    resize: vertical; min-height: 100px; outline: none;
-    transition: border-color .2s; background: #fff;
-}
-.review-textarea:focus { border-color: var(--orange); }
-.review-form-actions { display: flex; gap: 10px; margin-top: 14px; }
-.btn-publish-review {
-    flex: 1; padding: 11px; background: var(--navy); color: #fff;
-    font-size: 13px; font-weight: 800; border: none;
-    border-radius: var(--radius-md); cursor: pointer;
-    transition: background .15s;
-}
-.btn-publish-review:hover { background: #0a1421; }
-.btn-cancel-review {
-    padding: 11px 20px; background: #fff;
-    border: 1px solid #E5E7EB; border-radius: var(--radius-md);
-    font-size: 13px; font-weight: 600; color: var(--text-gray);
-    cursor: pointer; transition: border-color .15s;
-}
-.btn-cancel-review:hover { border-color: var(--navy); color: var(--navy); }
-.review-name-input {
-    width: 100%; padding: 11px 14px;
-    border: 1.5px solid #E5E7EB; border-radius: var(--radius-md);
-    font-size: 13px; color: var(--navy); font-family: 'Inter', sans-serif;
-    outline: none; transition: border-color .2s; background: #fff; margin-bottom: 14px;
-}
-.review-name-input:focus { border-color: var(--orange); }
+#showToast.visible { transform: translateY(0); opacity: 1; }
 
-/* Review items */
-.review-item {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); padding: 18px 20px;
-    margin-bottom: 12px; transition: box-shadow .2s;
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .show-wrap { grid-template-columns: 1fr; }
+  .booking-card { position: static; }
+  .specs-grid { grid-template-columns: repeat(2,1fr); }
 }
-.review-item:last-child { margin-bottom: 0; }
-.review-item:hover { box-shadow: var(--shadow-sm); }
-.review-item-header {
-    display: flex; align-items: center;
-    justify-content: space-between; margin-bottom: 10px;
-}
-.review-user { display: flex; align-items: center; gap: 12px; }
-.review-avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 800; color: #111; flex-shrink: 0;
-}
-.review-name { font-size: 14px; font-weight: 700; color: var(--navy); }
-.review-date { font-size: 11px; color: var(--text-light); margin-top: 1px; }
-.review-global-stars { color: var(--orange); font-size: 14px; letter-spacing: -1px; }
-.review-sub-ratings {
-    display: flex; gap: 20px; margin-bottom: 10px;
-}
-.sub-rating-label { font-size: 10px; color: var(--text-light); font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 3px; }
-.sub-rating-stars { color: var(--orange); font-size: 12px; letter-spacing: -1px; }
-.review-comment { font-size: 13px; color: var(--text-gray); line-height: 1.65; margin-bottom: 10px; }
-.review-helpful {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--text-light); cursor: pointer;
-    border: none; background: none; padding: 0; transition: color .15s;
-}
-.review-helpful:hover { color: var(--navy); }
-.review-helpful i { font-size: 13px; }
-
-@media (max-width: 900px) {
-    .show-body { grid-template-columns: 1fr; }
-    .booking-sidebar { position: static; }
-    .specs-grid { grid-template-columns: repeat(2,1fr); }
-    .ratings-section { padding: 0 16px 32px; }
-    .review-fields-grid { grid-template-columns: 1fr; }
-    .ratings-header { flex-direction: column; }
+@media (max-width: 600px) {
+  .show-wrap { padding: 12px; }
+  .viewer-3d-wrap { height: 280px; }
+  .main-img { width: 220px; height: 180px; }
 }
 </style>
 @endpush
 
 @section('content')
 
-<div class="show-header">
-    <div class="container-rentify">
-        <a href="/machines" class="back-link">
-            <i class="fas fa-arrow-left"></i> Retour au catalogue
-        </a>
-    </div>
+{{-- BREADCRUMB --}}
+<div style="background:#f8fafc;border-bottom:1px solid var(--border,#e2e8f0);padding:12px 24px">
+  <div style="max-width:1280px;margin:0 auto;font-size:13px;color:#6b7280">
+    <a href="/" style="color:inherit;text-decoration:none">Accueil</a>
+    <span style="margin:0 8px">›</span>
+    <a href="/machines" style="color:inherit;text-decoration:none">Catalogue</a>
+    <span style="margin:0 8px">›</span>
+    <span id="breadcrumb-name" style="color:#0F1B2D;font-weight:600">Chargement...</span>
+  </div>
 </div>
 
-<div class="show-body" id="machine-detail">
-    {{-- Loading state --}}
-    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-light)">
-        <div style="font-size:36px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block">⚙️</div>
-        <div style="font-size:14px">Chargement de la fiche machine...</div>
-    </div>
-</div>
+<div class="show-wrap" id="showWrap" style="opacity:0;transition:opacity .4s">
 
-{{-- ══ RATINGS SECTION ══ --}}
-<div class="ratings-section" id="ratings-section" style="display:none">
-    <div class="ratings-card">
-        <div class="ratings-header">
-            <div>
-                <div class="ratings-title">Avis &amp; Évaluations</div>
-                <div class="ratings-count" id="ratings-count">0 avis vérifiés</div>
-            </div>
-            <div class="ratings-scores" id="ratings-scores"></div>
+  {{-- COL GAUCHE --}}
+  <div>
+
+    {{-- VIEWER 3D --}}
+    <div class="viewer-section">
+      <div class="viewer-3d-wrap" id="viewer3d">
+        <div class="viewer-grid"></div>
+        <div class="viewer-halo"></div>
+
+        <div class="stage-3d" id="stage3d">
+          <img id="mainImg" class="main-img loading"
+               src="/img/machines/default.png"
+               onerror="this.src='https://placehold.co/340x280/0F1B2D/F59E0B?text=Machine'"
+               alt="machine">
         </div>
 
-        {{-- Button to open form --}}
-        <button class="btn-leave-review" id="btn-leave-review" onclick="toggleReviewForm()">
-            <i class="far fa-star"></i> Laisser un avis
+        <div class="status-badge-3d status-available" id="statusBadge">Disponible</div>
+
+        <button class="viewer-arrow prev" onclick="prevImg()">‹</button>
+        <button class="viewer-arrow next" onclick="nextImg()">›</button>
+
+        <div class="rotation-hint">
+          <i class="fas fa-arrows-alt"></i> Glisser pour tourner
+        </div>
+      </div>
+
+      <div class="viewer-thumbs" id="thumbsRow">
+        {{-- Thumbnails injectés par JS --}}
+      </div>
+    </div>
+
+    {{-- INFOS --}}
+    <div class="machine-info" id="machineInfo">
+      <div class="machine-badges">
+        <span class="badge-type" id="machineType">—</span>
+        <span class="badge-city"><i class="fas fa-map-marker-alt"></i> <span id="machineCity">—</span></span>
+      </div>
+      <h1 class="machine-title" id="machineName">Chargement...</h1>
+      <div class="machine-rating">
+        <div class="stars" id="machineStars">★★★★★</div>
+        <span class="rating-val" id="machineRatingVal">—</span>
+        <span class="rating-count" id="machineRatingCount">(0 avis)</span>
+      </div>
+      <p class="machine-desc" id="machineDesc">—</p>
+
+      {{-- SPECS --}}
+      <div class="specs-grid">
+        <div class="spec-card">
+          <div class="spec-icon">🏗️</div>
+          <div class="spec-val" id="specType">—</div>
+          <div class="spec-label">Type</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-icon">📍</div>
+          <div class="spec-val" id="specCity">—</div>
+          <div class="spec-label">Ville</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-icon">📅</div>
+          <div class="spec-val" id="specDay">—</div>
+          <div class="spec-label">DH/Jour</div>
+        </div>
+        <div class="spec-card">
+          <div class="spec-icon">⏱️</div>
+          <div class="spec-val" id="specHour">—</div>
+          <div class="spec-label">DH/Heure</div>
+        </div>
+      </div>
+
+      {{-- PRIX --}}
+      <div class="price-section">
+        <div class="price-item">
+          <div class="price-label">Par jour</div>
+          <div class="price-val" id="priceDay">— DH</div>
+        </div>
+        <div class="price-sep"></div>
+        <div class="price-item">
+          <div class="price-label">Par heure</div>
+          <div class="price-val" id="priceHour">— DH</div>
+        </div>
+        <div class="price-sep"></div>
+        <div class="price-item">
+          <div class="price-label">Statut</div>
+          <div class="price-val" id="priceStatus" style="font-size:14px">—</div>
+        </div>
+      </div>
+    </div>
+
+    {{-- CALENDRIER --}}
+    <div class="section-card">
+      <div class="section-title">
+        <i class="fas fa-calendar-alt"></i> Calendrier de disponibilité
+      </div>
+      <div id="calendarWrap">
+        <div style="text-align:center;padding:30px;color:#6b7280">
+          <div class="spinner-border text-warning spinner-border-sm me-2"></div>
+          Chargement du calendrier...
+        </div>
+      </div>
+    </div>
+
+    {{-- AVIS --}}
+    <div class="section-card">
+      <div class="section-title">
+        <i class="fas fa-star"></i> Avis & Évaluations
+      </div>
+      <div class="rating-summary">
+        <div>
+          <div class="rating-big" id="avgRating">—</div>
+          <div class="rating-stars-big" id="avgStars">★★★★★</div>
+          <div class="rating-total" id="ratingTotal">0 avis</div>
+        </div>
+        <div style="flex:1;padding-left:20px" id="ratingBars">
+          {{-- Barres générées par JS --}}
+        </div>
+      </div>
+      <div id="reviewsList">
+        <div style="text-align:center;padding:20px;color:#6b7280">Aucun avis pour le moment</div>
+      </div>
+      <button class="btn-reserver mt-3" style="background:transparent;border:1.5px solid var(--orange);color:var(--orange)"
+              onclick="showReviewForm()">
+        <i class="fas fa-star"></i> Laisser un avis
+      </button>
+      <div id="reviewFormWrap" style="display:none;margin-top:16px">
+        <div style="display:flex;gap:8px;margin-bottom:12px" id="starPicker">
+          <span style="font-size:11px;color:#6b7280;align-self:center">Note :</span>
+          <span class="star-pick" data-v="1" onclick="pickStar(1)" style="font-size:24px;cursor:pointer;color:#d1d5db">★</span>
+          <span class="star-pick" data-v="2" onclick="pickStar(2)" style="font-size:24px;cursor:pointer;color:#d1d5db">★</span>
+          <span class="star-pick" data-v="3" onclick="pickStar(3)" style="font-size:24px;cursor:pointer;color:#d1d5db">★</span>
+          <span class="star-pick" data-v="4" onclick="pickStar(4)" style="font-size:24px;cursor:pointer;color:#d1d5db">★</span>
+          <span class="star-pick" data-v="5" onclick="pickStar(5)" style="font-size:24px;cursor:pointer;color:#d1d5db">★</span>
+        </div>
+        <textarea id="reviewText" class="form-control-custom" rows="3" placeholder="Partagez votre expérience..."></textarea>
+        <button class="btn-reserver mt-2" onclick="submitReview()" style="width:auto;padding:10px 24px">
+          <i class="fas fa-paper-plane"></i> Envoyer
         </button>
+      </div>
+    </div>
 
-        {{-- Review form (hidden by default) --}}
-        <div class="review-form" id="review-form">
-            <div class="review-form-title" id="review-form-title">Votre avis sur la machine</div>
+  </div>{{-- fin col gauche --}}
 
-            <input type="text" class="review-name-input" id="review-name"
-                   placeholder="Ex: Mohammed Alami">
+  {{-- SIDEBAR BOOKING --}}
+  <div>
+    <div class="booking-card">
+      <div class="booking-header">
+        <div class="booking-price-main" id="bookingPrice">— DH</div>
+        <div class="booking-price-sub">par jour · <span id="bookingPriceHour">—</span> DH/heure</div>
+      </div>
 
-            <div class="review-fields-grid">
-                <div>
-                    <div class="review-field-label">Note Propriétaire</div>
-                    <div class="star-picker" id="stars-owner">
-                        <span class="star-pick" onclick="setStars('owner',1)" onmouseover="hoverStars('owner',1)" onmouseout="resetStarsHover('owner')">★</span>
-                        <span class="star-pick" onclick="setStars('owner',2)" onmouseover="hoverStars('owner',2)" onmouseout="resetStarsHover('owner')">★</span>
-                        <span class="star-pick" onclick="setStars('owner',3)" onmouseover="hoverStars('owner',3)" onmouseout="resetStarsHover('owner')">★</span>
-                        <span class="star-pick" onclick="setStars('owner',4)" onmouseover="hoverStars('owner',4)" onmouseout="resetStarsHover('owner')">★</span>
-                        <span class="star-pick" onclick="setStars('owner',5)" onmouseover="hoverStars('owner',5)" onmouseout="resetStarsHover('owner')">★</span>
-                    </div>
-                </div>
-                <div>
-                    <div class="review-field-label">Note Matériel</div>
-                    <div class="star-picker" id="stars-machine">
-                        <span class="star-pick" onclick="setStars('machine',1)" onmouseover="hoverStars('machine',1)" onmouseout="resetStarsHover('machine')">★</span>
-                        <span class="star-pick" onclick="setStars('machine',2)" onmouseover="hoverStars('machine',2)" onmouseout="resetStarsHover('machine')">★</span>
-                        <span class="star-pick" onclick="setStars('machine',3)" onmouseover="hoverStars('machine',3)" onmouseout="resetStarsHover('machine')">★</span>
-                        <span class="star-pick" onclick="setStars('machine',4)" onmouseover="hoverStars('machine',4)" onmouseout="resetStarsHover('machine')">★</span>
-                        <span class="star-pick" onclick="setStars('machine',5)" onmouseover="hoverStars('machine',5)" onmouseout="resetStarsHover('machine')">★</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="review-field-label">Commentaire</div>
-            <textarea class="review-textarea" id="review-comment"
-                      placeholder="Décrivez votre expérience avec ce matériel et le propriétaire..."></textarea>
-
-            <div class="review-form-actions">
-                <button class="btn-publish-review" onclick="submitReview()">Publier l'avis</button>
-                <button class="btn-cancel-review" onclick="toggleReviewForm()">Annuler</button>
-            </div>
+      <div class="booking-body">
+        {{-- Mode --}}
+        <div class="form-group">
+          <label class="form-label-custom">Mode de location</label>
+          <div class="mode-toggle">
+            <button class="mode-btn active" onclick="setMode('jour',this)">
+              <i class="fas fa-sun me-1"></i>Jour
+            </button>
+            <button class="mode-btn" onclick="setMode('heure',this)">
+              <i class="fas fa-clock me-1"></i>Heure
+            </button>
+          </div>
         </div>
 
-        {{-- Reviews list --}}
-        <div id="reviews-list"></div>
+        {{-- Date début --}}
+        <div class="form-group">
+          <label class="form-label-custom">Date de début</label>
+          <input type="date" id="startDate" class="form-control-custom"
+                 onchange="calcTotal()" min="{{ date('Y-m-d') }}">
+        </div>
+
+        {{-- Durée --}}
+        <div class="form-group">
+          <label class="form-label-custom" id="durationLabel">Durée (jours)</label>
+          <div class="duration-ctrl">
+            <button class="duration-btn" onclick="changeDuration(-1)">−</button>
+            <input type="number" id="durationVal" class="duration-input" value="1" min="1" onchange="calcTotal()">
+            <button class="duration-btn" onclick="changeDuration(1)">+</button>
+          </div>
+        </div>
+
+        {{-- Récap --}}
+        <div class="price-recap">
+          <div class="price-line">
+            <span id="recapLabel">— DH × 1 jour</span>
+            <span id="recapSub">— DH</span>
+          </div>
+          <div class="price-line">
+            <span>Frais de service (5%)</span>
+            <span id="recapFee">— DH</span>
+          </div>
+          <div class="price-line total">
+            <span>Total estimé</span>
+            <span id="recapTotal">— DH</span>
+          </div>
+        </div>
+
+        <button class="btn-reserver" onclick="reserver()">
+          <i class="fas fa-paper-plane"></i> Envoyer une demande
+        </button>
+        <button class="btn-devis" onclick="devis()">
+          <i class="fas fa-file-alt"></i> Devis rapide
+        </button>
+      </div>
+
+      {{-- Owner --}}
+      <div class="owner-section">
+        <div class="owner-row">
+          <div class="owner-avatar" id="ownerAvatar">P</div>
+          <div>
+            <div class="owner-name" id="ownerName">Propriétaire</div>
+            <div class="owner-badge"><i class="fas fa-check-circle me-1"></i>Vérifié</div>
+          </div>
+        </div>
+        <div class="owner-actions">
+          <button class="btn-whatsapp" onclick="openWhatsApp()">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </button>
+          <button class="btn-appeler" onclick="appeler()">
+            <i class="fas fa-phone"></i> Appeler
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+
 </div>
 
+<div id="showToast"></div>
 @endsection
 
 @push('scripts')
 <script>
-const machineId = {{ $id ?? 1 }};
-let currentMode = 'jour';
-let duration = 1;
-let machineData = null;
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+var machineId   = window.location.pathname.split('/').pop();
+var machine     = null;
+var currentMode = 'jour';
+var currentImg  = 0;
+var selectedStar= 0;
+var images      = [];
 
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  loadMachine();
+  init3DViewer();
+  document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
+});
+
+// ═══════════════════════════════════════════════
+//  LOAD MACHINE
+// ═══════════════════════════════════════════════
 async function loadMachine() {
-    try {
-        machineData = await API.get(`/api/machines/${machineId}`);
-        renderMachine(machineData);
-    } catch(e) {
-        renderDemoMachine();
+  try {
+    var token = localStorage.getItem('auth_token') || localStorage.getItem('token') || '';
+    var headers = { 'Accept': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    var r = await fetch('/api/machines/' + machineId, { headers: headers });
+    var json = await r.json();
+    machine = (json && json.data) ? json.data : json;
+
+    if (!machine || !machine.id) {
+      document.getElementById('machineName').textContent = 'Machine introuvable';
+      return;
     }
+
+    renderMachine();
+    loadRatings();
+    loadCalendar();
+    document.getElementById('showWrap').style.opacity = '1';
+
+  } catch(e) {
+    console.error('loadMachine:', e);
+    showToast('Erreur de chargement', 'danger');
+  }
 }
 
-function renderDemoMachine() {
-    machineData = {
-        id: machineId, type: 'Excavatrice', marque: 'JCB', annee: 2022,
-        name: 'JCB 3CX Backhoe Loader', location: 'Casablanca',
-        status: 'available', ratings_avg: 4.9, ratings_count: 28,
-        price_per_day: 2400, price_per_hour: 350,
-        description: 'Chargeuse-pelleteuse JCB 3CX en excellent état, entretenue régulièrement. Idéale pour les travaux de terrassement, excavation et chargement. Opérateur disponible sur demande.',
-        owner: { name: 'Ahmed Benali', phone: '+212600000001', verified: true, rating: 4.9, total_rentals: 44 },
-        images: []
-    };
-    renderMachine(machineData);
+// ═══════════════════════════════════════════════
+//  RENDER MACHINE
+// ═══════════════════════════════════════════════
+function renderMachine() {
+  var m = machine;
+
+  // Breadcrumb
+  document.getElementById('breadcrumb-name').textContent = m.name || '—';
+
+  // Badges & titre
+  document.getElementById('machineType').textContent    = m.type     || 'Machine';
+  document.getElementById('machineCity').textContent    = m.city     || '—';
+  document.getElementById('machineName').textContent    = m.name     || '—';
+  document.getElementById('machineDesc').textContent    = m.description || 'Aucune description disponible.';
+
+  // Specs
+  document.getElementById('specType').textContent  = m.type             || '—';
+  document.getElementById('specCity').textContent  = m.city             || '—';
+  document.getElementById('specDay').textContent   = fmt(m.price_per_day)  + ' DH';
+  document.getElementById('specHour').textContent  = fmt(m.price_per_hour) + ' DH';
+
+  // Prix section
+  document.getElementById('priceDay').textContent   = fmt(m.price_per_day)  + ' DH';
+  document.getElementById('priceHour').textContent  = fmt(m.price_per_hour) + ' DH';
+
+  // Status
+  var statusLabels = { available:'Disponible', rented:'Loué', maintenance:'Maintenance' };
+  var statusColors = { available:'#10b981',    rented:'#F59E0B', maintenance:'#ef4444' };
+  var st = m.status || 'available';
+  document.getElementById('priceStatus').textContent      = statusLabels[st] || st;
+  document.getElementById('priceStatus').style.color      = statusColors[st] || '#fff';
+  document.getElementById('statusBadge').textContent      = statusLabels[st] || st;
+  document.getElementById('statusBadge').className        = 'status-badge-3d status-' + st;
+
+  // Booking sidebar
+  document.getElementById('bookingPrice').textContent     = fmt(m.price_per_day)  + ' DH';
+  document.getElementById('bookingPriceHour').textContent = fmt(m.price_per_hour);
+
+  // Owner
+  var ownerName = m.owner ? (m.owner.name || 'Propriétaire') : 'Propriétaire';
+  document.getElementById('ownerName').textContent = ownerName;
+  document.getElementById('ownerAvatar').textContent = ownerName.charAt(0).toUpperCase();
+
+  // Images
+  images = [];
+  if (m.images && m.images.length) {
+    m.images.forEach(function(img) {
+      images.push('/storage/' + (img.path || img.image || img));
+    });
+  }
+  if (!images.length) {
+    images.push('https://placehold.co/340x280/0F1B2D/F59E0B?text=' + encodeURIComponent(m.name || 'Machine'));
+  }
+  renderImages();
+  calcTotal();
 }
 
-function renderMachine(m) {
-    const dispo = m.status === 'available';
-    const emojis = { Excavatrice:'🏗', Camion:'🚛', Grue:'🏙', Manitou:'🔧', Compacteur:'⚙️', Bulldozer:'🚧', Niveleuse:'🚜' };
-    const emoji = emojis[m.type] || '🏗';
-    const ownerInitial = (m.owner?.name || 'P').charAt(0).toUpperCase();
+// ═══════════════════════════════════════════════
+//  IMAGES
+// ═══════════════════════════════════════════════
+function renderImages() {
+  var img   = document.getElementById('mainImg');
+  var thumbs = document.getElementById('thumbsRow');
 
-    document.getElementById('machine-detail').innerHTML = `
-    <!-- LEFT COLUMN -->
-    <div>
-        <!-- Gallery -->
-        <div class="gallery-main" id="gallery-main">
-            <div class="gallery-placeholder">${emoji}</div>
-            <div class="gallery-nav">
-                <button class="gallery-btn" onclick="prevPhoto()"><i class="fas fa-chevron-left"></i></button>
-                <button class="gallery-btn" onclick="nextPhoto()"><i class="fas fa-chevron-right"></i></button>
-            </div>
-        </div>
-        <div class="gallery-thumbs" id="gallery-thumbs">
-            <div class="gallery-thumb active" onclick="setPhoto(0)">${emoji}</div>
-            <div class="gallery-thumb" onclick="setPhoto(1)">${emoji}</div>
-            <div class="gallery-thumb" onclick="setPhoto(2)">${emoji}</div>
-        </div>
+  img.src = images[currentImg];
+  img.classList.remove('loading');
 
-        <!-- Info -->
-        <div class="machine-info">
-            <div class="info-badge">${m.type || 'Machine'}</div>
-            <h1 class="machine-title">${m.name}</h1>
-            <div class="machine-meta">
-                <div class="meta-rating">
-                    <i class="fas fa-star"></i>
-                    <span>${m.ratings_avg || '—'}</span>
-                    <small>(${m.ratings_count || 0} avis)</small>
-                </div>
-                <div class="meta-dispo">
-                    <div class="dispo-dot" style="background:${dispo ? '#10B981' : '#EF4444'}"></div>
-                    <span style="color:${dispo ? '#10B981' : '#EF4444'};font-size:12px;font-weight:700">${dispo ? 'Disponible' : 'Indisponible'}</span>
-                </div>
-                <div style="font-size:12px;color:var(--text-gray);display:flex;align-items:center;gap:4px">
-                    <i class="fas fa-map-marker-alt" style="color:var(--orange);font-size:11px"></i>
-                    ${m.location || '—'}
-                </div>
-            </div>
-            <p class="machine-desc">${m.description || 'Aucune description disponible.'}</p>
-
-            <!-- Specs -->
-            <div style="font-size:12px;font-weight:800;color:var(--navy);letter-spacing:-.2px;margin-bottom:12px;padding:16px 18px;background:#F9FAFB;border-radius:var(--radius-md);border:1px solid #F0F0F0">
-                <div style="font-size:11px;font-weight:800;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Spécifications techniques</div>
-                <div class="specs-grid" style="margin-bottom:0">
-                    <div class="spec-card"><div class="spec-icon"><i class="fas fa-bolt"></i></div><div class="spec-label">Puissance</div><div class="spec-value">92 ch</div></div>
-                    <div class="spec-card"><div class="spec-icon"><i class="fas fa-gas-pump"></i></div><div class="spec-label">Carburant</div><div class="spec-value">Diesel</div></div>
-                    <div class="spec-card"><div class="spec-icon"><i class="fas fa-weight-hanging"></i></div><div class="spec-label">Poids</div><div class="spec-value">8,2 tonnes</div></div>
-                    <div class="spec-card"><div class="spec-icon"><i class="fas fa-calendar-alt"></i></div><div class="spec-label">Année</div><div class="spec-value">${m.annee || '—'}</div></div>
-                </div>
-            </div>
-
-            <!-- Equipements -->
-            <div style="background:#F9FAFB;border:1px solid #F0F0F0;border-radius:var(--radius-md);padding:16px 18px;margin-top:12px">
-                <div style="font-size:11px;font-weight:800;color:var(--text-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Équipements inclus</div>
-                <div class="equip-grid">
-                    <div class="equip-item"><i class="fas fa-check-circle"></i>GPS intégré</div>
-                    <div class="equip-item"><i class="fas fa-check-circle"></i>Climatisation cabine</div>
-                    <div class="equip-item"><i class="fas fa-check-circle"></i>Godet standard + godet curage</div>
-                    <div class="equip-item"><i class="fas fa-check-circle"></i>Manuel d'utilisation FR</div>
-                    <div class="equip-item"><i class="fas fa-check-circle"></i>Certifié CE</div>
-                </div>
-            </div>
-
-            <!-- Availability calendar -->
-            <div class="availability-cal">
-                <div class="cal-header">
-                    <div class="cal-title">Calendrier de disponibilité</div>
-                    <div class="cal-nav">
-                        <button class="cal-nav-btn"><i class="fas fa-chevron-left"></i></button>
-                        <span style="font-size:12px;font-weight:700;color:var(--navy);align-self:center">Mai 2025</span>
-                        <button class="cal-nav-btn"><i class="fas fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                <div class="cal-days-header">
-                    ${['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'].map(d=>`<div class="cal-day-hdr">${d}</div>`).join('')}
-                </div>
-                <div class="cal-days" id="calendar-grid"></div>
-                <div class="cal-legend">
-                    <div class="cal-legend-item"><div class="leg-dot" style="background:#D1FAE5"></div>Disponible</div>
-                    <div class="cal-legend-item"><div class="leg-dot" style="background:#FEE2E2"></div>Réservé</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- RIGHT COLUMN — Booking sidebar -->
-    <div class="booking-sidebar">
-        <div class="booking-price-header">
-            <div class="booking-price-main" id="sidebar-price">${parseInt(m.price_per_day).toLocaleString('fr')} <span>dh</span></div>
-            <div class="booking-price-sub">par jour · ${parseInt(m.price_per_hour).toLocaleString('fr')} dh/heure · ${(parseInt(m.price_per_day)*7).toLocaleString('fr')} dh/semaine</div>
-        </div>
-        <div class="booking-body">
-
-            <!-- Mode -->
-            <div class="booking-label">Mode de location</div>
-            <div class="mode-tabs">
-                <div class="mode-tab" onclick="setMode('heure',this)">Heure</div>
-                <div class="mode-tab active" onclick="setMode('jour',this)">Jour</div>
-                <div class="mode-tab" onclick="setMode('semaine',this)">Semaine</div>
-            </div>
-
-            <!-- Date -->
-            <div class="booking-label">Date de début</div>
-            <input type="date" class="booking-date-input" id="booking-date"
-                   min="${new Date().toISOString().split('T')[0]}"
-                   onchange="updateTotal()">
-
-            <!-- Duration stepper -->
-            <div class="booking-label">Durée (<span id="mode-label">jour(s)</span>)</div>
-            <div class="duration-stepper">
-                <button class="step-btn" onclick="changeDur(-1)">−</button>
-                <span class="step-val" id="dur-val">1</span>
-                <button class="step-btn" onclick="changeDur(1)">+</button>
-            </div>
-
-            <!-- Price breakdown -->
-            <div class="price-breakdown" id="price-breakdown">
-                <div class="pb-row"><span id="pb-formula">${parseInt(m.price_per_day).toLocaleString('fr')} dh × 1 jour(s)</span><span id="pb-base">${parseInt(m.price_per_day).toLocaleString('fr')} dh</span></div>
-                <div class="pb-row"><span>Frais de service (5%)</span><span id="pb-fee">${Math.round(m.price_per_day*.05).toLocaleString('fr')} dh</span></div>
-                <div class="pb-row"><strong>Total estimé</strong><span id="pb-total">${Math.round(m.price_per_day*1.05).toLocaleString('fr')} dh</span></div>
-            </div>
-
-            <!-- CTA -->
-            <button class="btn-orange w-100 mb-2" style="width:100%;justify-content:center;font-size:14px;padding:13px" onclick="sendDemande()">
-                <i class="fas fa-paper-plane"></i> Envoyer une demande de location
-            </button>
-            <button class="btn-outline-orange" style="width:100%;justify-content:center;font-size:13px;padding:10px">
-                ⚡ Devis rapide
-            </button>
-            <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text-light)">
-                <i class="fas fa-lock" style="font-size:9px"></i> Paiement sécurisé · Annulation gratuite 48h avant
-            </div>
-
-            <!-- Owner -->
-            <div style="border-top:1px solid #F0F0F0;margin:16px 0 14px"></div>
-            <div class="booking-label">Propriétaire</div>
-            <div class="owner-card">
-                <div class="owner-avatar">${ownerInitial}</div>
-                <div style="flex:1">
-                    <div class="owner-name">${m.owner?.name || 'Propriétaire'}</div>
-                    <div class="owner-meta">
-                        <span class="owner-badge"><i class="fas fa-check-circle"></i> Vérifié</span>
-                        &nbsp;·&nbsp; ⭐ ${m.owner?.rating || '—'}
-                        &nbsp;·&nbsp; ${m.owner?.total_rentals || 0} loc.
-                    </div>
-                </div>
-            </div>
-            <div class="owner-actions">
-                <a href="https://wa.me/${m.owner?.phone || '+212600000000'}?text=Bonjour, je suis intéressé par votre machine : ${encodeURIComponent(m.name)}"
-                   target="_blank" class="btn-whatsapp">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </a>
-                <a href="tel:${m.owner?.phone || '+212600000000'}" class="btn-call">
-                    <i class="fas fa-phone"></i> Appeler
-                </a>
-            </div>
-
-            <!-- Tracking -->
-            <div class="tracking">
-                <div class="tracking-title">Suivi de la réservation</div>
-                <div class="track-item"><div class="track-dot track-done"><i class="fas fa-check" style="font-size:8px"></i></div><div><div class="track-label">Demande envoyée</div></div></div>
-                <div class="track-item"><div class="track-dot track-active">2</div><div><div class="track-label">Confirmée par propriétaire</div><div class="track-sub">En cours...</div></div></div>
-                <div class="track-item"><div class="track-dot track-pending">3</div><div><div class="track-label" style="color:var(--text-light)">Machine en route</div></div></div>
-                <div class="track-item"><div class="track-dot track-pending">4</div><div><div class="track-label" style="color:var(--text-light)">Location démarrée</div></div></div>
-            </div>
-        </div>
-    </div>`;
-
-    buildCalendar();
-    renderRatings(m.ratings || getDemoRatings());
+  thumbs.innerHTML = '';
+  images.forEach(function(src, i) {
+    var el = document.createElement('img');
+    el.src = src;
+    el.className = 'thumb' + (i === currentImg ? ' active' : '');
+    el.onerror  = function() { this.src = 'https://placehold.co/72x56/0F1B2D/F59E0B?text=img'; };
+    el.onclick  = function() { goImg(i); };
+    thumbs.appendChild(el);
+  });
 }
 
-/* ── Mode & duration ── */
-const prices = { heure: 0, jour: 0, semaine: 0 };
+function goImg(i) {
+  currentImg = i;
+  var img = document.getElementById('mainImg');
+  img.classList.add('loading');
+  setTimeout(function() {
+    img.src = images[i];
+    img.classList.remove('loading');
+  }, 200);
+  document.querySelectorAll('.thumb').forEach(function(t, j) {
+    t.classList.toggle('active', j === i);
+  });
+}
+function prevImg() { goImg((currentImg - 1 + images.length) % images.length); }
+function nextImg() { goImg((currentImg + 1) % images.length); }
+
+// ═══════════════════════════════════════════════
+//  3D DRAG EFFECT
+// ═══════════════════════════════════════════════
+function init3DViewer() {
+  var viewer = document.getElementById('viewer3d');
+  var stage  = document.getElementById('stage3d');
+  var isDragging = false, startX = 0, startY = 0, rotX = 0, rotY = 0;
+
+  viewer.addEventListener('mousedown', function(e) {
+    isDragging = true; startX = e.clientX; startY = e.clientY;
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var dx = (e.clientX - startX) * 0.3;
+    var dy = (e.clientY - startY) * 0.15;
+    rotY = Math.max(-25, Math.min(25, dx));
+    rotX = Math.max(-15, Math.min(15, -dy));
+    stage.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+  });
+  document.addEventListener('mouseup', function() {
+    if (!isDragging) return;
+    isDragging = false;
+    var int = setInterval(function() {
+      rotX *= 0.85; rotY *= 0.85;
+      stage.style.transform = 'rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+      if (Math.abs(rotX) < 0.1 && Math.abs(rotY) < 0.1) clearInterval(int);
+    }, 16);
+  });
+
+  // Touch support
+  viewer.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY; isDragging = true;
+  }, { passive: true });
+  viewer.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    var dx = (e.touches[0].clientX - startX) * 0.3;
+    rotY = Math.max(-25, Math.min(25, dx));
+    stage.style.transform = 'rotateY(' + rotY + 'deg)';
+  }, { passive: true });
+  viewer.addEventListener('touchend', function() { isDragging = false; });
+}
+
+// ═══════════════════════════════════════════════
+//  MODE & CALCUL
+// ═══════════════════════════════════════════════
 function setMode(mode, btn) {
-    currentMode = mode;
-    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    const labels = { heure: 'heure(s)', jour: 'jour(s)', semaine: 'semaine(s)' };
-    document.getElementById('mode-label').textContent = labels[mode];
-    updateTotal();
-}
-function changeDur(delta) {
-    duration = Math.max(1, duration + delta);
-    document.getElementById('dur-val').textContent = duration;
-    updateTotal();
-}
-function updateTotal() {
-    if (!machineData) return;
-    const rates = { heure: machineData.price_per_hour, jour: machineData.price_per_day, semaine: machineData.price_per_day * 7 };
-    const rate = rates[currentMode] || machineData.price_per_day;
-    const base = rate * duration;
-    const fee  = Math.round(base * .05);
-    const total = base + fee;
-    const labels = { heure: 'heure(s)', jour: 'jour(s)', semaine: 'semaine(s)' };
-
-    const fmt = n => parseInt(n).toLocaleString('fr');
-    document.getElementById('pb-formula').textContent = `${fmt(rate)} dh × ${duration} ${labels[currentMode]}`;
-    document.getElementById('pb-base').textContent    = fmt(base) + ' dh';
-    document.getElementById('pb-fee').textContent     = fmt(fee) + ' dh';
-    document.getElementById('pb-total').textContent   = fmt(total) + ' dh';
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('durationLabel').textContent = mode === 'jour' ? 'Durée (jours)' : 'Durée (heures)';
+  calcTotal();
 }
 
-/* ── Calendar ── */
-function buildCalendar() {
-    const grid = document.getElementById('calendar-grid');
-    if (!grid) return;
-    const reserved = [3,4,8,15,16,17,25,26];
-    const firstDay = 3; // May 2025 starts on Thursday
-    let html = Array(firstDay).fill('<div class="cal-day empty"></div>').join('');
-    for (let d = 1; d <= 31; d++) {
-        const cls = reserved.includes(d) ? 'reserved' : 'available';
-        html += `<div class="cal-day ${cls}">${d}</div>`;
+function changeDuration(d) {
+  var inp = document.getElementById('durationVal');
+  inp.value = Math.max(1, parseInt(inp.value || 1) + d);
+  calcTotal();
+}
+
+function calcTotal() {
+  if (!machine) return;
+  var dur  = parseInt(document.getElementById('durationVal').value) || 1;
+  var rate = currentMode === 'jour'
+    ? (machine.price_per_day  || 0)
+    : (machine.price_per_hour || 0);
+
+  var base  = rate * dur;
+  var fee   = Math.round(base * 0.05);
+  var total = base + fee;
+  var unit  = currentMode === 'jour' ? 'jour' : 'heure';
+
+  document.getElementById('recapLabel').textContent = fmt(rate) + ' DH × ' + dur + ' ' + unit + (dur > 1 ? 's' : '');
+  document.getElementById('recapSub').textContent   = fmt(base)  + ' DH';
+  document.getElementById('recapFee').textContent   = fmt(fee)   + ' DH';
+  document.getElementById('recapTotal').textContent = fmt(total) + ' DH';
+}
+
+// ═══════════════════════════════════════════════
+//  RÉSERVER
+// ═══════════════════════════════════════════════
+async function reserver() {
+  var token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  if (!token) { window.location.href = '/login'; return; }
+
+  var start = document.getElementById('startDate').value;
+  var dur   = parseInt(document.getElementById('durationVal').value) || 1;
+  if (!start) { showToast('Choisissez une date de début', 'warning'); return; }
+
+  var end = new Date(start);
+  if (currentMode === 'jour') {
+    end.setDate(end.getDate() + dur);
+  } else {
+    end = new Date(start);
+  }
+  var endStr = end.toISOString().split('T')[0];
+
+  try {
+    var r = await fetch('/api/reservations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        machine_id: machineId,
+        start_date: start,
+        end_date:   endStr
+      })
+    });
+    var json = await r.json();
+    if (r.ok) {
+      showToast('✅ Demande envoyée avec succès !', 'success');
+    } else {
+      showToast('❌ ' + (json.message || 'Erreur'), 'danger');
     }
-    grid.innerHTML = html;
+  } catch(e) {
+    showToast('❌ Erreur réseau', 'danger');
+  }
 }
 
-/* ── Gallery ── */
-let photoIdx = 0;
-function setPhoto(i) {
-    photoIdx = i;
-    document.querySelectorAll('.gallery-thumb').forEach((t,j) => t.classList.toggle('active', j===i));
-}
-function nextPhoto() { setPhoto((photoIdx+1)%3); }
-function prevPhoto() { setPhoto((photoIdx+2)%3); }
-
-/* ── Send demande ── */
-function sendDemande() {
-    if (!getToken()) { window.location.href = '/login'; return; }
-    const date = document.getElementById('booking-date').value;
-    if (!date) { showFlash('Veuillez sélectionner une date de début', 'warning'); return; }
-    showFlash('Demande envoyée au propriétaire ! Il vous répondra sous 24h.', 'success');
+function devis() {
+  showToast('📄 Fonctionnalité devis bientôt disponible', 'info');
 }
 
-/* ── Ratings ── */
-let starsOwner = 0, starsMachine = 0;
-const avatarColors = ['#F59E0B','#3B82F6','#10B981','#8B5CF6','#EF4444','#EC4899'];
+// ═══════════════════════════════════════════════
+//  OWNER ACTIONS
+// ═══════════════════════════════════════════════
+function openWhatsApp() {
+  var phone = machine && machine.owner ? (machine.owner.phone || '') : '';
+  phone = phone.replace(/\s/g,'').replace(/^\+/, '');
+  if (!phone) { showToast('Numéro non disponible', 'warning'); return; }
+  var msg = encodeURIComponent('Bonjour, je suis intéressé par la machine "' + (machine.name||'') + '" sur Rentify.');
+  window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
+}
 
-function getDemoRatings() {
-    return [
-        { name:'Karim Azzouzi',   date:'15 Avril 2026',   owner:5, machine:5, avg:5,   comment:"Matériel en parfait état, livraison ponctuelle. Propriétaire très professionnel. Je recommande vivement !", helpful:4 },
-        { name:'Youssef El Amrani',date:'3 Mars 2026',    owner:3, machine:5, avg:4,   comment:"Bonne machine, bien entretenue. Quelques petits soucis de communication au début mais ça s'est arrangé rapidement.", helpful:2 },
-        { name:'Hassan Tazi',      date:'18 Février 2026', owner:5, machine:4, avg:5,   comment:"Excellent rapport qualité/prix. La JCB était propre et performante. Opérateur compétent inclus dans le prix.", helpful:6 },
-    ];
+function appeler() {
+  var phone = machine && machine.owner ? (machine.owner.phone || '') : '';
+  if (!phone) { showToast('Numéro non disponible', 'warning'); return; }
+  window.location.href = 'tel:' + phone;
+}
+
+// ═══════════════════════════════════════════════
+//  RATINGS
+// ═══════════════════════════════════════════════
+async function loadRatings() {
+  try {
+    var r = await fetch('/api/machines/' + machineId + '/ratings');
+    if (!r.ok) return;
+    var json = await r.json();
+    var ratings = (json && json.data) ? json.data : (Array.isArray(json) ? json : []);
+    renderRatings(ratings);
+  } catch(e) {}
 }
 
 function renderRatings(ratings) {
-    document.getElementById('ratings-section').style.display = 'block';
+  if (!ratings.length) return;
 
-    // Update form title
-    if (machineData) document.getElementById('review-form-title').textContent = `Votre avis sur ${machineData.name || 'cette machine'}`;
+  var avg = ratings.reduce(function(s, r) { return s + (r.rating || r.note || 0); }, 0) / ratings.length;
+  avg = Math.round(avg * 10) / 10;
 
-    // Scores
-    const avgOwner   = ratings.reduce((s,r) => s + (r.owner||0), 0) / (ratings.length||1);
-    const avgMachine = ratings.reduce((s,r) => s + (r.machine||0), 0) / (ratings.length||1);
-    document.getElementById('ratings-count').textContent = `${ratings.length} avis vérifiés`;
-    document.getElementById('ratings-scores').innerHTML = `
-        <div class="score-block">
-            <div class="score-num">${avgOwner.toFixed(1)}</div>
-            <div class="score-stars">${starsHtml(avgOwner)}</div>
-            <div class="score-label">Propriétaire</div>
-        </div>
-        <div class="score-block">
-            <div class="score-num">${avgMachine.toFixed(1)}</div>
-            <div class="score-stars">${starsHtml(avgMachine)}</div>
-            <div class="score-label">Matériel</div>
-        </div>`;
+  document.getElementById('avgRating').textContent   = avg;
+  document.getElementById('avgStars').textContent    = starsStr(avg);
+  document.getElementById('ratingTotal').textContent = ratings.length + ' avis vérifiés';
 
-    // Reviews
-    document.getElementById('reviews-list').innerHTML = ratings.map((r, i) => {
-        const initial = (r.name || 'U').charAt(0).toUpperCase();
-        const bgColor = avatarColors[i % avatarColors.length];
-        return `
-        <div class="review-item">
-            <div class="review-item-header">
-                <div class="review-user">
-                    <div class="review-avatar" style="background:${bgColor}">${initial}</div>
-                    <div>
-                        <div class="review-name">${r.name}</div>
-                        <div class="review-date">${r.date}</div>
-                    </div>
-                </div>
-                <div class="review-global-stars">${starsHtml(r.avg)}</div>
-            </div>
-            <div class="review-sub-ratings">
-                <div>
-                    <div class="sub-rating-label">Propriétaire</div>
-                    <div class="sub-rating-stars">${starsHtml(r.owner)}</div>
-                </div>
-                <div>
-                    <div class="sub-rating-label">Matériel</div>
-                    <div class="sub-rating-stars">${starsHtml(r.machine)}</div>
-                </div>
-            </div>
-            <div class="review-comment">${r.comment}</div>
-            <button class="review-helpful" onclick="markHelpful(this, ${i})">
-                <i class="far fa-thumbs-up"></i> Utile (${r.helpful || 0})
-            </button>
-        </div>`;
-    }).join('');
+  // Barres
+  var bars = '';
+  for (var s = 5; s >= 1; s--) {
+    var count = ratings.filter(function(r) { return Math.round(r.rating||r.note||0) === s; }).length;
+    var pct   = Math.round(count / ratings.length * 100);
+    bars += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<span style="font-size:11px;color:rgba(255,255,255,.5);width:12px">' + s + '</span>' +
+      '<div style="flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden">' +
+        '<div style="width:' + pct + '%;height:100%;background:#F59E0B;border-radius:3px"></div>' +
+      '</div>' +
+      '<span style="font-size:11px;color:rgba(255,255,255,.4);width:28px">' + pct + '%</span>' +
+      '</div>';
+  }
+  document.getElementById('ratingBars').innerHTML = bars;
+
+  // Reviews
+  var html = '';
+  ratings.slice(0, 5).forEach(function(r) {
+    var name  = r.user ? (r.user.name || 'Anonyme') : 'Client Rentify';
+    var note  = r.rating || r.note || 5;
+    var text  = r.comment || r.commentaire || '';
+    var date  = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '';
+    html += '<div class="review-card">' +
+      '<div class="review-header">' +
+        '<div class="reviewer-name">' + name + '</div>' +
+        '<div class="reviewer-date">' + date + '</div>' +
+      '</div>' +
+      '<div class="review-stars">' + starsStr(note) + '</div>' +
+      (text ? '<div class="review-text">' + text + '</div>' : '') +
+      '</div>';
+  });
+  document.getElementById('reviewsList').innerHTML = html || '<p style="color:#6b7280;text-align:center;padding:16px">Aucun avis</p>';
+
+  // Mise à jour header machine
+  document.getElementById('machineRatingVal').textContent   = avg;
+  document.getElementById('machineStars').textContent       = starsStr(avg);
+  document.getElementById('machineRatingCount').textContent = '(' + ratings.length + ' avis)';
 }
 
-function starsHtml(rating) {
-    let html = '';
-    for (let i = 1; i <= 5; i++) {
-        html += i <= Math.round(rating) ? '★' : '☆';
-    }
-    return html;
+// ═══════════════════════════════════════════════
+//  REVIEW FORM
+// ═══════════════════════════════════════════════
+function showReviewForm() {
+  var token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  if (!token) { window.location.href = '/login'; return; }
+  var wrap = document.getElementById('reviewFormWrap');
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
 }
 
-function toggleReviewForm() {
-    const form = document.getElementById('review-form');
-    form.classList.toggle('open');
-    const isOpen = form.classList.contains('open');
-    document.getElementById('btn-leave-review').style.display = isOpen ? 'none' : 'flex';
-}
-
-function setStars(type, val) {
-    if (type === 'owner')   starsOwner   = val;
-    if (type === 'machine') starsMachine = val;
-    updateStarDisplay(type, val);
-}
-function hoverStars(type, val) { updateStarDisplay(type, val, true); }
-function resetStarsHover(type) {
-    const val = type === 'owner' ? starsOwner : starsMachine;
-    updateStarDisplay(type, val);
-}
-function updateStarDisplay(type, val, isHover = false) {
-    const id = type === 'owner' ? 'stars-owner' : 'stars-machine';
-    document.querySelectorAll(`#${id} .star-pick`).forEach((s, i) => {
-        s.classList.toggle('on', i < val);
-    });
-}
-
-function markHelpful(btn, idx) {
-    btn.innerHTML = `<i class="fas fa-thumbs-up"></i> Utile ✓`;
-    btn.style.color = 'var(--orange)';
-    btn.disabled = true;
+function pickStar(val) {
+  selectedStar = val;
+  document.querySelectorAll('.star-pick').forEach(function(s) {
+    s.style.color = parseInt(s.dataset.v) <= val ? '#F59E0B' : '#d1d5db';
+  });
 }
 
 async function submitReview() {
-    const name    = document.getElementById('review-name').value.trim();
-    const comment = document.getElementById('review-comment').value.trim();
-
-    if (!name)    { showFlash('Veuillez entrer votre nom', 'warning'); return; }
-    if (!starsOwner || !starsMachine) { showFlash('Veuillez noter le propriétaire et le matériel', 'warning'); return; }
-    if (!comment) { showFlash('Veuillez écrire un commentaire', 'warning'); return; }
-
-    try {
-        await API.post(`/api/machines/${machineId}/ratings`, {
-            rating: Math.round((starsOwner + starsMachine) / 2),
-            comment
-        });
-    } catch(e) { /* demo mode */ }
-
-    // Add locally
-    const newReview = {
-        name, date: new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' }),
-        owner: starsOwner, machine: starsMachine,
-        avg: Math.round((starsOwner + starsMachine) / 2),
-        comment, helpful: 0
-    };
-    const existing = getDemoRatings();
-    renderRatings([newReview, ...existing]);
-    toggleReviewForm();
-    starsOwner = 0; starsMachine = 0;
-    document.getElementById('review-name').value = '';
-    document.getElementById('review-comment').value = '';
-    showFlash('Votre avis a été publié ! Merci 🙏', 'success');
+  var token = localStorage.getItem('auth_token') || localStorage.getItem('token');
+  if (!selectedStar) { showToast('Choisissez une note', 'warning'); return; }
+  var text = document.getElementById('reviewText').value.trim();
+  try {
+    var r = await fetch('/api/machines/' + machineId + '/ratings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ machine_id: machineId, rating: selectedStar, comment: text })
+    });
+    var json = await r.json();
+    if (r.ok) {
+      showToast('✅ Avis envoyé, merci !', 'success');
+      document.getElementById('reviewFormWrap').style.display = 'none';
+      loadRatings();
+    } else {
+      showToast('❌ ' + (json.message || 'Erreur'), 'danger');
+    }
+  } catch(e) { showToast('Erreur réseau', 'danger'); }
 }
 
-loadMachine();
+// ═══════════════════════════════════════════════
+//  CALENDRIER
+// ═══════════════════════════════════════════════
+async function loadCalendar() {
+  // Calendrier simple — mois actuel
+  var now      = new Date();
+  var year     = now.getFullYear();
+  var month    = now.getMonth();
+  renderCalendar(year, month, []);
+
+  // Essayer de charger les réservations
+  try {
+    var r = await fetch('/api/machines/' + machineId + '/availability');
+    if (r.ok) {
+      var json = await r.json();
+      var reserved = json.data || json || [];
+      renderCalendar(year, month, reserved);
+    }
+  } catch(e) {}
+}
+
+function renderCalendar(year, month, reserved) {
+  var names   = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  var mnames  = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  var first   = new Date(year, month, 1).getDay();
+  var days    = new Date(year, month + 1, 0).getDate();
+  var today   = new Date().getDate();
+  var curMonth= new Date().getMonth();
+  var curYear = new Date().getFullYear();
+
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
+    '<button onclick="changeMonth(-1)" style="border:none;background:#f1f5f9;border-radius:8px;width:32px;height:32px;cursor:pointer">‹</button>' +
+    '<strong style="color:#0F1B2D">' + mnames[month] + ' ' + year + '</strong>' +
+    '<button onclick="changeMonth(1)"  style="border:none;background:#f1f5f9;border-radius:8px;width:32px;height:32px;cursor:pointer">›</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">';
+
+  names.forEach(function(n) {
+    html += '<div style="font-size:10px;font-weight:700;color:#6b7280;padding:6px 0">' + n + '</div>';
+  });
+
+  for (var i = 0; i < first; i++) html += '<div></div>';
+
+  for (var d = 1; d <= days; d++) {
+    var isToday   = (d === today && month === curMonth && year === curYear);
+    var isPast    = (new Date(year, month, d) < new Date(curYear, curMonth, today));
+    var isReserved= reserved.includes(year + '-' + pad(month+1) + '-' + pad(d));
+
+    var bg  = isReserved ? '#FEE2E2' : (isToday ? '#F59E0B' : (isPast ? '#f9fafb' : '#f0fdf4'));
+    var col = isReserved ? '#991B1B' : (isToday ? 'white'   : (isPast ? '#d1d5db' : '#0F1B2D'));
+    var fw  = isToday ? '900' : '500';
+
+    html += '<div style="background:' + bg + ';color:' + col + ';border-radius:8px;padding:8px 4px;font-size:12px;font-weight:' + fw + '">' + d + '</div>';
+  }
+  html += '</div>';
+  html += '<div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:#6b7280">' +
+    '<span><span style="display:inline-block;width:12px;height:12px;background:#f0fdf4;border-radius:3px;margin-right:4px"></span>Disponible</span>' +
+    '<span><span style="display:inline-block;width:12px;height:12px;background:#FEE2E2;border-radius:3px;margin-right:4px"></span>Réservé</span>' +
+    '</div>';
+
+  document.getElementById('calendarWrap').innerHTML = html;
+  window._calYear  = year;
+  window._calMonth = month;
+  window._calResv  = reserved;
+}
+
+function changeMonth(d) {
+  var m = window._calMonth + d;
+  var y = window._calYear;
+  if (m < 0)  { m = 11; y--; }
+  if (m > 11) { m = 0;  y++; }
+  renderCalendar(y, m, window._calResv || []);
+}
+
+// ═══════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════
+function fmt(n) { return n ? parseInt(n).toLocaleString('fr') : '0'; }
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function starsStr(n) {
+  var full = Math.round(n); var s = '';
+  for (var i = 1; i <= 5; i++) s += (i <= full ? '★' : '☆');
+  return s;
+}
+
+var _toastT;
+function showToast(msg, type) {
+  var el = document.getElementById('showToast');
+  var colors = { success:'#10b981', danger:'#ef4444', warning:'#F59E0B', info:'#3b82f6' };
+  el.style.background = colors[type] || colors.info;
+  el.textContent = msg;
+  el.classList.add('visible');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(function() { el.classList.remove('visible'); }, 3500);
+}
 </script>
 @endpush

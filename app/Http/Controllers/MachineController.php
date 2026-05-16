@@ -31,7 +31,7 @@ class MachineController extends Controller
     {
         $machine->load([
             'images',
-            'owner:id,name,phone,ville',
+            'owner:id,name,phone,city',
             'ratings.client:id,name',
         ]);
         $machine->ratings_avg = $machine->averageRating();

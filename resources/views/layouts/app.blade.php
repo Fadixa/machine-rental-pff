@@ -15,9 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-        /* ════════════════════════════════════════════════════════
-           VARIABLES & BASE
-        ════════════════════════════════════════════════════════ */
         :root {
             --navy:        #0F1B2D;
             --navy-light:  #152236;
@@ -42,9 +39,7 @@
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         html { scroll-behavior: smooth; }
-
         body {
             font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg-page);
@@ -53,9 +48,7 @@
             overflow-x: hidden;
         }
 
-        /* ════════════════════════════════════════════════════════
-           NAVBAR
-        ════════════════════════════════════════════════════════ */
+        /* ── NAVBAR ── */
         .rentify-nav {
             position: fixed;
             top: 0; left: 0; right: 0;
@@ -184,10 +177,7 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 16px var(--orange-glow);
         }
-        /* User menu when logged in */
-        .nav-user-menu {
-            position: relative;
-        }
+        .nav-user-menu { position: relative; }
         .nav-user-btn {
             display: flex; align-items: center; gap: 8px;
             background: rgba(255,255,255,.06);
@@ -211,9 +201,7 @@
         }
         .nav-user-name { font-size: 12px; font-weight: 600; }
 
-        /* ════════════════════════════════════════════════════════
-           FLASH MESSAGES
-        ════════════════════════════════════════════════════════ */
+        /* ── FLASH ── */
         .flash-container {
             position: fixed;
             top: 80px; right: 20px;
@@ -244,27 +232,17 @@
             to   { opacity: 1; transform: translateX(0); }
         }
 
-        /* ════════════════════════════════════════════════════════
-           GLOBAL ANIMATIONS
-        ════════════════════════════════════════════════════════ */
+        /* ── ANIMATIONS ── */
         .fade-up {
             opacity: 0;
             transform: translateY(28px);
             transition: opacity .6s ease, transform .6s ease;
         }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .fade-in {
-            opacity: 0;
-            transition: opacity .5s ease;
-        }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .fade-in { opacity: 0; transition: opacity .5s ease; }
         .fade-in.visible { opacity: 1; }
 
-        /* ════════════════════════════════════════════════════════
-           GLOBAL BUTTONS
-        ════════════════════════════════════════════════════════ */
+        /* ── BUTTONS ── */
         .btn-orange {
             background: var(--orange);
             color: #111;
@@ -322,43 +300,16 @@
             align-items: center;
             gap: 7px;
         }
-        .btn-outline-orange:hover {
-            background: var(--orange);
-            color: #111;
-        }
+        .btn-outline-orange:hover { background: var(--orange); color: #111; }
 
-        /* ════════════════════════════════════════════════════════
-           PAGE HEADER (catalogue, fiche, etc.)
-        ════════════════════════════════════════════════════════ */
-        .page-header {
-            background: var(--navy);
-            padding: 80px 0 24px;
-        }
-        .page-header-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 32px;
-        }
-        .page-header-title {
-            color: #fff;
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 4px;
-            letter-spacing: -.4px;
-        }
-        .page-header-sub {
-            color: rgba(255,255,255,.45);
-            font-size: 13px;
-        }
+        /* ── PAGE HEADER ── */
+        .page-header { background: var(--navy); padding: 80px 0 24px; }
+        .page-header-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+        .page-header-title { color: #fff; font-size: 26px; font-weight: 800; margin-bottom: 4px; letter-spacing: -.4px; }
+        .page-header-sub { color: rgba(255,255,255,.45); font-size: 13px; }
 
-        /* ════════════════════════════════════════════════════════
-           FOOTER
-        ════════════════════════════════════════════════════════ */
-        .rentify-footer {
-            background: var(--navy);
-            border-top: 1px solid var(--border);
-            padding: 48px 0 0;
-        }
+        /* ── FOOTER ── */
+        .rentify-footer { background: var(--navy); border-top: 1px solid var(--border); padding: 48px 0 0; }
         .footer-inner {
             max-width: 1280px;
             margin: 0 auto;
@@ -368,76 +319,25 @@
             gap: 48px;
             padding-bottom: 40px;
         }
-        .footer-brand-name {
-            color: #fff;
-            font-size: 16px;
-            font-weight: 800;
-        }
+        .footer-brand-name { color: #fff; font-size: 16px; font-weight: 800; }
         .footer-brand-name span { color: var(--orange); }
-        .footer-brand-desc {
-            color: rgba(255,255,255,.4);
-            font-size: 13px;
-            line-height: 1.7;
-            margin-top: 10px;
-        }
-        .footer-col-title {
-            color: var(--orange);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }
-        .footer-links {
-            display: flex;
-            flex-direction: column;
-            gap: 9px;
-        }
-        .footer-links a {
-            color: rgba(255,255,255,.5);
-            font-size: 13px;
-            text-decoration: none;
-            transition: color .2s;
-        }
+        .footer-brand-desc { color: rgba(255,255,255,.4); font-size: 13px; line-height: 1.7; margin-top: 10px; }
+        .footer-col-title { color: var(--orange); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+        .footer-links { display: flex; flex-direction: column; gap: 9px; }
+        .footer-links a { color: rgba(255,255,255,.5); font-size: 13px; text-decoration: none; transition: color .2s; }
         .footer-links a:hover { color: var(--orange); }
-        .footer-contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: rgba(255,255,255,.5);
-            font-size: 13px;
-            margin-bottom: 9px;
-        }
+        .footer-contact-item { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.5); font-size: 13px; margin-bottom: 9px; }
         .footer-contact-item i { color: var(--orange); width: 14px; }
-        .footer-bottom {
-            border-top: 1px solid var(--border);
-            padding: 16px 32px;
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .footer-copy {
-            color: rgba(255,255,255,.25);
-            font-size: 12px;
-        }
-        .footer-pfe {
-            color: rgba(255,255,255,.25);
-            font-size: 12px;
-            font-style: italic;
-        }
+        .footer-bottom { border-top: 1px solid var(--border); padding: 16px 32px; max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .footer-copy { color: rgba(255,255,255,.25); font-size: 12px; }
+        .footer-pfe { color: rgba(255,255,255,.25); font-size: 12px; font-style: italic; }
 
-        /* ════════════════════════════════════════════════════════
-           SCROLLBAR
-        ════════════════════════════════════════════════════════ */
+        /* ── SCROLLBAR ── */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--navy); }
         ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
 
-        /* ════════════════════════════════════════════════════════
-           UTILITY
-        ════════════════════════════════════════════════════════ */
+        /* ── UTILITY ── */
         .text-orange { color: var(--orange) !important; }
         .bg-navy     { background: var(--navy) !important; }
         .container-rentify { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
@@ -449,13 +349,12 @@
             .container-rentify { padding: 0 16px; }
         }
 
-
         .navbar-nav {
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center;
-    gap: 8px;
-}
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 
     @stack('styles')
@@ -465,7 +364,6 @@
     {{-- ══ NAVBAR ══ --}}
     <nav class="rentify-nav" id="rentify-nav">
         <div class="nav-inner">
-            {{-- Logo --}}
             <a href="/" class="nav-logo">
                 <div class="nav-logo-mark">🏗</div>
                 <div class="nav-logo-text">
@@ -474,25 +372,18 @@
                 </div>
             </a>
 
-            {{-- Links --}}
             <div class="nav-links">
                 <a href="/" class="nav-link {{ request()->is('/') ? 'active' : '' }}">Accueil</a>
                 <a href="/machines" class="nav-link {{ request()->is('machines*') ? 'active' : '' }}">Parcourir</a>
-        <a href="/#comment-ca-marche" class="nav-link">Comment ça marche</a>
-<a href="{{ route('contact') }}" class="nav-link {{ request()->is('contact') ? 'active' : '' }}">Contact</a>
+                <a href="/#comment-ca-marche" class="nav-link">Comment ça marche</a>
+                <a href="{{ route('contact') }}" class="nav-link {{ request()->is('contact') ? 'active' : '' }}">Contact</a>
             </div>
 
-            {{-- Actions --}}
             <div class="nav-actions">
                 <button class="btn-nav-dark-mode" id="darkModeBtn" title="Mode sombre">
                     <i class="fas fa-moon"></i>
                 </button>
-
-                @php $authUser = json_decode(request()->cookie('auth_user') ?? 'null'); @endphp
-
-                <div id="nav-auth-zone">
-                    {{-- Rempli dynamiquement par JS depuis localStorage --}}
-                </div>
+                <div id="nav-auth-zone"></div>
             </div>
         </div>
     </nav>
@@ -521,7 +412,6 @@
     {{-- ══ FOOTER ══ --}}
     <footer class="rentify-footer">
         <div class="footer-inner">
-            {{-- Brand --}}
             <div>
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
                     <div style="width:34px;height:34px;background:var(--orange);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">🏗</div>
@@ -532,8 +422,6 @@
                     Connectez-vous avec les meilleurs propriétaires de machines.
                 </div>
             </div>
-
-            {{-- Navigation --}}
             <div>
                 <div class="footer-col-title">Navigation</div>
                 <div class="footer-links">
@@ -544,25 +432,13 @@
                     <a href="/login">Connexion</a>
                 </div>
             </div>
-
-            {{-- Contact --}}
             <div>
                 <div class="footer-col-title">Contact</div>
-                <div class="footer-contact-item">
-                    <i class="fas fa-envelope"></i>
-                    contact@rentify.ma
-                </div>
-                <div class="footer-contact-item">
-                    <i class="fas fa-phone"></i>
-                    +212 6 00 00 00 00
-                </div>
-                <div class="footer-contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Casablanca, Maroc
-                </div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i>contact@rentify.ma</div>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i>+212 6 00 00 00 00</div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i>Casablanca, Maroc</div>
             </div>
         </div>
-
         <div class="footer-bottom">
             <div class="footer-copy">© 2025 Rentify.ma. Tous droits réservés.</div>
             <div class="footer-pfe">Projet de fin d'études — Développement Digital</div>
@@ -573,13 +449,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    /* ── Navbar scroll effect ── */
+    /* ── Navbar scroll ── */
     const nav = document.getElementById('rentify-nav');
     window.addEventListener('scroll', () => {
         nav.classList.toggle('scrolled', window.scrollY > 40);
     });
 
-    /* ── Auth zone dynamique (localStorage) ── */
+    /* ── Auth zone ── */
     function updateNavAuth() {
         const token = localStorage.getItem('auth_token');
         const user  = JSON.parse(localStorage.getItem('auth_user') || 'null');
@@ -588,8 +464,19 @@
 
         if (token && user) {
             const initial = (user.name || 'U').charAt(0).toUpperCase();
-            const dashUrl = user.role === 'owner' ? '/dashboard/owner' : '/dashboard/client';
+
+            // ✅ Redirect selon le rôle
+            const dashUrl = user.role === 'owner'  ? '/dashboard/owner'  :
+                            user.role === 'driver' ? '/dashboard/driver' :
+                            '/dashboard/client';
+
+            // ✅ Lien spécial pour le driver
+            const driverLink = user.role === 'driver'
+                ? `<a href="/dashboard/driver" class="nav-link">🚗 Mon espace</a>`
+                : '';
+
             zone.innerHTML = `
+                ${driverLink}
                 <a href="${dashUrl}" class="nav-user-btn">
                     <div class="nav-user-avatar">${initial}</div>
                     <span class="nav-user-name">${user.name.split(' ')[0]}</span>
@@ -608,9 +495,9 @@
         setTimeout(() => t.remove(), 4000);
     });
 
-    /* ── showFlash utility (callable from pages) ── */
+    /* ── showFlash utility ── */
     window.showFlash = function(msg, type = 'success') {
-        const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle' };
+        const icons  = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle' };
         const colors = { success: '#10B981', error: '#EF4444', warning: '#F59E0B' };
         const el = document.createElement('div');
         el.className = `flash-toast ${type}`;
@@ -619,18 +506,15 @@
         setTimeout(() => el.remove(), 4000);
     };
 
-    /* ── Scroll animations (Intersection Observer) ── */
+    /* ── Scroll animations ── */
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
+        entries.forEach((e) => {
             if (e.isIntersecting) {
-                setTimeout(() => {
-                    e.target.classList.add('visible');
-                }, (e.target.dataset.delay || 0));
+                setTimeout(() => e.target.classList.add('visible'), (e.target.dataset.delay || 0));
                 observer.unobserve(e.target);
             }
         });
     }, { threshold: 0.1 });
-
     document.querySelectorAll('.fade-up, .fade-in').forEach(el => observer.observe(el));
 
     /* ── API helper global ── */
@@ -642,30 +526,35 @@
             return h;
         },
         async get(url) {
-    const r = await fetch(url, { headers: this.headers() });
-
-    if (r.status === 401) {
-        
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
-        window.location.replace('/login'); 
-        return null;
-    }
-
-    return r.json();
-},
+            const r = await fetch(url, { headers: this.headers() });
+            if (r.status === 401) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_user');
+                window.location.replace('/login');
+                return null;
+            }
+            return r.json();
+        },
         async post(url, body) {
             const r = await fetch(url, { method: 'POST', headers: this.headers(), body: JSON.stringify(body) });
+            return { ok: r.ok, status: r.status, data: await r.json() };
+        },
+        async put(url, body) {
+            const r = await fetch(url, { method: 'PUT', headers: this.headers(), body: JSON.stringify(body) });
             return { ok: r.ok, status: r.status, data: await r.json() };
         },
         async patch(url, body = {}) {
             const r = await fetch(url, { method: 'PATCH', headers: this.headers(), body: JSON.stringify(body) });
             return { ok: r.ok, data: await r.json() };
+        },
+        async delete(url) {
+            const r = await fetch(url, { method: 'DELETE', headers: this.headers() });
+            return { ok: r.ok, data: await r.json() };
         }
     };
 
-    window.getUser = () => JSON.parse(localStorage.getItem('auth_user') || 'null');
-    window.getToken = () => localStorage.getItem('auth_token');
+    window.getUser    = () => JSON.parse(localStorage.getItem('auth_user') || 'null');
+    window.getToken   = () => localStorage.getItem('auth_token');
     window.requireAuth = () => {
         if (!getToken()) { window.location.href = '/login'; return false; }
         return true;
@@ -675,6 +564,6 @@
     @stack('scripts')
 
     {{-- FEATURE 6 : Chatbot Widget --}}
-@include('chatbot.widget')
+    @include('chatbot.widget')
 </body>
 </html>
