@@ -120,6 +120,18 @@
 }
 .btn-contrat:disabled { opacity: 0.65; cursor: not-allowed; }
 .btn-contrat .spinner-border { width: 0.75rem; height: 0.75rem; border-width: 0.1em; }
+
+/* ── Feature D — Bouton WhatsApp réservations ── */
+.btn-wa-res {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #25D366; color: #fff; border: none;
+    border-radius: 6px; padding: 5px 10px;
+    font-size: 0.78rem; font-weight: 600; text-decoration: none;
+    transition: background .2s; white-space: nowrap; cursor: pointer;
+}
+.btn-wa-res:hover { background: #1ebe5d; color: #fff; }
+.btn-wa-res i { font-size: 0.95rem; }
+
 @media (max-width: 900px) {
     .dash-wrap { grid-template-columns: 1fr; }
     .dash-sidebar { position: static; }
@@ -145,27 +157,23 @@
 <script>
 (function () {
 
-    
- if (!getToken() || !getUser()) {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    window.location.replace('/login');
-    return;
-}
-const user = getUser();
-if (user?.role === 'owner') {
-    window.location.replace('/dashboard/owner');
-    return;
-}
- 
+    if (!getToken() || !getUser()) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        window.location.replace('/login');
+        return;
+    }
+    const user = getUser();
+    if (user?.role === 'owner') {
+        window.location.replace('/dashboard/owner');
+        return;
+    }
 
-    
     async function loadClientDash() {
         const root      = document.getElementById('dash-root');
         const initial   = (user?.name || 'C').charAt(0).toUpperCase();
         const firstName = (user?.name || 'Client').split(' ')[0];
 
-        /* ✅ Récupérer les réservations — supporte pagination et array */
         let reservations = [];
         try {
             const d      = await API.get('/api/reservations');
@@ -174,7 +182,6 @@ if (user?.role === 'owner') {
             reservations = getDemoReservations();
         }
 
-        /* ✅ KPIs — protégés contre les non-arrays */
         const total   = Array.isArray(reservations) ? reservations.length : 0;
         const active  = Array.isArray(reservations) ? reservations.filter(r => r.status === 'accepted').length  : 0;
         const pending = Array.isArray(reservations) ? reservations.filter(r => r.status === 'pending').length   : 0;
@@ -198,9 +205,9 @@ if (user?.role === 'owner') {
                     <i class="fas fa-search"></i> Chercher un engin
                 </a>
                 <div class="dash-nav-sep"></div>
-            <a href="/profile" class="dash-nav-item">
-    <i class="fas fa-user"></i> Mon profil
-</a>
+                <a href="/profile" class="dash-nav-item">
+                    <i class="fas fa-user"></i> Mon profil
+                </a>
                 <button class="btn-logout" onclick="doLogout()">
                     <i class="fas fa-sign-out-alt"></i> Déconnexion
                 </button>
@@ -257,14 +264,40 @@ if (user?.role === 'owner') {
             </div>
         </main>`;
 
-        /* Animations fade-up */
         document.querySelectorAll('.fade-up').forEach(el => {
             el.style.transitionDelay = (el.dataset.delay || 0) + 'ms';
             setTimeout(() => el.classList.add('visible'), 50);
         });
     }
 
-    /* ── Rendu du tableau des réservations ── */
+    // ── Feature D — Construit le lien WhatsApp pour une réservation acceptée ──
+    function whatsappResBtn(r) {
+        if (r.status !== 'accepted') return '';
+
+        const phone = r.machine?.owner?.phone ?? null;
+        if (!phone) return '';
+
+        // Normalisation → +212XXXXXXXXX
+        let num = phone.replace(/\s+/g, '').replace(/^0/, '212');
+        if (!num.startsWith('+')) num = '+' + num;
+
+        const machineName = r.machine?.name  ?? 'la machine';
+        const startDate   = r.start_date     ?? '—';
+        const endDate     = r.end_date       ?? '—';
+
+        const msg = encodeURIComponent(
+            `Bonjour, ma réservation pour "${machineName}" (du ${startDate} au ${endDate}) a été acceptée sur Rentify. Comment procéder pour le règlement ?`
+        );
+
+        return `<a href="https://wa.me/${num.replace('+','')}?text=${msg}"
+                   target="_blank" rel="noopener"
+                   class="btn-wa-res ms-1"
+                   title="Contacter le propriétaire sur WhatsApp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>`;
+    }
+
+    // ── Rendu du tableau des réservations ──
     function renderReservations(reservations) {
         if (!reservations.length) {
             return `<div class="empty-state">
@@ -295,18 +328,20 @@ if (user?.role === 'owner') {
             <tbody>
                 ${reservations.map(r => {
                     const st = statusMap[r.status] || { label: r.status, cls: 'sb-default' };
+
                     const btnContrat = r.status === 'accepted'
                         ? `<button class="btn btn-sm btn-contrat ms-1"
-                                onclick="telechargerContrat(${r.id}, this)"
-                                title="Télécharger le contrat PDF">
+                                   onclick="telechargerContrat(${r.id}, this)"
+                                   title="Télécharger le contrat PDF">
                                <i class="fas fa-file-pdf me-1"></i>Contrat
                            </button>`
                         : '';
+
                     return `<tr>
                         <td>
                             <div class="machine-name-cell">${r.machine?.name || '—'}</div>
                             <div class="machine-type-cell">
-                                ${r.machine?.type || ''} · ${r.machine?.location || ''}
+                                ${r.machine?.type || ''} · ${r.machine?.city || ''}
                             </div>
                         </td>
                         <td>
@@ -320,12 +355,14 @@ if (user?.role === 'owner') {
                             ${parseInt(r.total_price || 0).toLocaleString('fr')} DH
                         </td>
                         <td><span class="stat-badge ${st.cls}">${st.label}</span></td>
-                        <td>
+                        <td style="white-space:nowrap">
                             <a href="/machines/${r.machine_id}"
-                               class="btn btn-sm btn-outline-secondary">
+                               class="btn btn-sm btn-outline-secondary"
+                               title="Voir la machine">
                                 <i class="fas fa-eye"></i>
                             </a>
                             ${btnContrat}
+                            ${whatsappResBtn(r)}
                         </td>
                     </tr>`;
                 }).join('')}
@@ -333,56 +370,59 @@ if (user?.role === 'owner') {
         </table>`;
     }
 
-    /* ── Données de démonstration (fallback) ── */
+    // ── Données de démonstration (fallback) ──
     function getDemoReservations() {
         return [
             {
                 id: 1, machine_id: 1,
-                machine: { name: 'JCB 3CX Backhoe Loader', type: 'Excavatrice', location: 'Casablanca' },
+                machine: {
+                    name: 'JCB 3CX Backhoe Loader', type: 'Excavatrice', city: 'Casablanca',
+                    owner: { name: 'Karim', phone: '0612345678' }
+                },
                 start_date: '2025-05-10', end_date: '2025-05-15',
                 nb_days: 5, total_price: 12600, status: 'accepted'
             },
             {
                 id: 2, machine_id: 2,
-                machine: { name: 'Manitou MT 1840', type: 'Manitou', location: 'Rabat' },
+                machine: {
+                    name: 'Manitou MT 1840', type: 'Manitou', city: 'Rabat',
+                    owner: { name: 'Karim', phone: '0612345678' }
+                },
                 start_date: '2025-05-20', end_date: '2025-05-22',
                 nb_days: 3, total_price: 5985, status: 'pending'
             },
             {
                 id: 3, machine_id: 3,
-                machine: { name: 'Camion Benne Volvo FH16', type: 'Camion', location: 'Marrakech' },
+                machine: {
+                    name: 'Camion Benne Volvo FH16', type: 'Camion', city: 'Marrakech',
+                    owner: { name: 'Karim', phone: null }
+                },
                 start_date: '2025-04-01', end_date: '2025-04-07',
                 nb_days: 7, total_price: 9555, status: 'completed'
             },
         ];
     }
 
-    /* ── Déconnexion ── */
+    // ── Déconnexion ──
     window.doLogout = function () {
-    
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        API.post('/api/logout', {}).finally(() => {
+            window.location.replace('/');
+        });
+    };
 
-    API.post('/api/logout', {}).finally(() => {
-        window.location.replace('/');
-    });
-};
-
-    /* ── Téléchargement du contrat PDF ── */
+    // ── Téléchargement contrat PDF ──
     window.telechargerContrat = async function (reservationId, btn) {
         const labelOriginal = btn.innerHTML;
-        btn.disabled    = true;
-        btn.innerHTML   = `<span class="spinner-border spinner-border-sm me-1"
-                                  role="status"></span>Génération…`;
+        btn.disabled  = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span>Génération…`;
 
         try {
             const token    = localStorage.getItem('auth_token');
             const response = await fetch(`/api/reservations/${reservationId}/contrat`, {
                 method:  'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept':        'application/pdf',
-                }
+                headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/pdf' }
             });
 
             if (!response.ok) {
@@ -395,16 +435,11 @@ if (user?.role === 'owner') {
             const lien        = document.createElement('a');
             const disposition = response.headers.get('Content-Disposition') || '';
             const match       = disposition.match(/filename[^;=\n]*=(?:(['"])(.+?)\1|([^;\n]*))/i);
-            lien.download     = match
-                ? (match[2] || match[3])
-                : `contrat-RENTIFY-${reservationId}.pdf`;
+            lien.download     = match ? (match[2] || match[3]) : `contrat-RENTIFY-${reservationId}.pdf`;
             lien.href = url;
             document.body.appendChild(lien);
             lien.click();
-            setTimeout(() => {
-                URL.revokeObjectURL(url);
-                document.body.removeChild(lien);
-            }, 200);
+            setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(lien); }, 200);
             showFlash('Contrat téléchargé avec succès !', 'success');
 
         } catch (erreur) {
@@ -416,7 +451,6 @@ if (user?.role === 'owner') {
         }
     };
 
-    /* ── Lancement ── */
     loadClientDash();
 
 })();

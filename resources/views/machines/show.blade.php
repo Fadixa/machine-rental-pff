@@ -394,6 +394,15 @@
   .viewer-3d-wrap { height: 280px; }
   .main-img { width: 220px; height: 180px; }
 }
+
+
+.btn-reserver {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: var(--orange); border: none; color: white;
+  ...
+}
+.btn-reserver:hover { background: var(--orange2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,158,11,.4); }
+
 </style>
 @endpush
 
@@ -608,9 +617,12 @@
           </div>
         </div>
 
-        <button class="btn-reserver" onclick="reserver()">
-          <i class="fas fa-paper-plane"></i> Envoyer une demande
-        </button>
+        <button onclick="reserver()"
+  style="width:100%;padding:14px;border-radius:12px;background:#0F1B2D;color:#F59E0B;border:1.5px solid #F59E0B;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;"
+  onmouseover="this.style.background='#F59E0B';this.style.color='#0F1B2D'"
+  onmouseout="this.style.background='#0F1B2D';this.style.color='#F59E0B'">
+  <i class="fas fa-paper-plane"></i> Envoyer une demande
+</button>
         <button class="btn-devis" onclick="devis()">
           <i class="fas fa-file-alt"></i> Devis rapide
         </button>

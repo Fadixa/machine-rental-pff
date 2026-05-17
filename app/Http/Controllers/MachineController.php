@@ -11,21 +11,37 @@ class MachineController extends Controller
 {
     // GET /api/machines — liste publique avec filtres
     public function index(Request $request)
-    {
-        $machines = Machine::available()
-            ->when($request->type,     fn($q) => $q->byType($request->type))
-            ->when($request->location, fn($q) => $q->byLocation($request->location))
-            ->when(
-                $request->start_date && $request->end_date,
-                fn($q) => $q->freeOn($request->start_date, $request->end_date)
-            )
-            ->with(['primaryImage', 'owner:id,name,phone'])
-            ->withAvg('ratings', 'rating')
-            ->paginate(12);
+{
+    $query = Machine::query();
 
-        return response()->json($machines);
+    // Search — q=casablanca
+    if ($request->q) {
+        $q = $request->q;
+        $query->where(function($sq) use ($q) {
+            $sq->where('name',        'like', "%$q%")
+               ->orWhere('type',      'like', "%$q%")
+               ->orWhere('city',      'like', "%$q%")
+               ->orWhere('description','like', "%$q%");
+        });
     }
 
+    // Filtres
+    if ($request->type)      $query->where('type', $request->type);
+    if ($request->city)      $query->where('city', $request->city);
+    if ($request->status)    $query->where('status', $request->status);
+    if ($request->max_price) $query->where('price_per_day', '<=', $request->max_price);
+
+    // Sort
+    if ($request->sort === 'price_per_day') {
+        $query->orderBy('price_per_day', $request->order ?? 'asc');
+    } else {
+        $query->orderByDesc('created_at');
+    }
+
+    $machines = $query->with(['images', 'ratings'])->get();
+
+    return response()->json($machines);
+}
     // GET /api/machines/{machine} — fiche détaillée
     public function show(Machine $machine)
     {
