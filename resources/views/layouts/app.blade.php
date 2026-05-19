@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        /* ══ LIGHT MODE (default) ══ */
         :root {
             --navy:        #0F1B2D;
             --navy-light:  #152236;
@@ -25,10 +26,12 @@
             --orange-glow: rgba(245,158,11,0.35);
             --bg-page:     #F0F2F5;
             --bg-white:    #FFFFFF;
+            --bg-card:     #FFFFFF;
             --text-dark:   #111827;
             --text-gray:   #6B7280;
             --text-light:  #9CA3AF;
             --border:      rgba(255,255,255,0.08);
+            --border-light:#E5E7EB;
             --radius-sm:   6px;
             --radius-md:   10px;
             --radius-lg:   14px;
@@ -36,6 +39,81 @@
             --shadow-sm:   0 2px 8px rgba(0,0,0,.08);
             --shadow-md:   0 4px 20px rgba(0,0,0,.12);
             --shadow-lg:   0 8px 40px rgba(0,0,0,.18);
+        }
+
+        /* ══ DARK MODE ══ */
+        [data-theme="dark"] {
+            --bg-page:     #0d1117;
+            --bg-white:    #161b22;
+            --bg-card:     #1c2333;
+            --text-dark:   #e6edf3;
+            --text-gray:   #8b949e;
+            --text-light:  #6e7681;
+            --border-light:#30363d;
+        }
+
+        /* Dark mode — overrides composants */
+        [data-theme="dark"] body {
+            background: var(--bg-page);
+            color: var(--text-dark);
+        }
+        [data-theme="dark"] .dash-sidebar,
+        [data-theme="dark"] .dash-panel,
+        [data-theme="dark"] .kpi-card,
+        [data-theme="dark"] .table-card,
+        [data-theme="dark"] .chart-card,
+        [data-theme="dark"] .auth-right {
+            background: var(--bg-card) !important;
+            border-color: #30363d !important;
+        }
+        [data-theme="dark"] .res-table td,
+        [data-theme="dark"] .data-table td {
+            color: var(--text-dark);
+            border-color: #21262d !important;
+        }
+        [data-theme="dark"] .res-table th,
+        [data-theme="dark"] .data-table th {
+            background: #161b22 !important;
+            color: var(--text-gray);
+            border-color: #30363d !important;
+        }
+        [data-theme="dark"] .res-table tr:hover td,
+        [data-theme="dark"] .data-table tr:hover td {
+            background: #1c2333 !important;
+        }
+        [data-theme="dark"] .form-input {
+            background: #0d1117 !important;
+            border-color: #30363d !important;
+            color: var(--text-dark) !important;
+        }
+        [data-theme="dark"] .form-input::placeholder { color: #6e7681; }
+        [data-theme="dark"] .panel-header,
+        [data-theme="dark"] .table-header {
+            border-color: #30363d !important;
+        }
+        [data-theme="dark"] .dash-nav-item:hover { background: #21262d; }
+        [data-theme="dark"] .dash-nav-sep { background: #21262d; }
+        [data-theme="dark"] .filter-group input,
+        [data-theme="dark"] .filter-group select {
+            background: #0d1117 !important;
+            border-color: #30363d !important;
+            color: var(--text-dark) !important;
+        }
+        [data-theme="dark"] .page-btn {
+            background: #161b22;
+            border-color: #30363d;
+            color: var(--text-dark);
+        }
+        [data-theme="dark"] .auth-right { background: #161b22 !important; }
+        [data-theme="dark"] .auth-tabs  { background: #0d1117 !important; border-color: #30363d !important; }
+        [data-theme="dark"] .auth-tab   { color: var(--text-gray); }
+        [data-theme="dark"] .auth-tab.active { background: var(--navy); color: #fff; }
+
+        /* transition douce sur changement de thème */
+        body, .dash-sidebar, .dash-panel, .kpi-card, .table-card,
+        .chart-card, .auth-right, .form-input, .res-table td,
+        .data-table td, .data-table th, .panel-header {
+            transition: background .25s ease, color .25s ease, border-color .25s ease;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -380,8 +458,9 @@
             </div>
 
             <div class="nav-actions">
-                <button class="btn-nav-dark-mode" id="darkModeBtn" title="Mode sombre">
-                    <i class="fas fa-moon"></i>
+                {{-- ✅ Dark mode toggle --}}
+                <button class="btn-nav-dark-mode" id="darkModeBtn" title="Changer le thème">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
                 </button>
                 <div id="nav-auth-zone"></div>
             </div>
@@ -449,6 +528,28 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+    /* ════════════════════════════════════════
+       ✅ DARK MODE
+    ════════════════════════════════════════ */
+    (function () {
+        const html    = document.documentElement;
+        const btn     = document.getElementById('darkModeBtn');
+        const icon    = document.getElementById('darkModeIcon');
+        const saved   = localStorage.getItem('rentify_theme') || 'light';
+
+        // Appliquer le thème sauvegardé au chargement
+        html.setAttribute('data-theme', saved);
+        icon.className = saved === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+        btn.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next    = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('rentify_theme', next);
+            icon.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        });
+    })();
+
     /* ── Navbar scroll ── */
     const nav = document.getElementById('rentify-nav');
     window.addEventListener('scroll', () => {
@@ -464,13 +565,11 @@
 
         if (token && user) {
             const initial = (user.name || 'U').charAt(0).toUpperCase();
-
-            // ✅ Redirect selon le rôle
-            const dashUrl = user.role === 'owner'  ? '/dashboard/owner'  :
+            const dashUrl = user.role === 'admin'  ? '/dashboard/admin'  :
+                            user.role === 'owner'  ? '/dashboard/owner'  :
                             user.role === 'driver' ? '/dashboard/driver' :
                             '/dashboard/client';
 
-            // ✅ Lien spécial pour le driver
             const driverLink = user.role === 'driver'
                 ? `<a href="/dashboard/driver" class="nav-link">🚗 Mon espace</a>`
                 : '';

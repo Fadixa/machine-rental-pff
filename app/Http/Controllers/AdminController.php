@@ -21,7 +21,7 @@ class AdminController extends Controller
 
         $totalMachines     = Machine::count();
         $machinesAvail     = Machine::where('status', 'available')->count();
-        $machinesRented    = Machine::where('status', 'rented')->count();
+        $machinesRented    = Machine::where('status', 'unavailable')->count(); // ✅ FIX: 'rented' → 'unavailable'
 
         $totalReservations = Reservation::count();
         $reservPending     = Reservation::where('status', 'pending')->count();
@@ -29,11 +29,8 @@ class AdminController extends Controller
         $reservCompleted   = Reservation::where('status', 'completed')->count();
         $reservRejected    = Reservation::where('status', 'rejected')->count();
 
-        // Revenus totaux (réservations complétées)
-        $totalRevenue = Reservation::where('status', 'completed')
-            ->join('machines', 'reservations.machine_id', '=', 'machines.id')
-            ->selectRaw('SUM(DATEDIFF(reservations.end_date, reservations.start_date) * machines.daily_price) as total')
-            ->value('total') ?? 0;
+        // ✅ FIX: utiliser total_price stocké directement (plus de daily_price ni de JOIN)
+        $totalRevenue = Reservation::where('status', 'completed')->sum('total_price') ?? 0;
 
         // Réservations par mois (12 derniers mois)
         $reservByMonth = Reservation::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as count')
@@ -47,7 +44,7 @@ class AdminController extends Controller
         $topMachines = Machine::withCount('reservations')
             ->orderByDesc('reservations_count')
             ->take(5)
-            ->get(['id', 'name', 'city', 'daily_price', 'reservations_count']);
+            ->get(['id', 'name', 'city', 'price_per_day', 'reservations_count']); // ✅ FIX: daily_price → price_per_day
 
         // Inscriptions par mois
         $usersByMonth = User::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as count')
@@ -150,11 +147,11 @@ class AdminController extends Controller
             $query->where(function ($q2) use ($q) {
                 $q2->where('name', 'like', "%$q%")
                    ->orWhere('city', 'like', "%$q%")
-                   ->orWhere('category', 'like', "%$q%");
+                   ->orWhere('type', 'like', "%$q%"); // ✅ FIX: category → type
             });
         }
 
-        if ($request->status && in_array($request->status, ['available', 'rented', 'maintenance'])) {
+        if ($request->status && in_array($request->status, ['available', 'unavailable', 'maintenance'])) {
             $query->where('status', $request->status);
         }
 
@@ -174,7 +171,7 @@ class AdminController extends Controller
     public function reservations(Request $request)
     {
         $query = Reservation::with([
-            'machine:id,name,city,daily_price',
+            'machine:id,name,city,price_per_day', // ✅ FIX: daily_price → price_per_day
             'client:id,name,email',
         ])->orderByDesc('created_at');
 
@@ -184,8 +181,10 @@ class AdminController extends Controller
 
         if ($request->search) {
             $q = $request->search;
-            $query->whereHas('client', fn($q2) => $q2->where('name', 'like', "%$q%"))
-                  ->orWhereHas('machine', fn($q2) => $q2->where('name', 'like', "%$q%"));
+            $query->where(function ($q2) use ($q) {
+                $q2->whereHas('client', fn($q3) => $q3->where('name', 'like', "%$q%"))
+                   ->orWhereHas('machine', fn($q3) => $q3->where('name', 'like', "%$q%"));
+            });
         }
 
         $reservations = $query->paginate(15);

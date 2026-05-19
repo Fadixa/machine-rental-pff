@@ -121,7 +121,6 @@
 .btn-contrat:disabled { opacity: 0.65; cursor: not-allowed; }
 .btn-contrat .spinner-border { width: 0.75rem; height: 0.75rem; border-width: 0.1em; }
 
-/* ── Feature D — Bouton WhatsApp réservations ── */
 .btn-wa-res {
     display: inline-flex; align-items: center; gap: 4px;
     background: #25D366; color: #fff; border: none;
@@ -157,18 +156,34 @@
 <script>
 (function () {
 
+    // ════════════════════════════════════════════════════════
+    // ✅ GUARD — vérification token + rôle
+    // ════════════════════════════════════════════════════════
     if (!getToken() || !getUser()) {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
-        window.location.replace('/login');
-        return;
-    }
-    const user = getUser();
-    if (user?.role === 'owner') {
-        window.location.replace('/dashboard/owner');
+        window.location.href = window.location.origin + '/login';
         return;
     }
 
+    const user = getUser();
+    const base = window.location.origin;
+
+    // ✅ FIX : redirect admin → dashboard admin
+    if (user?.role === 'admin') {
+        window.location.href = base + '/dashboard/admin';
+        return;
+    }
+
+    // redirect owner → dashboard owner
+    if (user?.role === 'owner') {
+        window.location.href = base + '/dashboard/owner';
+        return;
+    }
+
+    // ════════════════════════════════════════════════════════
+    // CHARGEMENT DU DASHBOARD CLIENT
+    // ════════════════════════════════════════════════════════
     async function loadClientDash() {
         const root      = document.getElementById('dash-root');
         const initial   = (user?.name || 'C').charAt(0).toUpperCase();
@@ -270,25 +285,19 @@
         });
     }
 
-    // ── Feature D — Construit le lien WhatsApp pour une réservation acceptée ──
+    // ── WhatsApp réservation acceptée ──
     function whatsappResBtn(r) {
         if (r.status !== 'accepted') return '';
-
         const phone = r.machine?.owner?.phone ?? null;
         if (!phone) return '';
-
-        // Normalisation → +212XXXXXXXXX
         let num = phone.replace(/\s+/g, '').replace(/^0/, '212');
         if (!num.startsWith('+')) num = '+' + num;
-
         const machineName = r.machine?.name  ?? 'la machine';
         const startDate   = r.start_date     ?? '—';
         const endDate     = r.end_date       ?? '—';
-
         const msg = encodeURIComponent(
             `Bonjour, ma réservation pour "${machineName}" (du ${startDate} au ${endDate}) a été acceptée sur Rentify. Comment procéder pour le règlement ?`
         );
-
         return `<a href="https://wa.me/${num.replace('+','')}?text=${msg}"
                    target="_blank" rel="noopener"
                    class="btn-wa-res ms-1"
@@ -297,7 +306,7 @@
                 </a>`;
     }
 
-    // ── Rendu du tableau des réservations ──
+    // ── Tableau des réservations ──
     function renderReservations(reservations) {
         if (!reservations.length) {
             return `<div class="empty-state">
@@ -328,7 +337,6 @@
             <tbody>
                 ${reservations.map(r => {
                     const st = statusMap[r.status] || { label: r.status, cls: 'sb-default' };
-
                     const btnContrat = r.status === 'accepted'
                         ? `<button class="btn btn-sm btn-contrat ms-1"
                                    onclick="telechargerContrat(${r.id}, this)"
@@ -336,7 +344,6 @@
                                <i class="fas fa-file-pdf me-1"></i>Contrat
                            </button>`
                         : '';
-
                     return `<tr>
                         <td>
                             <div class="machine-name-cell">${r.machine?.name || '—'}</div>
@@ -370,7 +377,7 @@
         </table>`;
     }
 
-    // ── Données de démonstration (fallback) ──
+    // ── Données démo (fallback) ──
     function getDemoReservations() {
         return [
             {
@@ -408,7 +415,7 @@
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
         API.post('/api/logout', {}).finally(() => {
-            window.location.replace('/');
+            window.location.href = window.location.origin + '/';
         });
     };
 
@@ -417,19 +424,16 @@
         const labelOriginal = btn.innerHTML;
         btn.disabled  = true;
         btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span>Génération…`;
-
         try {
             const token    = localStorage.getItem('auth_token');
             const response = await fetch(`/api/reservations/${reservationId}/contrat`, {
                 method:  'GET',
                 headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/pdf' }
             });
-
             if (!response.ok) {
                 const erreur = await response.json().catch(() => ({}));
                 throw new Error(erreur.message || `Erreur ${response.status}`);
             }
-
             const blob        = await response.blob();
             const url         = URL.createObjectURL(blob);
             const lien        = document.createElement('a');
@@ -441,7 +445,6 @@
             lien.click();
             setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(lien); }, 200);
             showFlash('Contrat téléchargé avec succès !', 'success');
-
         } catch (erreur) {
             console.error('[Rentify] Erreur contrat :', erreur);
             showFlash(erreur.message || 'Impossible de générer le contrat.', 'error');
