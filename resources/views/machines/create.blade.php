@@ -1,651 +1,1294 @@
 @extends('layouts.app')
-@section('title', 'Publier un engin — Rentify')
+
+@section('title', isset($editMode) && $editMode ? 'Modifier la machine — Rentify' : 'Ajouter une machine — Rentify')
 
 @push('styles')
 <style>
-.create-header {
-    background: var(--navy); padding: 20px 0 18px;
-    border-bottom: 1px solid var(--border);
+/* ══════════════════════════════════════════════
+   MACHINES CREATE / EDIT — RENTIFY V6
+   Gold / Crème — Formulaire complet
+══════════════════════════════════════════════ */
+:root {
+  --gold:#D4AF37;--gold-dk:#9A7D20;--gold-pale:#FEF9E7;
+  --navy:#0F1B2D;--navy2:#162540;
+  --cream:#FAF7F0;--cream2:#F0EBE0;--cream3:#E8DDD0;
+  --txt-mid:#5a5660;--txt-light:#9992a4;
+  --green:#22c55e;--red:#ef4444;
+  --radius:14px;--shadow:0 4px 24px rgba(15,27,45,.08);
 }
-.back-link {
-    color: rgba(255,255,255,.5); font-size: 13px; font-weight: 500;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color .2s;
-}
-.back-link:hover { color: var(--orange); }
+body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 
-.create-body {
-    max-width: 900px; margin: 0 auto; padding: 32px;
-}
-
-/* Progress steps */
-.pub-steps {
-    display: flex; align-items: center; gap: 0;
-    margin-bottom: 36px; background: #fff;
-    border: 1px solid #F0F0F0; border-radius: var(--radius-lg);
-    padding: 16px 24px; overflow: hidden;
-}
-.pub-step {
-    display: flex; align-items: center; gap: 10px; flex: 1;
-    position: relative; cursor: pointer;
-}
-.pub-step:not(:last-child)::after {
-    content: ''; position: absolute; right: 0; top: 50%;
-    transform: translateY(-50%); width: 1px; height: 30px;
-    background: #F0F0F0;
-}
-.ps-circle {
-    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 800; transition: all .2s;
-}
-.ps-circle.active { background: var(--orange); color: #111; }
-.ps-circle.done   { background: #10B981; color: #fff; }
-.ps-circle.todo   { background: #F3F4F6; color: var(--text-light); }
-.ps-label { font-size: 12px; font-weight: 700; color: var(--navy); }
-.ps-sublabel { font-size: 10px; color: var(--text-light); }
-
-/* Section card */
-.pub-section {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 16px;
-    display: none;
-}
-.pub-section.active { display: block; animation: fadeIn .3s ease; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.pub-section-title {
-    font-size: 16px; font-weight: 900; color: var(--navy); margin-bottom: 4px;
-}
-.pub-section-sub { font-size: 13px; color: var(--text-gray); margin-bottom: 22px; }
-
-/* Form fields */
-.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.fields-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.field-group { margin-bottom: 0; }
-.field-label {
-    display: block; font-size: 10px; font-weight: 800;
-    color: var(--text-gray); letter-spacing: 1px;
-    text-transform: uppercase; margin-bottom: 6px;
-}
-.field-required { color: var(--orange); }
-.field-input, .field-select, .field-textarea {
-    width: 100%; padding: 11px 14px;
-    background: #fff; border: 1.5px solid #E5E7EB;
-    border-radius: var(--radius-md); font-size: 13px; color: var(--navy);
-    outline: none; transition: border-color .2s, box-shadow .2s;
-    font-family: 'Inter', sans-serif;
-}
-.field-input:focus, .field-select:focus, .field-textarea:focus {
-    border-color: var(--orange); box-shadow: 0 0 0 3px rgba(245,158,11,.1);
-}
-.field-input.error { border-color: #EF4444; }
-.field-textarea { resize: vertical; min-height: 100px; }
-.field-hint { font-size: 11px; color: var(--text-light); margin-top: 4px; }
-
-/* Price fields */
-.price-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.price-input-wrap { position: relative; }
-.price-suffix {
-    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-    font-size: 12px; font-weight: 700; color: var(--text-light);
-    pointer-events: none;
+/* ── Page layout ── */
+.create-wrap {
+  max-width:1080px; margin:0 auto;
+  padding:2.5rem 2rem 5rem;
 }
 
-/* Upload zone */
+/* ── Page header ── */
+.page-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+}
+.page-header-left { display:flex; align-items:center; gap:1rem; }
+.back-btn {
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.5rem .9rem; border-radius:9px;
+  background:#fff; border:1.5px solid var(--cream3);
+  color:var(--txt-mid); font-size:.82rem; font-weight:600;
+  cursor:pointer; text-decoration:none; transition:all .2s;
+}
+.back-btn:hover { border-color:var(--gold); color:var(--navy); }
+.page-title {
+  font-family:'Playfair Display',serif;
+  font-size:1.7rem; color:var(--navy); margin:0;
+}
+.page-title span { color:var(--gold); }
+.page-sub { color:var(--txt-light); font-size:.85rem; margin:.2rem 0 0; }
+
+/* ── Steps indicator ── */
+.steps-bar {
+  display:flex; align-items:center; gap:0;
+  background:#fff; border:1px solid rgba(212,175,55,.12);
+  border-radius:12px; padding:.6rem 1.5rem;
+  margin-bottom:2rem; overflow-x:auto;
+}
+.step-item {
+  display:flex; align-items:center; gap:.5rem;
+  padding:.5rem 1.2rem; border-radius:8px;
+  cursor:pointer; transition:all .2s; flex-shrink:0;
+}
+.step-item.active { background:var(--navy); }
+.step-item.done   { background:var(--gold-pale); }
+.step-dot {
+  width:24px; height:24px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.72rem; font-weight:800; flex-shrink:0;
+  background:var(--cream2); color:var(--txt-mid);
+  border:2px solid var(--cream3);
+}
+.step-item.active .step-dot { background:var(--gold); color:var(--navy); border-color:var(--gold); }
+.step-item.done .step-dot   { background:var(--green); color:#fff; border-color:var(--green); }
+.step-label { font-size:.8rem; font-weight:700; color:var(--txt-mid); }
+.step-item.active .step-label { color:var(--gold); }
+.step-item.done .step-label   { color:var(--gold-dk); }
+.step-arrow { color:var(--cream3); font-size:.8rem; padding:0 .3rem; }
+
+/* ── Grid layout main ── */
+.create-grid {
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:1.5rem;
+  align-items:start;
+}
+
+/* ── Cards ── */
+.form-card {
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.form-card-header {
+  padding:1.1rem 1.5rem;
+  border-bottom:1px solid var(--cream3);
+  background:var(--cream);
+  display:flex; align-items:center; gap:.6rem;
+}
+.form-card-header h3 {
+  font-family:'Playfair Display',serif;
+  font-size:1rem; color:var(--navy); margin:0;
+}
+.form-card-icon {
+  width:32px; height:32px; border-radius:8px;
+  background:var(--navy); color:var(--gold);
+  font-size:.9rem; display:flex; align-items:center; justify-content:center;
+}
+.form-card-body { padding:1.5rem; }
+
+/* ── Form elements ── */
+.form-group { margin-bottom:1.2rem; }
+.form-label {
+  display:block; font-size:.78rem; font-weight:800;
+  color:var(--navy); margin-bottom:.45rem;
+  letter-spacing:.03em;
+}
+.form-label span { color:var(--red); margin-left:.2rem; }
+.form-control {
+  width:100%; padding:.62rem .9rem;
+  border:1.5px solid var(--cream3); border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:.88rem;
+  color:var(--navy); outline:none; background:#fff;
+  transition:border .2s, box-shadow .2s;
+  box-sizing:border-box;
+}
+.form-control:focus {
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,.1);
+}
+.form-control.error { border-color:var(--red); }
+.field-error { color:var(--red); font-size:.75rem; margin-top:.3rem; display:none; }
+.field-error.show { display:block; }
+.form-hint { color:var(--txt-light); font-size:.75rem; margin-top:.3rem; }
+
+textarea.form-control { resize:vertical; min-height:100px; }
+select.form-control { cursor:pointer; }
+
+.form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; }
+
+/* ── Type selector chips ── */
+.type-selector {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem;
+}
+.type-opt {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:.3rem;
+  padding:.7rem .4rem; border-radius:10px;
+  border:1.5px solid var(--cream3); background:#fff;
+  cursor:pointer; transition:all .2s; text-align:center;
+}
+.type-opt:hover { border-color:var(--gold); }
+.type-opt.selected {
+  background:var(--navy); border-color:var(--navy);
+  box-shadow:0 4px 12px rgba(15,27,45,.18);
+}
+.type-opt-icon { font-size:1.4rem; line-height:1; }
+.type-opt-label {
+  font-size:.7rem; font-weight:700; color:var(--txt-mid);
+  text-transform:capitalize;
+}
+.type-opt.selected .type-opt-label { color:var(--gold); }
+
+/* ── Status toggle ── */
+.status-toggle {
+  display:flex; gap:.5rem; flex-wrap:wrap;
+}
+.status-btn {
+  flex:1; min-width:100px;
+  display:flex; flex-direction:column; align-items:center; gap:.3rem;
+  padding:.75rem .5rem; border-radius:10px;
+  border:1.5px solid var(--cream3); background:#fff;
+  cursor:pointer; transition:all .2s; text-align:center;
+}
+.status-btn:hover { border-color:var(--gold); }
+.status-btn.active-available { background:#dcfce7; border-color:#22c55e; }
+.status-btn.active-unavailable { background:#fee2e2; border-color:var(--red); }
+.status-btn.active-maintenance { background:#fef9c3; border-color:#ca8a04; }
+.status-btn-icon { font-size:1.2rem; }
+.status-btn-label { font-size:.72rem; font-weight:700; color:var(--txt-mid); }
+.status-btn.active-available .status-btn-label   { color:#15803d; }
+.status-btn.active-unavailable .status-btn-label { color:#dc2626; }
+.status-btn.active-maintenance .status-btn-label { color:#ca8a04; }
+
+/* ── Image upload zone ── */
 .upload-zone {
-    border: 2px dashed #D1D5DB; border-radius: var(--radius-lg);
-    padding: 32px; text-align: center; cursor: pointer;
-    transition: all .2s; background: #FAFAFA;
+  border:2px dashed var(--cream3); border-radius:12px;
+  padding:2rem; text-align:center; cursor:pointer;
+  transition:all .2s; background:var(--cream);
+  position:relative; overflow:hidden;
 }
-.upload-zone:hover, .upload-zone.dragging {
-    border-color: var(--orange); background: rgba(245,158,11,.04);
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color:var(--gold);
+  background:var(--gold-pale);
 }
-.upload-icon { font-size: 36px; margin-bottom: 10px; opacity: .5; }
-.upload-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-.upload-sub { font-size: 12px; color: var(--text-light); }
-.upload-btn-fake {
-    display: inline-block; margin-top: 14px;
-    background: var(--orange); color: #111; font-size: 12px; font-weight: 700;
-    padding: 8px 20px; border-radius: var(--radius-md); cursor: pointer;
-    transition: background .15s;
+.upload-zone input[type="file"] {
+  position:absolute; inset:0; opacity:0; cursor:pointer;
 }
-.upload-btn-fake:hover { background: var(--orange-dark); }
-.preview-grid {
-    display: grid; grid-template-columns: repeat(4,1fr);
-    gap: 10px; margin-top: 14px;
-}
-.preview-img {
-    aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden;
-    position: relative; background: var(--navy-light);
-    display: flex; align-items: center; justify-content: center;
-    border: 1.5px solid #F0F0F0; font-size: 28px;
-}
-.preview-img.primary-img { border-color: var(--orange); }
-.primary-badge {
-    position: absolute; bottom: 4px; left: 4px; right: 4px;
-    background: var(--orange); color: #111; font-size: 8px; font-weight: 800;
-    text-align: center; padding: 2px; border-radius: 4px; letter-spacing: .5px;
-}
-.preview-del {
-    position: absolute; top: 4px; right: 4px;
-    width: 20px; height: 20px; background: rgba(239,68,68,.9); color: #fff;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 10px; cursor: pointer; opacity: 0; transition: opacity .15s;
-}
-.preview-img:hover .preview-del { opacity: 1; }
+.upload-icon { font-size:2.2rem; margin-bottom:.5rem; opacity:.6; }
+.upload-label { font-weight:700; color:var(--navy); font-size:.9rem; margin-bottom:.25rem; }
+.upload-sub { color:var(--txt-light); font-size:.78rem; }
 
-/* Equipements checkboxes */
-.equip-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
-.equip-check {
-    display: flex; align-items: center; gap: 8px;
-    background: #F9FAFB; border: 1px solid #F0F0F0; border-radius: var(--radius-md);
-    padding: 9px 12px; cursor: pointer; transition: all .15s; font-size: 12px; font-weight: 500;
+.images-preview {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:.6rem; margin-top:1rem;
 }
-.equip-check:hover { border-color: var(--orange); background: rgba(245,158,11,.04); }
-.equip-check.checked { border-color: var(--orange); background: rgba(245,158,11,.06); color: var(--navy); font-weight: 600; }
-.equip-check input { accent-color: var(--orange); width: 14px; height: 14px; }
+.preview-item {
+  position:relative; border-radius:8px; overflow:hidden;
+  aspect-ratio:1; background:var(--cream2);
+  border:1.5px solid var(--cream3);
+}
+.preview-item img {
+  width:100%; height:100%; object-fit:cover;
+}
+.preview-remove {
+  position:absolute; top:.3rem; right:.3rem;
+  width:22px; height:22px; border-radius:50%;
+  background:rgba(239,68,68,.9); border:none;
+  color:#fff; font-size:.7rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .2s;
+}
+.preview-remove:hover { transform:scale(1.15); }
+.preview-item.uploading::after {
+  content:''; position:absolute; inset:0;
+  background:rgba(255,255,255,.7);
+  display:flex; align-items:center; justify-content:center;
+}
+.preview-main-badge {
+  position:absolute; bottom:.3rem; left:.3rem;
+  background:var(--gold); color:var(--navy);
+  font-size:.6rem; font-weight:800;
+  padding:.1rem .35rem; border-radius:3px;
+}
 
-/* Navigation buttons */
-.pub-nav {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #fff; border: 1px solid #F0F0F0; border-radius: var(--radius-lg);
-    padding: 16px 24px;
+/* ── Map picker ── */
+#mapPicker {
+  height:240px; border-radius:10px;
+  border:1.5px solid var(--cream3);
+  overflow:hidden; margin-top:.75rem;
 }
-.btn-prev {
-    background: #F3F4F6; color: var(--navy); border: none; border-radius: var(--radius-md);
-    padding: 10px 22px; font-size: 13px; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; gap: 7px; transition: all .15s;
+.map-coords-row {
+  display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-top:.75rem;
 }
-.btn-prev:hover { background: #E5E7EB; }
-.btn-next {
-    background: var(--navy); color: #fff; border: none; border-radius: var(--radius-md);
-    padding: 11px 28px; font-size: 13px; font-weight: 800; cursor: pointer;
-    display: flex; align-items: center; gap: 7px; transition: all .15s;
-}
-.btn-next:hover { background: #0a1421; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
-.btn-publish {
-    background: var(--orange); color: #111; border: none; border-radius: var(--radius-md);
-    padding: 11px 28px; font-size: 13px; font-weight: 800; cursor: pointer;
-    display: flex; align-items: center; gap: 7px; transition: all .15s;
-}
-.btn-publish:hover { background: var(--orange-dark); transform: translateY(-1px); box-shadow: 0 4px 16px var(--orange-glow); }
 
-/* Preview card */
+/* ── Preview card (sidebar) ── */
 .preview-card {
-    background: #fff; border: 1px solid #F0F0F0; border-radius: var(--radius-lg);
-    overflow: hidden;
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius); overflow:hidden;
+  box-shadow:var(--shadow);
 }
 .preview-card-img {
-    height: 160px; background: var(--navy-light);
-    display: flex; align-items: center; justify-content: center; font-size: 56px;
+  height:190px; background:var(--cream2);
+  position:relative; overflow:hidden;
 }
-.preview-card-body { padding: 16px; }
-.preview-card-badge { font-size: 10px; font-weight: 800; color: var(--orange); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
-.preview-card-name { font-size: 16px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
-.preview-card-price { font-size: 22px; font-weight: 900; color: var(--navy); }
-.preview-card-price small { font-size: 12px; color: var(--text-light); font-weight: 400; }
-
-/* Success state */
-.success-state {
-    text-align: center; padding: 48px 32px;
-    background: #fff; border: 1px solid #F0F0F0; border-radius: var(--radius-lg);
+.preview-card-img img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .45s;
 }
-.success-icon { font-size: 56px; margin-bottom: 16px; animation: bounceIn .5s ease; }
-@keyframes bounceIn { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
-.success-title { font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
-.success-sub { font-size: 14px; color: var(--text-gray); margin-bottom: 24px; }
+.preview-card-img:hover img { transform:scale(1.05); }
+.preview-status-badge {
+  position:absolute; top:.65rem; right:.65rem;
+  padding:.22rem .6rem; border-radius:20px;
+  font-size:.68rem; font-weight:700;
+}
+.pv-body { padding:1.2rem; }
+.pv-type { display:inline-block; background:var(--gold-pale); color:var(--gold-dk);
+  font-size:.65rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  padding:.15rem .5rem; border-radius:4px; margin-bottom:.5rem; }
+.pv-name { font-weight:800; color:var(--navy); font-size:1rem; margin-bottom:.25rem; }
+.pv-city { color:var(--txt-light); font-size:.78rem; margin-bottom:.75rem; }
+.pv-price { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--navy); font-weight:700; }
+.pv-price span { font-family:'DM Sans',sans-serif; font-size:.78rem; color:var(--txt-mid); font-weight:400; }
 
-@media (max-width: 768px) {
-    .create-body { padding: 16px; }
-    .fields-grid, .fields-grid-3, .price-fields { grid-template-columns: 1fr; }
-    .equip-grid { grid-template-columns: 1fr 1fr; }
-    .preview-grid { grid-template-columns: repeat(3,1fr); }
-    .pub-steps { overflow-x: auto; gap: 0; padding: 12px 16px; }
+/* ── 3D Viewer mini ── */
+.viewer-wrap {
+  position:relative; height:200px;
+  background:var(--navy); border-radius:10px;
+  overflow:hidden; margin-top:1rem;
+}
+#miniCanvas3d {
+  width:100%; height:100%; display:block;
+}
+.viewer-label {
+  position:absolute; bottom:.6rem; left:.7rem;
+  background:rgba(0,0,0,.5); backdrop-filter:blur(4px);
+  color:var(--gold); font-size:.68rem; font-weight:700;
+  padding:.2rem .5rem; border-radius:4px;
+}
+
+/* ── Char counter ── */
+.char-counter { font-size:.72rem; color:var(--txt-light); text-align:right; margin-top:.25rem; }
+.char-counter.warn { color:#ca8a04; }
+
+/* ── Submit area ── */
+.submit-card {
+  background:#fff; border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius); padding:1.5rem;
+  box-shadow:var(--shadow); margin-top:1.5rem;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; flex-wrap:wrap;
+}
+.submit-note { font-size:.8rem; color:var(--txt-light); max-width:400px; }
+.submit-note strong { color:var(--navy); display:block; margin-bottom:.2rem; font-size:.85rem; }
+.submit-btns { display:flex; gap:.65rem; }
+
+.btn-navy {
+  background:var(--navy); color:var(--gold); border:none;
+  border-radius:10px; padding:.65rem 1.5rem;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.88rem;
+  cursor:pointer; transition:all .2s;
+  display:inline-flex; align-items:center; gap:.4rem;
+}
+.btn-navy:hover { background:var(--navy2); transform:translateY(-1px); }
+.btn-navy:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.btn-gold {
+  background:var(--gold); color:var(--navy); border:none;
+  border-radius:10px; padding:.65rem 1.5rem;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.88rem;
+  cursor:pointer; transition:all .2s;
+  display:inline-flex; align-items:center; gap:.4rem;
+}
+.btn-gold:hover { background:var(--gold-dk); }
+.btn-outline {
+  background:transparent; color:var(--navy);
+  border:1.5px solid var(--cream3); border-radius:10px;
+  padding:.65rem 1.25rem; font-family:'DM Sans',sans-serif;
+  font-weight:600; font-size:.88rem; cursor:pointer; transition:all .2s;
+  display:inline-flex; align-items:center; gap:.4rem; text-decoration:none;
+}
+.btn-outline:hover { border-color:var(--gold); color:var(--gold-dk); }
+
+/* ── Toast ── */
+.toast-ctr {
+  position:fixed; bottom:2rem; right:2rem;
+  z-index:99999; display:flex; flex-direction:column; gap:.5rem;
+}
+.toast {
+  background:#fff; border-radius:12px;
+  border:1px solid var(--cream3);
+  padding:.8rem 1.2rem;
+  box-shadow:0 8px 32px rgba(10,16,28,.12);
+  font-size:.84rem; font-weight:600; color:var(--navy);
+  display:flex; align-items:center; gap:.6rem;
+  transform:translateX(120%); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  min-width:240px;
+}
+.toast.show { transform:translateX(0); }
+.toast.success { border-left:4px solid var(--green); }
+.toast.error   { border-left:4px solid var(--red); }
+.toast.info    { border-left:4px solid var(--gold); }
+
+/* ── Responsive ── */
+@media(max-width:940px){
+  .create-grid { grid-template-columns:1fr; }
+  .type-selector { grid-template-columns:repeat(4,1fr); }
+}
+@media(max-width:560px){
+  .form-row-2, .form-row-3 { grid-template-columns:1fr; }
+  .type-selector { grid-template-columns:repeat(4,1fr); }
+  .create-wrap { padding:1.5rem 1rem 4rem; }
 }
 </style>
 @endpush
 
 @section('content')
-<div class="create-header">
-    <div class="container-rentify">
-        <a href="/dashboard/owner" class="back-link">
-            <i class="fas fa-arrow-left"></i> Tableau de bord
-        </a>
+
+<div class="create-wrap">
+
+  {{-- ── PAGE HEADER ── --}}
+  <div class="page-header">
+    <div class="page-header-left">
+      <a href="/dashboard/owner" class="back-btn">← Retour</a>
+      <div>
+        <h1 class="page-title">
+          @if(isset($editMode) && $editMode)
+            Modifier la <span>Machine</span>
+          @else
+            Ajouter une <span>Machine</span>
+          @endif
+        </h1>
+        <p class="page-sub">
+          @if(isset($editMode) && $editMode)
+            Mettez à jour les informations de votre machine
+          @else
+            Publiez votre engin sur Rentify et commencez à recevoir des demandes
+          @endif
+        </p>
+      </div>
     </div>
+    {{-- Progress label --}}
+    <div id="formProgressLabel"
+         style="background:var(--gold-pale);border:1px solid rgba(212,175,55,.3);
+                border-radius:9px;padding:.5rem 1rem;font-size:.8rem;font-weight:700;
+                color:var(--gold-dk);display:flex;align-items:center;gap:.4rem;">
+      <span id="progressPct">0%</span> complété
+    </div>
+  </div>
+
+  {{-- ── STEPS BAR ── --}}
+  <div class="steps-bar">
+    <div class="step-item active" id="step1Indicator">
+      <div class="step-dot">1</div>
+      <span class="step-label">Informations</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step-item" id="step2Indicator">
+      <div class="step-dot">2</div>
+      <span class="step-label">Prix &amp; Statut</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step-item" id="step3Indicator">
+      <div class="step-dot">3</div>
+      <span class="step-label">Photos</span>
+    </div>
+    <span class="step-arrow">›</span>
+    <div class="step-item" id="step4Indicator">
+      <div class="step-dot">4</div>
+      <span class="step-label">Localisation</span>
+    </div>
+  </div>
+
+  {{-- ── MAIN GRID ── --}}
+  <div class="create-grid">
+
+    {{-- ══════════════════════ LEFT COLUMN ══════════════════════ --}}
+    <div>
+
+      {{-- SECTION 1 — INFOS GÉNÉRALES --}}
+      <div class="form-card" id="section1">
+        <div class="form-card-header">
+          <div class="form-card-icon">📋</div>
+          <h3>Informations générales</h3>
+        </div>
+        <div class="form-card-body">
+
+          <div class="form-group">
+            <label class="form-label" for="fName">Nom de la machine <span>*</span></label>
+            <input type="text" id="fName" class="form-control"
+                   placeholder="Ex: Caterpillar 320 GX — Excavatrice hydraulique"
+                   maxlength="120" oninput="updatePreview(); updateProgress(); countChars('fName','nameCounter',120)">
+            <div class="char-counter" id="nameCounter">0 / 120</div>
+            <div class="field-error" id="errName">Ce champ est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Type de machine <span>*</span></label>
+            <div class="type-selector" id="typeSelector">
+              <div class="type-opt" data-type="excavatrice" onclick="selectType(this)">
+                <span class="type-opt-icon">⛏</span>
+                <span class="type-opt-label">Excavatrice</span>
+              </div>
+              <div class="type-opt" data-type="grue" onclick="selectType(this)">
+                <span class="type-opt-icon">🏗</span>
+                <span class="type-opt-label">Grue</span>
+              </div>
+              <div class="type-opt" data-type="bulldozer" onclick="selectType(this)">
+                <span class="type-opt-icon">🚜</span>
+                <span class="type-opt-label">Bulldozer</span>
+              </div>
+              <div class="type-opt" data-type="chargeuse" onclick="selectType(this)">
+                <span class="type-opt-icon">🚛</span>
+                <span class="type-opt-label">Chargeuse</span>
+              </div>
+              <div class="type-opt" data-type="compacteur" onclick="selectType(this)">
+                <span class="type-opt-icon">🔧</span>
+                <span class="type-opt-label">Compacteur</span>
+              </div>
+              <div class="type-opt" data-type="nacelle" onclick="selectType(this)">
+                <span class="type-opt-icon">🪜</span>
+                <span class="type-opt-label">Nacelle</span>
+              </div>
+              <div class="type-opt" data-type="tractopelle" onclick="selectType(this)">
+                <span class="type-opt-icon">🚧</span>
+                <span class="type-opt-label">Tractopelle</span>
+              </div>
+              <div class="type-opt" data-type="camion" onclick="selectType(this)">
+                <span class="type-opt-icon">🚚</span>
+                <span class="type-opt-label">Camion</span>
+              </div>
+            </div>
+            <input type="hidden" id="fType">
+            <div class="field-error" id="errType">Choisissez un type.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="fDescription">Description <span>*</span></label>
+            <textarea id="fDescription" class="form-control" rows="4"
+                      placeholder="Décrivez votre machine : marque, modèle, année, capacités, état, équipements inclus…"
+                      maxlength="1500"
+                      oninput="updateProgress(); countChars('fDescription','descCounter',1500)"></textarea>
+            <div class="char-counter" id="descCounter">0 / 1500</div>
+            <div class="field-error" id="errDescription">Description requise (min 20 caractères).</div>
+          </div>
+
+        </div>
+      </div>
+
+      {{-- SECTION 2 — PRIX & STATUT --}}
+      <div class="form-card" id="section2" style="margin-top:1.25rem">
+        <div class="form-card-header">
+          <div class="form-card-icon">💰</div>
+          <h3>Prix &amp; Disponibilité</h3>
+        </div>
+        <div class="form-card-body">
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="fPriceDay">Prix / jour (MAD) <span>*</span></label>
+              <input type="number" id="fPriceDay" class="form-control"
+                     placeholder="Ex: 2500" min="0" step="50"
+                     oninput="updatePreview(); updateProgress()">
+              <div class="form-hint">Prix HT — sans frais de transport</div>
+              <div class="field-error" id="errPriceDay">Prix journalier requis.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fPriceHour">Prix / heure (MAD)</label>
+              <input type="number" id="fPriceHour" class="form-control"
+                     placeholder="Optionnel — Ex: 350" min="0" step="10"
+                     oninput="updatePreview()">
+              <div class="form-hint">Laisser vide si pas de tarif horaire</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:.25rem">
+            <label class="form-label">Statut <span>*</span></label>
+            <div class="status-toggle" id="statusToggle">
+              <button type="button" class="status-btn" data-status="available" onclick="selectStatus(this)">
+                <span class="status-btn-icon">✅</span>
+                <span class="status-btn-label">Disponible</span>
+              </button>
+              <button type="button" class="status-btn" data-status="unavailable" onclick="selectStatus(this)">
+                <span class="status-btn-icon">❌</span>
+                <span class="status-btn-label">Indisponible</span>
+              </button>
+              <button type="button" class="status-btn" data-status="maintenance" onclick="selectStatus(this)">
+                <span class="status-btn-icon">🔧</span>
+                <span class="status-btn-label">Maintenance</span>
+              </button>
+            </div>
+            <input type="hidden" id="fStatus" value="available">
+            <div class="field-error" id="errStatus">Choisissez un statut.</div>
+          </div>
+
+        </div>
+      </div>
+
+      {{-- SECTION 3 — PHOTOS --}}
+      <div class="form-card" id="section3" style="margin-top:1.25rem">
+        <div class="form-card-header">
+          <div class="form-card-icon">📸</div>
+          <h3>Photos de la machine</h3>
+        </div>
+        <div class="form-card-body">
+
+          <div class="upload-zone" id="uploadZone"
+               ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+               ondrop="handleDrop(event)">
+            <input type="file" id="fImages" accept="image/*" multiple onchange="handleFiles(this.files)">
+            <div class="upload-icon">📷</div>
+            <div class="upload-label">Glissez vos photos ici ou cliquez pour parcourir</div>
+            <div class="upload-sub">JPG, PNG, WebP — max 5 Mo par image — max 8 photos</div>
+          </div>
+
+          <div class="images-preview" id="imagesPreview"></div>
+
+          {{-- Images existantes (mode edit) --}}
+          <div id="existingImagesWrap" style="display:none;margin-top:1rem">
+            <div style="font-size:.75rem;font-weight:800;color:var(--txt-light);
+                        letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem">
+              Photos actuelles
+            </div>
+            <div class="images-preview" id="existingImagesGrid"></div>
+          </div>
+
+        </div>
+      </div>
+
+      {{-- SECTION 4 — LOCALISATION --}}
+      <div class="form-card" id="section4" style="margin-top:1.25rem">
+        <div class="form-card-header">
+          <div class="form-card-icon">📍</div>
+          <h3>Localisation</h3>
+        </div>
+        <div class="form-card-body">
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="fCity">Ville <span>*</span></label>
+              <input type="text" id="fCity" class="form-control"
+                     placeholder="Ex: Casablanca"
+                     oninput="updatePreview(); updateProgress()">
+              <div class="field-error" id="errCity">Ville requise.</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fLocation">Adresse / Zone</label>
+              <input type="text" id="fLocation" class="form-control"
+                     placeholder="Ex: Zone industrielle Ain Sebaâ">
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+            <label class="form-label" style="margin:0">Coordonnées GPS</label>
+            <button type="button" onclick="locateMe()"
+                    style="font-size:.75rem;font-weight:700;color:var(--gold-dk);
+                           background:none;border:none;cursor:pointer;padding:0">
+              📡 Ma position
+            </button>
+          </div>
+
+          <div id="mapPicker"></div>
+          <p style="font-size:.75rem;color:var(--txt-light);margin:.4rem 0 .75rem">
+            Cliquez sur la carte pour placer le marqueur, ou entrez manuellement.
+          </p>
+
+          <div class="map-coords-row">
+            <div class="form-group" style="margin:0">
+              <label class="form-label" for="fLat">Latitude</label>
+              <input type="number" id="fLat" class="form-control"
+                     placeholder="Ex: 33.5731" step="0.0001" oninput="syncMapFromInputs()">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label class="form-label" for="fLng">Longitude</label>
+              <input type="number" id="fLng" class="form-control"
+                     placeholder="Ex: -7.5898" step="0.0001" oninput="syncMapFromInputs()">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    {{-- ══════════════════════ RIGHT COLUMN ══════════════════════ --}}
+    <div>
+
+      {{-- PREVIEW CARD --}}
+      <div class="form-card" style="position:sticky;top:80px">
+        <div class="form-card-header">
+          <div class="form-card-icon" style="background:var(--gold);color:var(--navy)">👁</div>
+          <h3>Aperçu de la fiche</h3>
+        </div>
+        <div class="form-card-body" style="padding:0">
+
+          <div class="preview-card">
+            <div class="preview-card-img">
+              <img id="pvImg" src="/images/img1.png" alt="preview">
+              <span class="preview-status-badge status-available" id="pvStatus">✅ Disponible</span>
+            </div>
+            <div class="pv-body">
+              <span class="pv-type" id="pvType">Type</span>
+              <div class="pv-name" id="pvName">Nom de la machine</div>
+              <div class="pv-city" id="pvCity">📍 Ville</div>
+              <div class="pv-price" id="pvPrice">— <span>MAD/jour</span></div>
+            </div>
+          </div>
+
+          {{-- Mini viewer 3D --}}
+          <div style="padding:0 1.2rem 1.2rem">
+            <div class="viewer-wrap" id="miniViewerWrap">
+              <canvas id="miniCanvas3d"></canvas>
+              <div class="viewer-label">⬡ Vue 3D — <span id="viewerTypeName">—</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {{-- AIDE --}}
+      <div style="background:var(--gold-pale);border:1px solid rgba(212,175,55,.25);
+                  border-radius:var(--radius);padding:1.2rem;margin-top:1rem">
+        <div style="font-size:.8rem;font-weight:800;color:var(--navy);margin-bottom:.6rem">
+          💡 Conseils pour une bonne annonce
+        </div>
+        <ul style="font-size:.78rem;color:var(--txt-mid);margin:0;padding-left:1.1rem;line-height:1.8">
+          <li>Ajoutez au moins <strong>3 photos</strong> de qualité</li>
+          <li>Précisez la <strong>marque et le modèle</strong> exact</li>
+          <li>Indiquez l'<strong>année</strong> et les heures de service</li>
+          <li>Mentionnez les <strong>équipements inclus</strong></li>
+          <li>Un prix <strong>compétitif</strong> attire plus de demandes</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+  {{-- ── SUBMIT CARD ── --}}
+  <div class="submit-card">
+    <div class="submit-note">
+      <strong>Prêt à publier ?</strong>
+      Vérifiez que toutes les informations sont correctes avant de soumettre.
+      Votre machine sera visible sur le catalogue dès validation.
+    </div>
+    <div class="submit-btns">
+      <a href="/dashboard/owner" class="btn-outline">✕ Annuler</a>
+      <button type="button" class="btn-navy" id="submitBtn" onclick="submitForm()">
+        <span id="submitBtnText">
+          @if(isset($editMode) && $editMode)
+            💾 Sauvegarder les modifications
+          @else
+            🚀 Publier la machine
+          @endif
+        </span>
+      </button>
+    </div>
+  </div>
+
 </div>
 
-<div class="create-body">
+<div class="toast-ctr" id="toastCtr"></div>
 
-    {{-- Progress steps --}}
-    <div class="pub-steps" id="pub-steps">
-        <div class="pub-step" onclick="goStep(1)">
-            <div class="ps-circle active" id="circle-1">1</div>
-            <div><div class="ps-label">Informations</div><div class="ps-sublabel">Type, marque, modèle</div></div>
-        </div>
-        <div class="pub-step" onclick="goStep(2)">
-            <div class="ps-circle todo" id="circle-2">2</div>
-            <div><div class="ps-label">Tarification</div><div class="ps-sublabel">Prix & localisation</div></div>
-        </div>
-        <div class="pub-step" onclick="goStep(3)">
-            <div class="ps-circle todo" id="circle-3">3</div>
-            <div><div class="ps-label">Photos</div><div class="ps-sublabel">Galerie de l'engin</div></div>
-        </div>
-        <div class="pub-step" onclick="goStep(4)">
-            <div class="ps-circle todo" id="circle-4">4</div>
-            <div><div class="ps-label">Aperçu</div><div class="ps-sublabel">Vérifier & publier</div></div>
-        </div>
-    </div>
-
-    {{-- STEP 1 — Informations générales --}}
-    <div class="pub-section active" id="step-1">
-        <div class="pub-section-title">Informations générales</div>
-        <div class="pub-section-sub">Décrivez votre engin pour aider les clients à le trouver facilement</div>
-
-        <div class="fields-grid" style="margin-bottom:16px">
-            <div class="field-group">
-                <label class="field-label">Catégorie <span class="field-required">*</span></label>
-                <select class="field-select" id="f-type">
-                    <option value="">Sélectionner...</option>
-                    @foreach(['Excavatrice','Camion','Grue','Manitou','Compacteur','Bulldozer','Niveleuse','Chargeuse','Autre'] as $t)
-                    <option>{{ $t }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="field-group">
-                <label class="field-label">Marque <span class="field-required">*</span></label>
-                <input type="text" class="field-input" id="f-marque" placeholder="JCB, Caterpillar, Volvo...">
-            </div>
-        </div>
-
-        <div class="fields-grid-3" style="margin-bottom:16px">
-            <div class="field-group">
-                <label class="field-label">Modèle <span class="field-required">*</span></label>
-                <input type="text" class="field-input" id="f-modele" placeholder="Ex: 3CX, 320D...">
-            </div>
-            <div class="field-group">
-                <label class="field-label">Année de fabrication</label>
-                <input type="number" class="field-input" id="f-annee" placeholder="2020" min="1990" max="2025">
-            </div>
-            <div class="field-group">
-                <label class="field-label">Puissance</label>
-                <input type="text" class="field-input" id="f-puissance" placeholder="92 ch, 8 tonnes...">
-            </div>
-        </div>
-
-        <div class="field-group" style="margin-bottom:16px">
-            <label class="field-label">Nom de l'annonce <span class="field-required">*</span></label>
-            <input type="text" class="field-input" id="f-name"
-                   placeholder="Ex: JCB 3CX Backhoe Loader 2022 — disponible immédiatement"
-                   oninput="autoFillName()">
-            <div class="field-hint">Sera affiché comme titre principal de votre annonce</div>
-        </div>
-
-        <div class="field-group" style="margin-bottom:16px">
-            <label class="field-label">Description détaillée <span class="field-required">*</span></label>
-            <textarea class="field-textarea" id="f-desc" rows="4"
-                placeholder="Décrivez l'état de la machine, ses caractéristiques, conditions d'utilisation, opérateur inclus ou non..."></textarea>
-        </div>
-
-        <div class="field-group">
-            <label class="field-label" style="margin-bottom:10px">Équipements inclus</label>
-            <div class="equip-grid" id="equip-grid">
-                @foreach(['GPS intégré','Climatisation cabine','Godet standard','Godet curage','Certifié CE','Manuel FR','Opérateur inclus','Carburant inclus','Livraison possible','Assurance incluse','Entretien récent','Télécommande'] as $eq)
-                <label class="equip-check" onclick="toggleEquip(this)">
-                    <input type="checkbox" value="{{ $eq }}" style="display:none"> {{ $eq }}
-                </label>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    {{-- STEP 2 — Tarification --}}
-    <div class="pub-section" id="step-2">
-        <div class="pub-section-title">Tarification & Localisation</div>
-        <div class="pub-section-sub">Définissez vos tarifs et indiquez où se trouve votre engin</div>
-
-        <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:var(--radius-md);padding:12px 16px;margin-bottom:20px;font-size:13px;color:#92400E;display:flex;gap:10px;align-items:center">
-            <i class="fas fa-lightbulb" style="color:var(--orange)"></i>
-            Indiquez au moins un tarif (heure ou journée). Les clients pourront choisir le mode de location.
-        </div>
-
-        <div class="price-fields">
-            <div class="field-group">
-                <label class="field-label">Prix à la journée <span class="field-required">*</span></label>
-                <div class="price-input-wrap">
-                    <input type="number" class="field-input" id="f-prix-jour" placeholder="2400" min="0" oninput="updatePreview()">
-                    <div class="price-suffix">DH/jour</div>
-                </div>
-            </div>
-            <div class="field-group">
-                <label class="field-label">Prix à l'heure</label>
-                <div class="price-input-wrap">
-                    <input type="number" class="field-input" id="f-prix-heure" placeholder="350" min="0" oninput="updatePreview()">
-                    <div class="price-suffix">DH/h</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="fields-grid" style="margin-bottom:16px">
-            <div class="field-group">
-                <label class="field-label">Ville / Wilaya <span class="field-required">*</span></label>
-                <select class="field-select" id="f-ville">
-                    <option value="">Sélectionner une ville</option>
-                    @foreach(['Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir','Meknès','Oujda','Kenitra','Tétouan','Safi','El Jadida','Nador','Beni Mellal','Khouribga'] as $v)
-                    <option>{{ $v }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="field-group">
-                <label class="field-label">Adresse approximative</label>
-                <input type="text" class="field-input" id="f-adresse" placeholder="Quartier, zone industrielle...">
-            </div>
-        </div>
-
-        <div class="fields-grid">
-            <div class="field-group">
-                <label class="field-label">Carburant</label>
-                <select class="field-select" id="f-carburant">
-                    <option value="">Sélectionner</option>
-                    <option>Diesel</option>
-                    <option>Essence</option>
-                    <option>Électrique</option>
-                    <option>Hybride</option>
-                </select>
-            </div>
-            <div class="field-group">
-                <label class="field-label">Conditions de location</label>
-                <select class="field-select" id="f-conditions">
-                    <option value="jour">À la journée uniquement</option>
-                    <option value="heure">À l'heure uniquement</option>
-                    <option value="both" selected>Heure et journée</option>
-                    <option value="semaine">À la semaine</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    {{-- STEP 3 — Photos --}}
-    <div class="pub-section" id="step-3">
-        <div class="pub-section-title">Photos de l'engin</div>
-        <div class="pub-section-sub">Ajoutez jusqu'à 8 photos. La première sera la photo principale de votre annonce.</div>
-
-        <div class="upload-zone" id="upload-zone"
-             onclick="document.getElementById('file-input').click()"
-             ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-            <div class="upload-icon">📸</div>
-            <div class="upload-title">Glissez-déposez vos photos ici</div>
-            <div class="upload-sub">JPG, PNG, WebP — Max 5 Mo par photo</div>
-            <div class="upload-btn-fake">Choisir des fichiers</div>
-        </div>
-        <input type="file" id="file-input" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
-
-        <div class="preview-grid" id="preview-grid" style="display:none"></div>
-
-        <div style="margin-top:14px;padding:12px 14px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--radius-md);font-size:12px;color:#065F46;display:flex;align-items:center;gap:8px">
-            <i class="fas fa-info-circle"></i>
-            Les annonces avec photos reçoivent <strong>3× plus</strong> de demandes. Ajoutez au moins 3 photos de qualité.
-        </div>
-    </div>
-
-    {{-- STEP 4 — Aperçu --}}
-    <div class="pub-section" id="step-4">
-        <div class="pub-section-title">Aperçu de votre annonce</div>
-        <div class="pub-section-sub">Vérifiez que tout est correct avant de publier</div>
-
-        <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:20px">
-            <div class="preview-card" id="preview-card">
-                <div class="preview-card-img" id="pc-img">🏗</div>
-                <div class="preview-card-body">
-                    <div class="preview-card-badge" id="pc-badge">—</div>
-                    <div class="preview-card-name" id="pc-name">—</div>
-                    <div style="font-size:12px;color:var(--text-light);margin-bottom:10px;display:flex;align-items:center;gap:4px">
-                        <i class="fas fa-map-marker-alt" style="color:var(--orange);font-size:10px"></i>
-                        <span id="pc-loc">—</span>
-                    </div>
-                    <div class="preview-card-price" id="pc-price">— <small>dh/jour</small></div>
-                </div>
-            </div>
-
-            <div>
-                <div style="background:#F9FAFB;border:1px solid #F0F0F0;border-radius:var(--radius-lg);padding:16px;font-size:13px">
-                    <div style="font-size:11px;font-weight:800;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Récapitulatif</div>
-                    <div id="summary-rows" style="display:flex;flex-direction:column;gap:8px"></div>
-                </div>
-
-                <div style="margin-top:14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:var(--radius-lg);padding:14px 16px;font-size:13px;color:#92400E">
-                    <div style="font-weight:800;margin-bottom:4px"><i class="fas fa-shield-alt"></i> Modération</div>
-                    <div style="color:var(--text-gray)">Votre annonce sera vérifiée par notre équipe avant d'être publiée. Ce processus prend généralement <strong>moins de 24h</strong>.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Success state --}}
-    <div id="success-state" style="display:none">
-        <div class="success-state">
-            <div class="success-icon">🎉</div>
-            <div class="success-title">Annonce soumise avec succès !</div>
-            <div class="success-sub">Votre annonce est en cours de validation par notre équipe.<br>Vous recevrez une notification dès qu'elle sera publiée.</div>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-                <a href="/dashboard/owner" class="btn-dark">
-                    <i class="fas fa-th-large"></i> Mon tableau de bord
-                </a>
-                <a href="/machines/create" class="btn-orange">
-                    <i class="fas fa-plus"></i> Publier un autre engin
-                </a>
-            </div>
-        </div>
-    </div>
-
-    {{-- Navigation --}}
-    <div class="pub-nav" id="pub-nav">
-        <button class="btn-prev" id="btn-prev" onclick="prevStep()" style="visibility:hidden">
-            <i class="fas fa-arrow-left"></i> Précédent
-        </button>
-        <div style="font-size:12px;color:var(--text-light)"><span id="step-indicator">Étape 1</span> sur 4</div>
-        <button class="btn-next" id="btn-next" onclick="nextStep()">
-            Suivant <i class="fas fa-arrow-right"></i>
-        </button>
-    </div>
-
-</div>
 @endsection
 
 @push('scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-if (!getToken()) window.location.href = '/login';
+/* ════════════════════════════════════════════════
+   MACHINES CREATE / EDIT — RENTIFY V6
+   Full form: validation, preview, 3D, map, upload
+════════════════════════════════════════════════ */
 
-let currentStep = 1;
-const totalSteps = 4;
-let uploadedFiles = [];
-const emojis = { Excavatrice:'🏗', Camion:'🚛', Grue:'🏙', Manitou:'🔧', Compacteur:'⚙️', Bulldozer:'🚧', Niveleuse:'🚜', Autre:'⚙️' };
+/* ══ CONFIG ══ */
+const EDIT_MODE = {{ isset($editMode) && $editMode ? 'true' : 'false' }};
+const MACHINE_ID = {{ isset($id) ? $id : 'null' }};
 
-/* ── Step navigation ── */
-function goStep(n) {
-    if (n > currentStep) { if (!validateStep(currentStep)) return; }
-    [1,2,3,4].forEach(i => {
-        document.getElementById(`step-${i}`)?.classList.toggle('active', i === n);
-        const c = document.getElementById(`circle-${i}`);
-        if (i < n)      c.className = 'ps-circle done', c.innerHTML = '<i class="fas fa-check" style="font-size:10px"></i>';
-        else if (i===n) c.className = 'ps-circle active', c.textContent = i;
-        else            c.className = 'ps-circle todo', c.textContent = i;
-    });
-    currentStep = n;
-    document.getElementById('step-indicator').textContent = 'Étape ' + n;
-    document.getElementById('btn-prev').style.visibility = n === 1 ? 'hidden' : 'visible';
-    const btnNext = document.getElementById('btn-next');
-    if (n === 4) {
-        btnNext.className = 'btn-publish';
-        btnNext.innerHTML = '<i class="fas fa-paper-plane"></i> Publier l\'annonce';
-        btnNext.onclick = publishMachine;
-        buildPreview();
-    } else {
-        btnNext.className = 'btn-next';
-        btnNext.innerHTML = 'Suivant <i class="fas fa-arrow-right"></i>';
-        btnNext.onclick = nextStep;
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+const TYPE_PHOTO = {
+  excavatrice:'/images/img3.png', grue:'/images/img4.png',
+  bulldozer:'/images/img1.png',   chargeuse:'/images/img2.png',
+  compacteur:'/images/img8.png',  nacelle:'/images/img5.png',
+  tractopelle:'/images/img7.png', camion:'/images/img9.png',
+};
 
-function nextStep() { if (validateStep(currentStep)) goStep(currentStep + 1); }
-function prevStep() { if (currentStep > 1) goStep(currentStep - 1); }
+const TYPE_COLORS = {
+  excavatrice: 0xD4AF37, grue: 0x2563EB, bulldozer: 0xF59E0B,
+  chargeuse: 0x16A34A, compacteur: 0x7C3AED, nacelle: 0xEF4444,
+  tractopelle: 0x0891B2, camion: 0xEA580C,
+};
 
-/* ── Validation ── */
-function validateStep(n) {
-    if (n === 1) {
-        const type  = document.getElementById('f-type').value;
-        const marque= document.getElementById('f-marque').value.trim();
-        const modele= document.getElementById('f-modele').value.trim();
-        const name  = document.getElementById('f-name').value.trim();
-        const desc  = document.getElementById('f-desc').value.trim();
-        if (!type)   { showFlash('Veuillez sélectionner une catégorie', 'warning'); return false; }
-        if (!marque) { showFlash('Veuillez entrer la marque', 'warning'); return false; }
-        if (!modele) { showFlash('Veuillez entrer le modèle', 'warning'); return false; }
-        if (!name)   { showFlash('Veuillez entrer un nom pour l\'annonce', 'warning'); return false; }
-        if (!desc)   { showFlash('Veuillez écrire une description', 'warning'); return false; }
-    }
-    if (n === 2) {
-        const prix = document.getElementById('f-prix-jour').value;
-        const ville= document.getElementById('f-ville').value;
-        if (!prix || prix <= 0) { showFlash('Veuillez entrer un prix journalier', 'warning'); return false; }
-        if (!ville)             { showFlash('Veuillez sélectionner une ville', 'warning'); return false; }
-    }
-    return true;
-}
+/* ══ STATE ══ */
+let currentType   = '';
+let currentStatus = 'available';
+let newImageFiles = [];
+let deletedImageIds = [];
+let mapInstance   = null;
+let mapMarker     = null;
 
-/* ── Auto-fill name ── */
-function autoFillName() { /* manual input */ }
-document.addEventListener('DOMContentLoaded', () => {
-    ['f-type','f-marque','f-modele','f-annee'].forEach(id => {
-        document.getElementById(id)?.addEventListener('change', () => {
-            const t = document.getElementById('f-type').value;
-            const m = document.getElementById('f-marque').value;
-            const mo= document.getElementById('f-modele').value;
-            const a = document.getElementById('f-annee').value;
-            const nameField = document.getElementById('f-name');
-            if (!nameField.value && t && m && mo) {
-                nameField.value = `${m} ${mo}${a?' — '+a:''}`;
-            }
-        });
-    });
+// Three.js
+let renderer3d, scene3d, camera3d, mesh3d, animId3d;
+let isDragging3d = false, prevMouse3d = {x:0,y:0};
+
+/* ══ INIT ══ */
+document.addEventListener('DOMContentLoaded', async () => {
+  // Auth check
+  const user = window.getUser ? window.getUser() : JSON.parse(localStorage.getItem('auth_user')||'null');
+  if (!user || user.role !== 'owner') {
+    window.location.href = '/login'; return;
+  }
+
+  initMap();
+  initMiniViewer();
+
+  // Default status = available
+  selectStatus(document.querySelector('.status-btn[data-status="available"]'));
+
+  if (EDIT_MODE && MACHINE_ID) {
+    await loadMachineData();
+  }
+
+  updateProgress();
+  observeSections();
 });
 
-/* ── Equipements ── */
-function toggleEquip(el) {
-    el.classList.toggle('checked');
-    el.querySelector('input').checked = el.classList.contains('checked');
+/* ══ LOAD DATA (EDIT MODE) ══ */
+async function loadMachineData() {
+  try {
+    const data = await window.API.get(`/api/machines/${MACHINE_ID}`);
+    const m = data.machine || data;
+
+    document.getElementById('fName').value        = m.name || '';
+    document.getElementById('fDescription').value = m.description || '';
+    document.getElementById('fPriceDay').value     = m.price_per_day || '';
+    document.getElementById('fPriceHour').value    = m.price_per_hour || '';
+    document.getElementById('fCity').value         = m.city || '';
+    document.getElementById('fLocation').value     = m.location || '';
+    document.getElementById('fLat').value          = m.latitude || '';
+    document.getElementById('fLng').value          = m.longitude || '';
+
+    // type
+    const typeEl = document.querySelector(`.type-opt[data-type="${m.type?.toLowerCase()}"]`);
+    if (typeEl) selectType(typeEl);
+
+    // status
+    const statusEl = document.querySelector(`.status-btn[data-status="${m.status}"]`);
+    if (statusEl) selectStatus(statusEl);
+
+    // existing images
+    if (m.images?.length) {
+      const wrap = document.getElementById('existingImagesWrap');
+      const grid = document.getElementById('existingImagesGrid');
+      wrap.style.display = 'block';
+      grid.innerHTML = m.images.map((img, i) => `
+        <div class="preview-item" id="eimg-${img.id}">
+          <img src="/storage/${img.path}" alt="photo ${i+1}">
+          ${i===0 ? '<div class="preview-main-badge">Principal</div>' : ''}
+          <button class="preview-remove" onclick="deleteExistingImage(${img.id})" title="Supprimer">✕</button>
+        </div>
+      `).join('');
+
+      // Set first image as preview
+      document.getElementById('pvImg').src = `/storage/${m.images[0].path}`;
+    }
+
+    // sync map
+    if (m.latitude && m.longitude) {
+      syncMapToCoords(parseFloat(m.latitude), parseFloat(m.longitude));
+    }
+
+    countChars('fName', 'nameCounter', 120);
+    countChars('fDescription', 'descCounter', 1500);
+    updatePreview();
+    updateProgress();
+  } catch(e) {
+    console.error('loadMachineData', e);
+    showToast('error', '❌ Erreur lors du chargement des données');
+  }
 }
 
-/* ── Photo upload ── */
-function handleFiles(files) {
-    Array.from(files).forEach(f => {
-        if (uploadedFiles.length >= 8) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-            uploadedFiles.push({ name: f.name, url: e.target.result });
-            renderPreviews();
-        };
-        reader.readAsDataURL(f);
+/* ══ TYPE SELECTOR ══ */
+function selectType(el) {
+  document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  currentType = el.dataset.type;
+  document.getElementById('fType').value = currentType;
+  updatePreview();
+  update3dMesh();
+  updateProgress();
+  updateStepIndicator();
+}
+
+/* ══ STATUS TOGGLE ══ */
+function selectStatus(el) {
+  document.querySelectorAll('.status-btn').forEach(b => {
+    b.className = 'status-btn';
+  });
+  const s = el.dataset.status;
+  currentStatus = s;
+  el.classList.add(`active-${s}`);
+  document.getElementById('fStatus').value = s;
+
+  const statusMap = {
+    available:   '<span class="preview-status-badge status-available">✅ Disponible</span>',
+    unavailable: '<span class="preview-status-badge status-unavailable">❌ Indisponible</span>',
+    maintenance: '<span class="preview-status-badge status-maintenance">🔧 Maintenance</span>',
+  };
+  document.getElementById('pvStatus').outerHTML; // placeholder
+  const pvBadge = document.getElementById('pvStatus');
+  if (pvBadge) {
+    pvBadge.className = `preview-status-badge status-${s}`;
+    const labels = {available:'✅ Disponible', unavailable:'❌ Indisponible', maintenance:'🔧 Maintenance'};
+    pvBadge.textContent = labels[s];
+  }
+}
+
+/* ══ PREVIEW UPDATE ══ */
+function updatePreview() {
+  const name    = document.getElementById('fName').value || 'Nom de la machine';
+  const city    = document.getElementById('fCity').value || 'Ville';
+  const price   = document.getElementById('fPriceDay').value;
+  const typeKey = currentType;
+
+  document.getElementById('pvName').textContent  = name;
+  document.getElementById('pvCity').textContent  = '📍 ' + city;
+  document.getElementById('pvType').textContent  = typeKey || 'Type';
+  document.getElementById('pvPrice').innerHTML   =
+    price ? `${parseFloat(price).toLocaleString('fr-MA')} <span>MAD/jour</span>` : `— <span>MAD/jour</span>`;
+
+  if (typeKey && !newImageFiles.length) {
+    document.getElementById('pvImg').src = TYPE_PHOTO[typeKey] || '/images/img1.png';
+  }
+  if (newImageFiles.length) {
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById('pvImg').src = e.target.result;
+    reader.readAsDataURL(newImageFiles[0]);
+  }
+}
+
+/* ══ CHAR COUNTER ══ */
+function countChars(inputId, counterId, max) {
+  const len = document.getElementById(inputId).value.length;
+  const el  = document.getElementById(counterId);
+  el.textContent = `${len} / ${max}`;
+  el.classList.toggle('warn', len > max * 0.85);
+}
+
+/* ══ PROGRESS ══ */
+function updateProgress() {
+  const fields = [
+    !!document.getElementById('fName').value.trim(),
+    !!currentType,
+    !!document.getElementById('fDescription').value.trim(),
+    !!document.getElementById('fPriceDay').value,
+    !!currentStatus,
+    !!document.getElementById('fCity').value.trim(),
+  ];
+  const pct = Math.round(fields.filter(Boolean).length / fields.length * 100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  updateStepIndicator();
+}
+
+function updateStepIndicator() {
+  const s1 = !!(document.getElementById('fName').value && currentType && document.getElementById('fDescription').value);
+  const s2 = !!(document.getElementById('fPriceDay').value && currentStatus);
+  const s3 = newImageFiles.length > 0;
+  const s4 = !!(document.getElementById('fCity').value);
+
+  setStep(1, s1);
+  setStep(2, s2);
+  setStep(3, s3);
+  setStep(4, s4);
+}
+
+function setStep(n, done) {
+  const el = document.getElementById(`step${n}Indicator`);
+  if (!el) return;
+  el.classList.toggle('done', done);
+}
+
+/* ══ SECTION OBSERVER ══ */
+function observeSections() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const n = e.target.id.replace('section','');
+        document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active'));
+        const si = document.getElementById(`step${n}Indicator`);
+        if (si) si.classList.add('active');
+      }
     });
+  }, { threshold:0.4 });
+  [1,2,3,4].forEach(n => {
+    const el = document.getElementById(`section${n}`);
+    if (el) obs.observe(el);
+  });
+}
+
+/* ══ IMAGE UPLOAD ══ */
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function handleDragLeave() {
+  document.getElementById('uploadZone').classList.remove('drag-over');
 }
 function handleDrop(e) {
-    e.preventDefault();
-    document.getElementById('upload-zone').classList.remove('dragging');
-    handleFiles(e.dataTransfer.files);
-}
-function handleDragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('dragging'); }
-function handleDragLeave()  { document.getElementById('upload-zone').classList.remove('dragging'); }
-
-function renderPreviews() {
-    const grid = document.getElementById('preview-grid');
-    grid.style.display = uploadedFiles.length ? 'grid' : 'none';
-    grid.innerHTML = uploadedFiles.map((f, i) => `
-        <div class="preview-img ${i===0?'primary-img':''}">
-            <img src="${f.url}" style="width:100%;height:100%;object-fit:cover">
-            ${i===0 ? '<div class="primary-badge">PRINCIPALE</div>' : ''}
-            <div class="preview-del" onclick="removePhoto(${i})">×</div>
-        </div>`).join('');
-}
-function removePhoto(i) {
-    uploadedFiles.splice(i, 1);
-    renderPreviews();
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  handleFiles(e.dataTransfer.files);
 }
 
-/* ── Build preview ── */
-function buildPreview() {
-    const type   = document.getElementById('f-type').value;
-    const name   = document.getElementById('f-name').value;
-    const ville  = document.getElementById('f-ville').value;
-    const prix   = document.getElementById('f-prix-jour').value;
-    const marque = document.getElementById('f-marque').value;
-    const modele = document.getElementById('f-modele').value;
-    const annee  = document.getElementById('f-annee').value;
-    const prixH  = document.getElementById('f-prix-heure').value;
-    const desc   = document.getElementById('f-desc').value;
+function handleFiles(files) {
+  const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
+  const remaining = 8 - newImageFiles.length;
+  if (!remaining) { showToast('info', 'ℹ️ Maximum 8 photos atteint'); return; }
 
-    const emoji = emojis[type] || '⚙️';
-    document.getElementById('pc-img').textContent = emoji;
-    document.getElementById('pc-badge').textContent = type || '—';
-    document.getElementById('pc-name').textContent = name || '—';
-    document.getElementById('pc-loc').textContent  = ville || '—';
-    document.getElementById('pc-price').innerHTML  = prix
-        ? `${parseInt(prix).toLocaleString('fr')} <small>dh/jour</small>` : '— <small>dh/jour</small>';
+  arr.slice(0, remaining).forEach(file => {
+    if (file.size > 5*1024*1024) {
+      showToast('error', `❌ ${file.name} dépasse 5 Mo`); return;
+    }
+    newImageFiles.push(file);
+    addPreviewItem(file, newImageFiles.length - 1);
+    updateProgress();
+    updateStepIndicator();
+  });
 
-    const rows = [
-        ['Catégorie', type || '—'],
-        ['Marque / Modèle', `${marque} ${modele}`.trim() || '—'],
-        ['Année', annee || '—'],
-        ['Ville', ville || '—'],
-        ['Prix journalier', prix ? parseInt(prix).toLocaleString('fr') + ' DH' : '—'],
-        ['Prix horaire', prixH ? parseInt(prixH).toLocaleString('fr') + ' DH' : '—'],
-        ['Photos', uploadedFiles.length + ' photo(s) ajoutée(s)'],
-    ];
-    document.getElementById('summary-rows').innerHTML = rows.map(([l,v]) => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #F5F5F5">
-            <span style="color:var(--text-gray)">${l}</span>
-            <span style="font-weight:700;color:var(--navy)">${v}</span>
-        </div>`).join('');
+  if (newImageFiles.length === 1) {
+    updatePreview(); // update main image preview
+  }
 }
 
-function updatePreview() {
-    if (currentStep === 4) buildPreview();
+function addPreviewItem(file, idx) {
+  const grid  = document.getElementById('imagesPreview');
+  const item  = document.createElement('div');
+  item.className = 'preview-item';
+  item.id = `nimg-${idx}`;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    item.innerHTML = `
+      <img src="${e.target.result}" alt="">
+      ${idx===0 && !EDIT_MODE ? '<div class="preview-main-badge">Principal</div>' : ''}
+      <button class="preview-remove" onclick="removeNewImage(${idx})" title="Supprimer">✕</button>
+    `;
+    if (idx===0) document.getElementById('pvImg').src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  grid.appendChild(item);
 }
 
-/* ── Publish ── */
-async function publishMachine() {
-    if (!validateStep(1) || !validateStep(2)) return;
-
-    const btn = document.getElementById('btn-next');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publication en cours...';
-
-    try {
-        const equipements = Array.from(document.querySelectorAll('#equip-grid .equip-check.checked'))
-            .map(el => el.querySelector('input').value);
-
-        const payload = {
-            name:           document.getElementById('f-name').value,
-            type:           document.getElementById('f-type').value,
-            marque:         document.getElementById('f-marque').value,
-            modele:         document.getElementById('f-modele').value,
-            annee:          document.getElementById('f-annee').value || null,
-            puissance:      document.getElementById('f-puissance').value || null,
-            description:    document.getElementById('f-desc').value,
-            price_per_day:  parseFloat(document.getElementById('f-prix-jour').value),
-            price_per_hour: parseFloat(document.getElementById('f-prix-heure').value) || 0,
-            location:       document.getElementById('f-ville').value,
-            adresse_approx: document.getElementById('f-adresse').value || null,
-        };
-
-        await API.post('/api/machines', payload);
-    } catch(e) { /* demo mode — proceed anyway */ }
-
-    // Show success
-    [1,2,3,4].forEach(i => document.getElementById(`step-${i}`)?.classList.remove('active'));
-    document.getElementById('success-state').style.display = 'block';
-    document.getElementById('pub-nav').style.display = 'none';
-    document.getElementById('pub-steps').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    showFlash('Annonce publiée avec succès ! En attente de validation 🎉', 'success');
+function removeNewImage(idx) {
+  newImageFiles.splice(idx, 1);
+  const el = document.getElementById(`nimg-${idx}`);
+  if (el) el.remove();
+  // Re-index remaining
+  const grid = document.getElementById('imagesPreview');
+  [...grid.children].forEach((c, i) => {
+    c.id = `nimg-${i}`;
+    const rmBtn = c.querySelector('.preview-remove');
+    if (rmBtn) rmBtn.setAttribute('onclick', `removeNewImage(${i})`);
+  });
+  updateProgress();
+  updateStepIndicator();
 }
+
+function deleteExistingImage(imageId) {
+  deletedImageIds.push(imageId);
+  const el = document.getElementById(`eimg-${imageId}`);
+  if (el) {
+    el.style.opacity = '.3';
+    el.style.pointerEvents = 'none';
+  }
+  showToast('info', '🗑 Photo marquée pour suppression');
+}
+
+/* ══ MAP ══ */
+function initMap() {
+  mapInstance = L.map('mapPicker').setView([33.5731, -7.5898], 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© OpenStreetMap'
+  }).addTo(mapInstance);
+
+  mapInstance.on('click', e => {
+    const { lat, lng } = e.latlng;
+    placeMapMarker(lat, lng);
+    document.getElementById('fLat').value = lat.toFixed(6);
+    document.getElementById('fLng').value = lng.toFixed(6);
+  });
+}
+
+function placeMapMarker(lat, lng) {
+  if (mapMarker) mapMarker.remove();
+  mapMarker = L.marker([lat, lng], {
+    icon: L.divIcon({
+      className: '',
+      html: '<div style="background:var(--gold,#D4AF37);width:16px;height:16px;border-radius:50%;border:3px solid #0F1B2D;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
+      iconAnchor: [8, 8],
+    })
+  }).addTo(mapInstance);
+}
+
+function syncMapFromInputs() {
+  const lat = parseFloat(document.getElementById('fLat').value);
+  const lng = parseFloat(document.getElementById('fLng').value);
+  if (!isNaN(lat) && !isNaN(lng)) syncMapToCoords(lat, lng);
+}
+
+function syncMapToCoords(lat, lng) {
+  mapInstance.setView([lat, lng], 12);
+  placeMapMarker(lat, lng);
+}
+
+function locateMe() {
+  if (!navigator.geolocation) {
+    showToast('error', '❌ Géolocalisation non supportée'); return;
+  }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    document.getElementById('fLat').value = latitude.toFixed(6);
+    document.getElementById('fLng').value = longitude.toFixed(6);
+    syncMapToCoords(latitude, longitude);
+    showToast('success', '📡 Position détectée !');
+  }, () => {
+    showToast('error', '❌ Impossible d'accéder à votre position');
+  });
+}
+
+/* ══ MINI 3D VIEWER ══ */
+function initMiniViewer() {
+  const canvas = document.getElementById('miniCanvas3d');
+  const wrap   = document.getElementById('miniViewerWrap');
+
+  renderer3d = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer3d.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer3d.setSize(wrap.clientWidth || 320, 200);
+  renderer3d.setClearColor(0x0F1B2D, 1);
+
+  scene3d  = new THREE.Scene();
+  camera3d = new THREE.PerspectiveCamera(55, (wrap.clientWidth||320)/200, 0.1, 100);
+  camera3d.position.set(0, 1.2, 3.5);
+
+  const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+  const dirLight = new THREE.DirectionalLight(0xD4AF37, 1.2);
+  dirLight.position.set(3, 4, 3);
+  scene3d.add(ambLight, dirLight);
+
+  // Default mesh
+  buildMesh3d('bulldozer');
+
+  // Orbit manuel
+  canvas.addEventListener('mousedown', e => {
+    isDragging3d = true; prevMouse3d = {x:e.clientX, y:e.clientY};
+  });
+  window.addEventListener('mouseup', () => isDragging3d = false);
+  window.addEventListener('mousemove', e => {
+    if (!isDragging3d || !mesh3d) return;
+    const dx = e.clientX - prevMouse3d.x;
+    const dy = e.clientY - prevMouse3d.y;
+    mesh3d.rotation.y += dx * 0.012;
+    mesh3d.rotation.x += dy * 0.008;
+    prevMouse3d = {x:e.clientX, y:e.clientY};
+  });
+
+  function animate3d() {
+    animId3d = requestAnimationFrame(animate3d);
+    if (mesh3d && !isDragging3d) mesh3d.rotation.y += 0.008;
+    renderer3d.render(scene3d, camera3d);
+  }
+  animate3d();
+}
+
+function buildMesh3d(type) {
+  if (mesh3d) { scene3d.remove(mesh3d); mesh3d.geometry?.dispose(); mesh3d.material?.dispose(); }
+
+  const color = TYPE_COLORS[type] || 0xD4AF37;
+  const mat   = new THREE.MeshStandardMaterial({ color, roughness:.4, metalness:.6 });
+  let geo;
+
+  switch(type) {
+    case 'excavatrice':
+    case 'tractopelle':
+      geo = new THREE.BoxGeometry(1.8, 0.8, 1.1); break;
+    case 'grue':
+      geo = new THREE.CylinderGeometry(0.2, 0.2, 3, 8); break;
+    case 'bulldozer':
+    case 'chargeuse':
+      geo = new THREE.BoxGeometry(2, 1, 1.3); break;
+    case 'compacteur':
+      geo = new THREE.CylinderGeometry(0.7, 0.7, 1.4, 12); break;
+    case 'nacelle':
+      geo = new THREE.BoxGeometry(0.9, 2.5, 0.9); break;
+    case 'camion':
+      geo = new THREE.BoxGeometry(2.4, 1, 1.2); break;
+    default:
+      geo = new THREE.BoxGeometry(1.5, 1, 1);
+  }
+
+  mesh3d = new THREE.Mesh(geo, mat);
+  mesh3d.castShadow = true;
+  scene3d.add(mesh3d);
+
+  // Grid floor
+  const grid = new THREE.GridHelper(6, 10, 0x1a2a3a, 0x1a2a3a);
+  grid.position.y = -0.9;
+  grid.name = 'grid';
+  scene3d.children.filter(c => c.name==='grid').forEach(c => scene3d.remove(c));
+  scene3d.add(grid);
+}
+
+function update3dMesh() {
+  if (!scene3d) return;
+  buildMesh3d(currentType || 'bulldozer');
+  document.getElementById('viewerTypeName').textContent =
+    currentType.charAt(0).toUpperCase() + currentType.slice(1) || '—';
+}
+
+/* ══ VALIDATION ══ */
+function validateForm() {
+  let ok = true;
+
+  const checks = [
+    { id:'fName',        errId:'errName',        test: v => v.trim().length >= 3, msg:'Nom requis (min 3 caractères).' },
+    { id:'fType',        errId:'errType',         test: v => !!v,                  msg:'Choisissez un type.' },
+    { id:'fDescription', errId:'errDescription',  test: v => v.trim().length >= 20, msg:'Description trop courte (min 20 caractères).' },
+    { id:'fPriceDay',    errId:'errPriceDay',      test: v => parseFloat(v) > 0,    msg:'Prix journalier requis.' },
+    { id:'fCity',        errId:'errCity',          test: v => v.trim().length >= 2, msg:'Ville requise.' },
+  ];
+
+  checks.forEach(c => {
+    const val = document.getElementById(c.id)?.value || '';
+    const errEl = document.getElementById(c.errId);
+    const ctrl  = document.getElementById(c.id);
+    if (!c.test(val)) {
+      ok = false;
+      if (errEl) { errEl.textContent = c.msg; errEl.classList.add('show'); }
+      if (ctrl)  ctrl.classList.add('error');
+    } else {
+      if (errEl) errEl.classList.remove('show');
+      if (ctrl)  ctrl.classList.remove('error');
+    }
+  });
+
+  return ok;
+}
+
+/* ══ SUBMIT ══ */
+async function submitForm() {
+  if (!validateForm()) {
+    showToast('error', '⚠️ Veuillez corriger les erreurs');
+    // scroll to first error
+    const first = document.querySelector('.form-control.error');
+    if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+
+  const btn      = document.getElementById('submitBtn');
+  const btnTxt   = document.getElementById('submitBtnText');
+  btn.disabled   = true;
+  btnTxt.textContent = '⏳ Envoi en cours…';
+
+  try {
+    // 1. Create or update machine (JSON)
+    const payload = {
+      name:          document.getElementById('fName').value.trim(),
+      type:          document.getElementById('fType').value,
+      description:   document.getElementById('fDescription').value.trim(),
+      price_per_day: parseFloat(document.getElementById('fPriceDay').value),
+      price_per_hour: document.getElementById('fPriceHour').value ? parseFloat(document.getElementById('fPriceHour').value) : null,
+      status:        document.getElementById('fStatus').value,
+      city:          document.getElementById('fCity').value.trim(),
+      location:      document.getElementById('fLocation').value.trim(),
+      latitude:      document.getElementById('fLat').value  || null,
+      longitude:     document.getElementById('fLng').value  || null,
+    };
+
+    let machineId = MACHINE_ID;
+    let res;
+
+    if (EDIT_MODE && machineId) {
+      res = await window.API.put(`/api/machines/${machineId}`, payload);
+    } else {
+      res = await window.API.post('/api/machines', payload);
+      if (res.ok) {
+        machineId = res.data?.machine?.id || res.data?.id;
+      }
+    }
+
+    if (!res.ok) {
+      const msg = res.data?.message || Object.values(res.data?.errors||{}).flat()[0] || 'Erreur';
+      showToast('error', '❌ ' + msg);
+      btn.disabled = false;
+      btnTxt.textContent = EDIT_MODE ? '💾 Sauvegarder les modifications' : '🚀 Publier la machine';
+      return;
+    }
+
+    // 2. Upload new images
+    if (newImageFiles.length && machineId) {
+      const fd = new FormData();
+      newImageFiles.forEach((f, i) => fd.append(`images[${i}]`, f));
+
+      await fetch(`/api/machines/${machineId}/images`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${window.getToken()}` },
+        body: fd,
+      });
+    }
+
+    // 3. Delete removed images (edit mode)
+    if (deletedImageIds.length && EDIT_MODE) {
+      await Promise.all(deletedImageIds.map(imgId =>
+        window.API.delete(`/api/machines/${machineId}/images/${imgId}`)
+      ));
+    }
+
+    showToast('success', EDIT_MODE ? '✅ Machine mise à jour !' : '🎉 Machine publiée avec succès !');
+    setTimeout(() => { window.location.href = '/dashboard/owner'; }, 1800);
+
+  } catch(e) {
+    console.error('submitForm', e);
+    showToast('error', '❌ Erreur réseau. Réessayez.');
+    btn.disabled = false;
+    btnTxt.textContent = EDIT_MODE ? '💾 Sauvegarder les modifications' : '🚀 Publier la machine';
+  }
+}
+
+/* ══ UTILS ══ */
+function showToast(type, msg) {
+  const ctr = document.getElementById('toastCtr');
+  const el  = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = msg;
+  ctr.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(()=>el.remove(), 400); }, 3800);
+}
+
+// Cleanup 3D on page unload
+window.addEventListener('beforeunload', () => {
+  if (animId3d) cancelAnimationFrame(animId3d);
+  renderer3d?.dispose();
+});
 </script>
 @endpush

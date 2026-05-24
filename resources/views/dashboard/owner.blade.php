@@ -1,774 +1,1850 @@
 @extends('layouts.app')
-@section('title', 'Espace propriétaire — Rentify')
+
+@section('title', 'Dashboard Propriétaire — Rentify')
 
 @push('styles')
 <style>
-.dash-wrap {
-    max-width: 1280px; margin: 0 auto; padding: 28px 32px;
-    display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start;
-}
-.dash-sidebar {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); overflow: hidden;
-    position: sticky; top: 90px;
-}
-.dash-user-block {
-    background: var(--navy); padding: 20px 18px;
-    display: flex; align-items: center; gap: 12px;
-}
-.dash-avatar {
-    width: 44px; height: 44px; background: var(--orange);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800; color: #111; flex-shrink: 0;
-}
-.dash-user-name { color: #fff; font-size: 14px; font-weight: 700; }
-.dash-user-role {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: rgba(245,158,11,.2); color: var(--orange);
-    font-size: 10px; font-weight: 700; padding: 2px 8px;
-    border-radius: 100px; margin-top: 3px;
-}
-.dash-nav { padding: 10px 0; }
-.dash-nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 18px; font-size: 13px; font-weight: 500;
-    color: var(--text-gray); cursor: pointer; transition: all .15s;
-    border-left: 3px solid transparent; text-decoration: none;
-}
-.dash-nav-item:hover { background: #F9FAFB; color: var(--navy); }
-.dash-nav-item.active {
-    background: rgba(245,158,11,.06); color: var(--orange);
-    border-left-color: var(--orange); font-weight: 700;
-}
-.dash-nav-item i { width: 16px; text-align: center; font-size: 13px; }
-.dash-nav-sep { height: 1px; background: #F5F5F5; margin: 6px 0; }
-.btn-logout {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 18px; font-size: 13px; font-weight: 500;
-    color: #EF4444; cursor: pointer; width: 100%; border: none;
-    background: none; text-align: left; transition: background .15s;
-}
-.btn-logout:hover { background: #FEF2F2; }
-.dash-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 22px; flex-wrap: wrap; gap: 12px;
-}
-.dash-title    { font-size: 22px; font-weight: 900; color: var(--navy); letter-spacing: -.4px; }
-.dash-subtitle { font-size: 13px; color: var(--text-gray); margin-top: 3px; }
-.kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
-.kpi-card {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); padding: 16px 18px; transition: box-shadow .2s;
-}
-.kpi-card:hover { box-shadow: var(--shadow-md); }
-.kpi-label { font-size: 10px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-.kpi-label i { color: var(--orange); }
-.kpi-value { font-size: 26px; font-weight: 900; color: var(--navy); letter-spacing: -1px; }
-.kpi-sub   { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-.owner-tabs {
-    display: flex; gap: 4px;
-    background: #F3F4F6; border-radius: 10px; padding: 4px; margin-bottom: 20px;
-}
-.owner-tab {
-    flex: 1; text-align: center; padding: 9px 12px;
-    font-size: 13px; font-weight: 600; color: var(--text-gray);
-    border-radius: 8px; cursor: pointer; transition: all .2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.owner-tab.active { background: #fff; color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-.tab-count {
-    background: var(--orange); color: #111;
-    font-size: 10px; font-weight: 800; padding: 1px 6px;
-    border-radius: 100px; min-width: 18px; text-align: center;
-}
-.machines-owner-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-.mowner-card {
-    background: #fff; border: 1px solid #F0F0F0; border-radius: var(--radius-lg);
-    overflow: hidden; transition: box-shadow .2s, border-color .2s;
-    animation: cardIn .4s ease both;
-}
-@keyframes cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-.mowner-card:hover { box-shadow: var(--shadow-md); border-color: var(--orange); }
-
-/* ── Mini viewer 3D ── */
-.mowner-img {
-    height: 140px; background: #071018;
-    position: relative; overflow: hidden; display: block;
-}
-.mowner-img canvas {
-    display: block; width: 100% !important; height: 100% !important;
-    cursor: pointer;
-}
-@keyframes v3dspin-mini { to { transform: rotate(360deg); } }
-.mini-loader {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: #071018; z-index: 3; pointer-events: none;
-}
-.mini-loader-dot {
-    width: 22px; height: 22px; border: 2px solid #162333;
-    border-top-color: #F59E0B; border-radius: 50%;
-    animation: v3dspin-mini .65s linear infinite;
+/* ═══════════════════════════════════════════
+   DASHBOARD OWNER — RENTIFY V6
+   Gold / Crème Design System
+═══════════════════════════════════════════ */
+:root {
+  --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
+  --navy:#0F1B2D; --navy2:#162540;
+  --cream:#FAF7F0; --cream2:#F0EBE0; --cream3:#E8DDD0;
+  --txt-mid:#5a5660; --txt-light:#9992a4;
+  --green:#22c55e; --red:#ef4444; --orange:#f97316;
+  --radius:14px; --shadow:0 4px 24px rgba(15,27,45,.08);
 }
 
-.mowner-status {
-    position: absolute; top: 8px; left: 8px; z-index: 4;
-    font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px;
-}
-.ms-available  { background: #D1FAE5; color: #065F46; }
-.ms-rented     { background: #FEF3C7; color: #92400E; }
-.ms-maintenance{ background: #FEE2E2; color: #991B1B; }
-.ms-pending    { background: #EDE9FE; color: #5B21B6; }
+body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 
-/* hint "cliquer pour détail" */
-.mowner-img-hint {
-    position: absolute; bottom: 6px; right: 8px; z-index: 4;
-    font-size: 9px; color: rgba(255,255,255,.35); pointer-events: none;
-    letter-spacing: .04em;
+/* ── Layout principal ── */
+.owner-layout {
+  display:grid;
+  grid-template-columns:260px 1fr;
+  min-height:calc(100vh - 64px); /* 64px = navbar height from app.blade */
+  padding-top:0; /* main déjà padding-top:64px dans app.blade.php */
 }
 
-.mowner-body   { padding: 12px 14px; }
-.mowner-type   { font-size: 9px; font-weight: 800; color: var(--orange); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
-.mowner-name   { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
-.mowner-loc    { font-size: 11px; color: var(--text-light); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-.mowner-loc i  { color: var(--orange); font-size: 10px; }
-.mowner-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    border-top: 1px solid #F5F5F5; padding-top: 10px;
+/* ══════════════════════════════════
+   SIDEBAR
+══════════════════════════════════ */
+.owner-sidebar {
+  background:var(--navy);
+  padding:2rem 1.25rem;
+  position:sticky;
+  top:0; /* main a déjà padding-top:64px via app.blade.php */
+  height:100vh;
+  overflow-y:auto;
+  border-right:1px solid rgba(212,175,55,.15);
 }
-.mowner-price       { font-size: 15px; font-weight: 900; color: var(--navy); }
-.mowner-price small { font-size: 10px; color: var(--text-light); font-weight: 400; }
-.mowner-actions { display: flex; gap: 5px; }
-.mowner-stats   { display: flex; gap: 10px; margin-bottom: 8px; }
-.mowner-stat    { font-size: 11px; color: var(--text-light); }
-.mowner-stat strong { color: var(--navy); font-weight: 700; }
+
+.sidebar-profile {
+  text-align:center;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid rgba(212,175,55,.15);
+  margin-bottom:1.5rem;
+}
+.sidebar-avatar {
+  width:72px; height:72px; border-radius:50%;
+  border:3px solid var(--gold);
+  object-fit:cover; margin:0 auto 0.75rem;
+  display:block;
+  background:var(--navy2);
+}
+.sidebar-avatar-placeholder {
+  width:72px; height:72px; border-radius:50%;
+  border:3px solid var(--gold);
+  background:var(--navy2);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 0.75rem;
+  font-size:1.75rem; color:var(--gold);
+}
+.sidebar-name { color:#fff; font-weight:700; font-size:.95rem; }
+.sidebar-role {
+  display:inline-block; margin-top:.3rem;
+  background:rgba(212,175,55,.15); color:var(--gold);
+  font-size:.72rem; font-weight:600; letter-spacing:.08em;
+  padding:.2rem .7rem; border-radius:20px; text-transform:uppercase;
+}
+
+.sidebar-nav { list-style:none; padding:0; margin:0; }
+.sidebar-nav li + li { margin-top:.25rem; }
+.sidebar-nav a {
+  display:flex; align-items:center; gap:.75rem;
+  padding:.7rem 1rem; border-radius:10px;
+  color:rgba(255,255,255,.65); font-size:.88rem; font-weight:500;
+  text-decoration:none; transition:all .2s;
+}
+.sidebar-nav a:hover { background:rgba(212,175,55,.1); color:#fff; }
+.sidebar-nav a.active {
+  background:rgba(212,175,55,.18);
+  color:var(--gold);
+  font-weight:700;
+}
+.sidebar-nav a .nav-icon {
+  width:20px; text-align:center; font-size:1rem;
+  flex-shrink:0;
+}
+.sidebar-section-label {
+  color:rgba(255,255,255,.3); font-size:.7rem; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding:.5rem 1rem .3rem; margin-top:.5rem;
+}
+
+/* ══════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════ */
+.owner-main { padding:2rem 2.5rem; overflow-x:hidden; }
+
+.page-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:2rem;
+}
+.page-header h1 {
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem; color:var(--navy);
+  margin:0;
+}
+.page-header p { color:var(--txt-mid); font-size:.88rem; margin:.25rem 0 0; }
+
+/* ══════════════════════════════════
+   STAT CARDS
+══════════════════════════════════ */
+.stats-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.25rem;
+  margin-bottom:2rem;
+}
+.stat-card {
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius);
+  padding:1.4rem 1.5rem;
+  box-shadow:var(--shadow);
+  transition:transform .2s, box-shadow .2s;
+  position:relative; overflow:hidden;
+}
+.stat-card:hover { transform:translateY(-3px); box-shadow:0 8px 32px rgba(15,27,45,.12); }
+.stat-card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-dk));
+}
+.stat-icon {
+  width:42px; height:42px; border-radius:10px;
+  background:var(--gold-pale); display:flex;
+  align-items:center; justify-content:center;
+  font-size:1.2rem; margin-bottom:.9rem;
+}
+.stat-value {
+  font-size:1.9rem; font-weight:800;
+  color:var(--navy); line-height:1;
+  font-family:'Playfair Display',serif;
+}
+.stat-label { color:var(--txt-mid); font-size:.8rem; margin-top:.3rem; }
+.stat-delta {
+  font-size:.75rem; font-weight:600; margin-top:.4rem;
+}
+.stat-delta.up { color:var(--green); }
+.stat-delta.down { color:var(--red); }
+
+/* ══════════════════════════════════
+   TABS
+══════════════════════════════════ */
+.tabs-bar {
+  display:flex; gap:.5rem;
+  border-bottom:2px solid var(--cream3);
+  margin-bottom:1.75rem;
+}
+.tab-btn {
+  display:flex; align-items:center; gap:.5rem;
+  padding:.65rem 1.25rem;
+  background:none; border:none; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:600;
+  color:var(--txt-mid); border-bottom:3px solid transparent;
+  margin-bottom:-2px; transition:all .2s;
+  border-radius:8px 8px 0 0;
+}
+.tab-btn:hover { color:var(--navy); background:var(--cream2); }
+.tab-btn.active {
+  color:var(--gold-dk);
+  border-bottom-color:var(--gold);
+  background:var(--gold-pale);
+}
+.tab-badge {
+  background:var(--navy); color:#fff;
+  font-size:.68rem; font-weight:700;
+  padding:.1rem .45rem; border-radius:20px;
+  min-width:18px; text-align:center;
+}
+.tab-btn.active .tab-badge { background:var(--gold); color:var(--navy); }
+
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ══════════════════════════════════
+   TOOLBAR
+══════════════════════════════════ */
+.toolbar {
+  display:flex; align-items:center; gap:.75rem;
+  margin-bottom:1.25rem; flex-wrap:wrap;
+}
+.toolbar-search {
+  flex:1; min-width:200px;
+  position:relative;
+}
+.toolbar-search input {
+  width:100%; padding:.55rem .9rem .55rem 2.4rem;
+  border:1px solid var(--cream3); border-radius:10px;
+  background:#fff; font-family:'DM Sans',sans-serif; font-size:.88rem;
+  color:var(--navy); outline:none; transition:border .2s;
+}
+.toolbar-search input:focus { border-color:var(--gold); }
+.toolbar-search .search-icon {
+  position:absolute; left:.8rem; top:50%; transform:translateY(-50%);
+  color:var(--txt-light); font-size:.9rem;
+}
+.toolbar select {
+  padding:.55rem .9rem; border:1px solid var(--cream3);
+  border-radius:10px; background:#fff;
+  font-family:'DM Sans',sans-serif; font-size:.85rem;
+  color:var(--navy); outline:none; cursor:pointer;
+  transition:border .2s;
+}
+.toolbar select:focus { border-color:var(--gold); }
+
+/* ══════════════════════════════════
+   BUTTONS
+══════════════════════════════════ */
+.btn-navy {
+  background:var(--navy); color:#fff;
+  border:2px solid var(--navy);
+  padding:.55rem 1.25rem; border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
+  cursor:pointer; transition:all .2s; display:inline-flex;
+  align-items:center; gap:.5rem; text-decoration:none; white-space:nowrap;
+}
+.btn-navy:hover { background:var(--navy2); border-color:var(--gold); color:var(--gold); }
+.btn-gold {
+  background:var(--gold); color:var(--navy);
+  border:2px solid var(--gold);
+  padding:.55rem 1.25rem; border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
+  cursor:pointer; transition:all .2s; display:inline-flex;
+  align-items:center; gap:.5rem; text-decoration:none; white-space:nowrap;
+}
+.btn-gold:hover { background:var(--gold-dk); border-color:var(--gold-dk); }
+.btn-outline {
+  background:transparent; color:var(--navy);
+  border:2px solid var(--cream3);
+  padding:.55rem 1.25rem; border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-weight:600; font-size:.85rem;
+  cursor:pointer; transition:all .2s; display:inline-flex;
+  align-items:center; gap:.5rem; text-decoration:none; white-space:nowrap;
+}
+.btn-outline:hover { border-color:var(--gold); color:var(--gold-dk); }
+.btn-sm { padding:.35rem .8rem; font-size:.78rem; }
 .btn-icon {
-    width: 30px; height: 30px; border-radius: 7px; border: none;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; cursor: pointer; transition: all .15s;
+  width:34px; height:34px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+  cursor:pointer; border:none; transition:all .2s;
+  background:transparent;
 }
-.btn-icon-edit { background: #EFF6FF; color: #2563EB; }
-.btn-icon-edit:hover { background: #2563EB; color: #fff; }
-.btn-icon-del  { background: #FEF2F2; color: #EF4444; }
-.btn-icon-del:hover  { background: #EF4444; color: #fff; }
-.add-machine-card {
-    border: 2px dashed #D1D5DB; border-radius: var(--radius-lg);
-    min-height: 200px; display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 10px; cursor: pointer; transition: all .2s;
-    color: var(--text-light);
-}
-.add-machine-card:hover { border-color: var(--orange); color: var(--orange); background: rgba(245,158,11,.04); }
-.add-machine-icon { font-size: 28px; opacity: .5; }
-.add-machine-text { font-size: 13px; font-weight: 600; }
-.dash-panel {
-    background: #fff; border: 1px solid #F0F0F0;
-    border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px;
-}
-.panel-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 20px; border-bottom: 1px solid #F5F5F5;
-}
-.panel-title { font-size: 15px; font-weight: 800; color: var(--navy); }
-.panel-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; background: rgba(245,158,11,.12); color: var(--orange); }
-.res-table { width: 100%; border-collapse: collapse; }
-.res-table th { text-align: left; padding: 10px 20px; font-size: 10px; font-weight: 800; color: var(--text-light); letter-spacing: 1px; text-transform: uppercase; background: #FAFAFA; border-bottom: 1px solid #F5F5F5; }
-.res-table td { padding: 14px 20px; border-bottom: 1px solid #F9F9F9; font-size: 13px; color: var(--navy); vertical-align: middle; }
-.res-table tr:last-child td { border-bottom: none; }
-.res-table tr:hover td { background: #FAFAFA; }
-.stat-badge  { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
-.sb-pending  { background: #FEF3C7; color: #92400E; }
-.sb-accepted { background: #D1FAE5; color: #065F46; }
-.sb-rejected { background: #FEE2E2; color: #991B1B; }
-.sb-completed{ background: #EDE9FE; color: #5B21B6; }
-.sb-default  { background: #F3F4F6; color: #6B7280; }
-.btn-accept  { background: #10B981; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; transition: opacity .15s; }
-.btn-accept:hover { opacity: .85; }
-.btn-reject  { background: #F3F4F6; color: var(--text-gray); border: none; border-radius: 6px; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all .15s; }
-.btn-reject:hover { background: #FEE2E2; color: #EF4444; }
-.empty-state { padding: 48px 20px; text-align: center; color: var(--text-light); }
-.empty-state-icon  { font-size: 40px; margin-bottom: 10px; opacity: .5; }
-.empty-state-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
-.revenue-chart {
-    background: linear-gradient(135deg, var(--navy), #1D3557);
-    border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 20px; color: #fff;
-}
-.rev-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.rev-title  { font-size: 15px; font-weight: 800; }
-.rev-total  { font-size: 32px; font-weight: 900; color: var(--orange); letter-spacing: -1.5px; }
-.rev-sub    { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 2px; }
-.rev-bars   { display: flex; align-items: flex-end; gap: 8px; height: 80px; }
-.rev-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.rev-bar    { width: 100%; border-radius: 4px 4px 0 0; background: rgba(245,158,11,.3); transition: background .2s; min-height: 4px; }
-.rev-bar.highlight { background: var(--orange); }
-.rev-bar:hover { background: var(--orange); }
-.rev-month  { font-size: 9px; color: rgba(255,255,255,.35); font-weight: 600; }
+.btn-icon:hover { background:var(--cream2); }
+.btn-icon.danger:hover { background:#fee2e2; color:var(--red); }
+.btn-icon.success:hover { background:#dcfce7; color:var(--green); }
 
-@media (max-width: 1100px) { .machines-owner-grid { grid-template-columns: repeat(2,1fr); } .kpi-grid { grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 900px)  { .dash-wrap { grid-template-columns: 1fr; } .dash-sidebar { position: static; } }
-@media (max-width: 600px)  { .dash-wrap { padding: 16px; } .kpi-grid { grid-template-columns: 1fr 1fr; } .machines-owner-grid { grid-template-columns: 1fr; } }
+/* ══════════════════════════════════
+   MACHINES GRID
+══════════════════════════════════ */
+.machines-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1.25rem;
+}
+.machine-card {
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:transform .2s, box-shadow .2s;
+}
+.machine-card:hover { transform:translateY(-4px); box-shadow:0 12px 36px rgba(15,27,45,.13); }
+.machine-card-img {
+  height:160px; overflow:hidden; position:relative;
+  background:var(--cream2);
+}
+.machine-card-img img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .4s;
+}
+.machine-card:hover .machine-card-img img { transform:scale(1.06); }
+.machine-card-status {
+  position:absolute; top:.7rem; right:.7rem;
+  padding:.25rem .65rem; border-radius:20px;
+  font-size:.7rem; font-weight:700; letter-spacing:.05em;
+}
+.status-available { background:#dcfce7; color:#16a34a; }
+.status-unavailable { background:#fee2e2; color:#dc2626; }
+.status-maintenance { background:#fef9c3; color:#ca8a04; }
+
+.machine-card-3d {
+  position:absolute; top:.7rem; left:.7rem;
+  width:28px; height:28px; border-radius:6px;
+  background:rgba(15,27,45,.7); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--gold); font-size:.75rem;
+  transition:all .2s; z-index:2;
+}
+.machine-card-3d:hover { background:var(--gold); color:var(--navy); }
+
+.machine-card-body { padding:1.1rem 1.25rem; }
+.machine-card-type {
+  font-size:.7rem; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--gold-dk);
+  margin-bottom:.3rem;
+}
+.machine-card-name {
+  font-weight:700; color:var(--navy); font-size:1rem;
+  margin-bottom:.25rem;
+}
+.machine-card-city { color:var(--txt-light); font-size:.8rem; }
+.machine-card-price {
+  display:flex; align-items:baseline; gap:.25rem;
+  margin:.75rem 0 .5rem;
+}
+.machine-card-price strong {
+  font-size:1.1rem; color:var(--navy); font-weight:800;
+}
+.machine-card-price span { font-size:.78rem; color:var(--txt-mid); }
+.machine-card-actions {
+  display:flex; gap:.5rem; padding:.75rem 1.25rem;
+  border-top:1px solid var(--cream2);
+  background:var(--cream);
+}
+
+/* Mini 3D viewer */
+.mini-viewer-modal {
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(10,16,28,.8); backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.mini-viewer-modal.open { opacity:1; pointer-events:all; }
+.mini-viewer-box {
+  background:var(--navy); border-radius:18px;
+  padding:1.5rem; width:440px; max-width:95vw;
+  border:1px solid rgba(212,175,55,.2);
+  transform:scale(.9); transition:transform .3s;
+}
+.mini-viewer-modal.open .mini-viewer-box { transform:scale(1); }
+.mini-viewer-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1rem;
+}
+.mini-viewer-header h3 { color:#fff; font-size:1rem; margin:0; }
+.mini-viewer-close {
+  background:rgba(255,255,255,.1); border:none;
+  color:#fff; width:32px; height:32px; border-radius:8px;
+  cursor:pointer; font-size:1.1rem; transition:all .2s;
+}
+.mini-viewer-close:hover { background:rgba(212,175,55,.3); color:var(--gold); }
+#miniViewerCanvas {
+  width:100%; border-radius:10px;
+  height:280px; display:block;
+  background:linear-gradient(135deg,#0d1a2e,#162540);
+}
+
+/* ══════════════════════════════════
+   TABLE RÉSERVATIONS
+══════════════════════════════════ */
+.table-wrapper {
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.rentify-table {
+  width:100%; border-collapse:collapse;
+  font-size:.85rem;
+}
+.rentify-table thead tr {
+  background:var(--cream);
+  border-bottom:2px solid var(--cream3);
+}
+.rentify-table th {
+  padding:.85rem 1.1rem;
+  text-align:left; font-weight:700;
+  color:var(--navy); font-size:.78rem;
+  letter-spacing:.05em; text-transform:uppercase;
+  white-space:nowrap;
+}
+.rentify-table td {
+  padding:.85rem 1.1rem;
+  color:var(--txt-mid); border-bottom:1px solid var(--cream2);
+  vertical-align:middle;
+}
+.rentify-table tbody tr:last-child td { border-bottom:none; }
+.rentify-table tbody tr:hover td { background:var(--cream); }
+
+.badge {
+  display:inline-flex; align-items:center; gap:.3rem;
+  padding:.25rem .7rem; border-radius:20px;
+  font-size:.72rem; font-weight:700; letter-spacing:.04em;
+  white-space:nowrap;
+}
+.badge-pending { background:#fef9c3; color:#92400e; }
+.badge-accepted { background:#dcfce7; color:#15803d; }
+.badge-rejected { background:#fee2e2; color:#b91c1c; }
+.badge-completed { background:rgba(212,175,55,.15); color:var(--gold-dk); }
+.badge-cancelled { background:var(--cream3); color:var(--txt-mid); }
+
+.client-info { display:flex; align-items:center; gap:.6rem; }
+.client-avatar {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--cream3); display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:700; color:var(--navy); flex-shrink:0;
+}
+
+/* Actions réservations */
+.res-actions { display:flex; gap:.4rem; }
+
+/* ══════════════════════════════════
+   MODAL
+══════════════════════════════════ */
+.modal-overlay {
+  position:fixed; inset:0; z-index:8888;
+  background:rgba(10,16,28,.7); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-box {
+  background:#fff; border-radius:18px;
+  width:680px; max-width:96vw; max-height:90vh;
+  overflow-y:auto; box-shadow:0 24px 80px rgba(10,16,28,.25);
+  transform:translateY(20px); transition:transform .3s;
+}
+.modal-overlay.open .modal-box { transform:translateY(0); }
+.modal-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.4rem 1.75rem; border-bottom:1px solid var(--cream3);
+  position:sticky; top:0; background:#fff; z-index:1;
+}
+.modal-header h2 {
+  font-family:'Playfair Display',serif;
+  font-size:1.25rem; color:var(--navy); margin:0;
+}
+.modal-close {
+  width:36px; height:36px; border-radius:8px;
+  background:var(--cream2); border:none; cursor:pointer;
+  font-size:1.1rem; transition:all .2s;
+}
+.modal-close:hover { background:var(--cream3); }
+.modal-body { padding:1.75rem; }
+.modal-footer {
+  display:flex; justify-content:flex-end; gap:.75rem;
+  padding:1.25rem 1.75rem; border-top:1px solid var(--cream3);
+  background:var(--cream);
+}
+
+/* ── Form ── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
+.form-group { display:flex; flex-direction:column; gap:.4rem; }
+.form-group.full { grid-column:1/-1; }
+.form-label {
+  font-size:.8rem; font-weight:700; color:var(--navy);
+  letter-spacing:.03em;
+}
+.form-control {
+  padding:.6rem .9rem;
+  border:1.5px solid var(--cream3); border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:.88rem;
+  color:var(--navy); outline:none; background:#fff;
+  transition:border .2s;
+}
+.form-control:focus { border-color:var(--gold); }
+.form-control::placeholder { color:var(--txt-light); }
+textarea.form-control { resize:vertical; min-height:90px; }
+select.form-control { cursor:pointer; }
+
+/* Upload images */
+.upload-zone {
+  border:2px dashed var(--cream3); border-radius:12px;
+  padding:2rem; text-align:center; cursor:pointer;
+  transition:all .2s; position:relative;
+}
+.upload-zone:hover { border-color:var(--gold); background:var(--gold-pale); }
+.upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-zone-icon { font-size:2rem; margin-bottom:.5rem; }
+.upload-zone p { color:var(--txt-mid); font-size:.85rem; margin:0; }
+.upload-zone p strong { color:var(--navy); }
+
+.img-preview-grid {
+  display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem;
+}
+.img-preview-item {
+  position:relative; width:72px; height:72px;
+  border-radius:8px; overflow:hidden; border:2px solid var(--cream3);
+}
+.img-preview-item img { width:100%; height:100%; object-fit:cover; }
+.img-preview-remove {
+  position:absolute; top:2px; right:2px;
+  width:18px; height:18px; border-radius:4px;
+  background:rgba(0,0,0,.6); color:#fff;
+  font-size:.65rem; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; border:none; transition:background .2s;
+}
+.img-preview-remove:hover { background:var(--red); }
+
+/* Dispo toggle */
+.dispo-group {
+  display:flex; gap:.5rem; flex-wrap:wrap;
+}
+.dispo-btn {
+  padding:.45rem 1rem; border-radius:20px;
+  font-size:.8rem; font-weight:700; cursor:pointer;
+  border:2px solid var(--cream3);
+  background:#fff; color:var(--txt-mid); transition:all .2s;
+}
+.dispo-btn[data-val="available"].active { border-color:var(--green); background:#dcfce7; color:#15803d; }
+.dispo-btn[data-val="unavailable"].active { border-color:var(--red); background:#fee2e2; color:#dc2626; }
+.dispo-btn[data-val="maintenance"].active { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
+
+/* ══════════════════════════════════
+   CONFIRM DIALOG
+══════════════════════════════════ */
+.confirm-overlay {
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(10,16,28,.75); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.confirm-overlay.open { opacity:1; pointer-events:all; }
+.confirm-box {
+  background:#fff; border-radius:16px;
+  padding:2rem 2.25rem; width:400px; max-width:92vw;
+  text-align:center;
+}
+.confirm-icon { font-size:2.5rem; margin-bottom:1rem; }
+.confirm-box h3 { color:var(--navy); font-size:1.1rem; margin:0 0 .5rem; }
+.confirm-box p { color:var(--txt-mid); font-size:.88rem; margin:0 0 1.5rem; }
+.confirm-btns { display:flex; gap:.75rem; justify-content:center; }
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+.toast-container {
+  position:fixed; bottom:2rem; right:2rem;
+  z-index:99999; display:flex; flex-direction:column; gap:.6rem;
+}
+.toast {
+  display:flex; align-items:center; gap:.75rem;
+  background:#fff; border:1px solid var(--cream3);
+  border-radius:12px; padding:.85rem 1.25rem;
+  box-shadow:0 8px 32px rgba(10,16,28,.15);
+  font-size:.85rem; font-weight:600; color:var(--navy);
+  transform:translateX(120%); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  min-width:240px; max-width:320px;
+}
+.toast.show { transform:translateX(0); }
+.toast-icon { font-size:1.1rem; flex-shrink:0; }
+.toast.success { border-left:4px solid var(--green); }
+.toast.error { border-left:4px solid var(--red); }
+.toast.info { border-left:4px solid var(--gold); }
+
+/* ══════════════════════════════════
+   REVENUE CHART
+══════════════════════════════════ */
+.chart-card {
+  background:#fff; border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius); padding:1.5rem;
+  box-shadow:var(--shadow);
+}
+.chart-card h3 {
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem; color:var(--navy); margin:0 0 1.25rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+
+/* ══════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════ */
+.empty-state {
+  text-align:center; padding:4rem 2rem;
+}
+.empty-state-icon { font-size:3rem; margin-bottom:1rem; opacity:.5; }
+.empty-state h3 { color:var(--navy); font-size:1.1rem; margin:0 0 .5rem; }
+.empty-state p { color:var(--txt-mid); font-size:.88rem; }
+
+/* ══════════════════════════════════
+   LOADING SKELETON
+══════════════════════════════════ */
+.skeleton {
+  background:linear-gradient(90deg,var(--cream2) 25%,var(--cream3) 50%,var(--cream2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ══════════════════════════════════
+   REVENUE TABLE
+══════════════════════════════════ */
+.revenue-row { display:flex; align-items:center; gap:.75rem; padding:.6rem 0; border-bottom:1px solid var(--cream2); }
+.revenue-row:last-child { border-bottom:none; }
+.revenue-bar-wrap { flex:1; background:var(--cream2); border-radius:4px; height:6px; }
+.revenue-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--gold),var(--gold-dk)); }
+.revenue-amount { font-weight:700; color:var(--navy); font-size:.88rem; min-width:80px; text-align:right; }
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media(max-width:1200px) {
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:900px) {
+  .owner-layout { grid-template-columns:1fr; }
+  .owner-sidebar {
+    position:static; height:auto;
+    display:flex; flex-wrap:wrap; gap:.5rem;
+    padding:1rem; border-bottom:1px solid rgba(212,175,55,.15); border-right:none;
+  }
+  .sidebar-profile { display:none; }
+  .sidebar-section-label { display:none; }
+  .owner-main { padding:1.5rem 1.25rem; }
+}
+@media(max-width:600px) {
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .form-grid { grid-template-columns:1fr; }
+  .machines-grid { grid-template-columns:1fr; }
+}
 </style>
 @endpush
 
 @section('content')
-<div class="dash-wrap" id="dash-root">
-    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-light)">
-        <div style="font-size:32px;animation:spin 1s linear infinite;display:inline-block">⚙️</div>
-        <p style="margin-top:12px">Chargement...</p>
+<div class="owner-layout" id="ownerLayout">
+
+  {{-- ════════════════════════════════════════
+       SIDEBAR
+  ════════════════════════════════════════ --}}
+  <aside class="owner-sidebar">
+    <div class="sidebar-profile">
+      <div id="sidebarAvatarWrap">
+        <div class="sidebar-avatar-placeholder">👤</div>
+      </div>
+      <div class="sidebar-name" id="sidebarName">Chargement…</div>
+      <span class="sidebar-role">Propriétaire</span>
     </div>
+
+    <ul class="sidebar-nav">
+      <li><span class="sidebar-section-label">Principal</span></li>
+      <li>
+        <a href="#" class="active" data-tab="overview" onclick="switchSideTab('overview',this);return false;">
+          <span class="nav-icon">📊</span> Vue d'ensemble
+        </a>
+      </li>
+      <li>
+        <a href="#" data-tab="machines" onclick="switchSideTab('machines',this);return false;">
+          <span class="nav-icon">🏗</span> Mes Machines
+          <span class="tab-badge ms-auto" id="sideNavMachinesBadge">0</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" data-tab="reservations" onclick="switchSideTab('reservations',this);return false;">
+          <span class="nav-icon">📋</span> Réservations
+          <span class="tab-badge ms-auto" id="sideNavResBadge" style="background:#ef4444">0</span>
+        </a>
+      </li>
+      <li><span class="sidebar-section-label">Compte</span></li>
+      <li>
+        <a href="/profile">
+          <span class="nav-icon">👤</span> Mon Profil
+        </a>
+      </li>
+      <li>
+        <a href="#" onclick="handleLogout();return false;" style="color:#ef4444!important">
+          <span class="nav-icon">🚪</span> Déconnexion
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  {{-- ════════════════════════════════════════
+       MAIN
+  ════════════════════════════════════════ --}}
+  <main class="owner-main">
+
+    {{-- ── Header ── --}}
+    <div class="page-header">
+      <div>
+        <h1>Dashboard Propriétaire</h1>
+        <p id="headerGreeting">Bienvenue sur votre espace de gestion</p>
+      </div>
+      <button class="btn-gold" onclick="openMachineModal()">
+        <span>➕</span> Ajouter une machine
+      </button>
+    </div>
+
+    {{-- ── Tab Overview ── --}}
+    <div id="tab-overview" class="tab-panel active">
+
+      {{-- Stats --}}
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card skeleton" style="height:130px"></div>
+        <div class="stat-card skeleton" style="height:130px"></div>
+        <div class="stat-card skeleton" style="height:130px"></div>
+        <div class="stat-card skeleton" style="height:130px"></div>
+      </div>
+
+      {{-- Charts row --}}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem" id="chartsRow">
+        <div class="chart-card">
+          <h3>📈 Revenus mensuels</h3>
+          <canvas id="revenueChart" height="180"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>🗂 Répartition par machine</h3>
+          <div id="machineRevenueList"></div>
+        </div>
+      </div>
+
+      {{-- Recent reservations --}}
+      <div class="chart-card">
+        <h3>🕐 Réservations récentes</h3>
+        <div class="table-wrapper" style="box-shadow:none;border:none">
+          <table class="rentify-table" id="recentResTable">
+            <thead>
+              <tr>
+                <th>#</th><th>Client</th><th>Machine</th>
+                <th>Période</th><th>Montant</th><th>Statut</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recentResTbody">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    {{-- ── Tab Machines ── --}}
+    <div id="tab-machines" class="tab-panel">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Rechercher une machine…" id="machineSearchInput" oninput="filterMachines()">
+        </div>
+        <select id="machineTypeFilter" onchange="filterMachines()">
+          <option value="">Tous les types</option>
+          <option value="excavatrice">Excavatrice</option>
+          <option value="grue">Grue</option>
+          <option value="bulldozer">Bulldozer</option>
+          <option value="chargeuse">Chargeuse</option>
+          <option value="compacteur">Compacteur</option>
+          <option value="nacelle">Nacelle</option>
+          <option value="tractopelle">Tractopelle</option>
+          <option value="camion">Camion</option>
+        </select>
+        <select id="machineStatusFilter" onchange="filterMachines()">
+          <option value="">Tous les statuts</option>
+          <option value="available">Disponible</option>
+          <option value="unavailable">Indisponible</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+        <button class="btn-navy" onclick="openMachineModal()">
+          <span>➕</span> Ajouter
+        </button>
+      </div>
+      <div class="machines-grid" id="machinesGrid">
+        {{-- Skeletons --}}
+        @for($i=0;$i<4;$i++)
+        <div style="background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(212,175,55,.12)">
+          <div class="skeleton" style="height:160px"></div>
+          <div style="padding:1rem">
+            <div class="skeleton" style="height:12px;margin-bottom:.5rem;width:60%"></div>
+            <div class="skeleton" style="height:18px;margin-bottom:.5rem"></div>
+            <div class="skeleton" style="height:12px;width:40%"></div>
+          </div>
+        </div>
+        @endfor
+      </div>
+    </div>
+
+    {{-- ── Tab Réservations ── --}}
+    <div id="tab-reservations" class="tab-panel">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Rechercher…" id="resSearchInput" oninput="filterReservations()">
+        </div>
+        <select id="resStatusFilter" onchange="filterReservations()">
+          <option value="">Tous les statuts</option>
+          <option value="pending">En attente</option>
+          <option value="accepted">Acceptée</option>
+          <option value="rejected">Refusée</option>
+          <option value="completed">Complétée</option>
+          <option value="cancelled">Annulée</option>
+        </select>
+        <select id="resMachineFilter" onchange="filterReservations()">
+          <option value="">Toutes les machines</option>
+        </select>
+      </div>
+      <div class="table-wrapper">
+        <table class="rentify-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Client</th>
+              <th>Machine</th>
+              <th>Dates</th>
+              <th>Prix total</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reservationsTbody">
+            <tr><td colspan="7" style="text-align:center;padding:2.5rem;color:var(--txt-light)">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
 </div>
+
+{{-- ════════════════════════════════════════
+     MODAL MACHINE (Add / Edit)
+════════════════════════════════════════ --}}
+<div class="modal-overlay" id="machineModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="machineModalTitle">Ajouter une machine</h2>
+      <button class="modal-close" onclick="closeMachineModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label">Nom de la machine *</label>
+          <input type="text" class="form-control" id="machineName" placeholder="Ex: Excavatrice JCB 3CX">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Type *</label>
+          <select class="form-control" id="machineType">
+            <option value="">Sélectionner…</option>
+            <option value="excavatrice">Excavatrice</option>
+            <option value="grue">Grue</option>
+            <option value="bulldozer">Bulldozer</option>
+            <option value="chargeuse">Chargeuse</option>
+            <option value="compacteur">Compacteur</option>
+            <option value="nacelle">Nacelle</option>
+            <option value="tractopelle">Tractopelle</option>
+            <option value="camion">Camion</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Prix / jour (MAD) *</label>
+          <input type="number" class="form-control" id="machinePriceDay" placeholder="500">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Prix / heure (MAD)</label>
+          <input type="number" class="form-control" id="machinePriceHour" placeholder="75">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ville *</label>
+          <input type="text" class="form-control" id="machineCity" placeholder="Casablanca">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Localisation précise</label>
+          <input type="text" class="form-control" id="machineLocation" placeholder="Zone industrielle Ain Sebaâ">
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" id="machineDescription" placeholder="Décrivez votre machine, ses caractéristiques…"></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label">Disponibilité</label>
+          <div class="dispo-group">
+            <button type="button" class="dispo-btn active" data-val="available" onclick="setDispo(this)">✅ Disponible</button>
+            <button type="button" class="dispo-btn" data-val="unavailable" onclick="setDispo(this)">❌ Indisponible</button>
+            <button type="button" class="dispo-btn" data-val="maintenance" onclick="setDispo(this)">🔧 Maintenance</button>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label class="form-label">Photos de la machine</label>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="machineImages" multiple accept="image/*" onchange="previewImages(event)">
+            <div class="upload-zone-icon">📸</div>
+            <p><strong>Cliquer</strong> ou glisser-déposer les images</p>
+            <p style="font-size:.75rem;margin-top:.25rem;color:var(--txt-light)">PNG, JPG jusqu'à 5 Mo chacune</p>
+          </div>
+          <div class="img-preview-grid" id="imgPreviewGrid"></div>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-outline" onclick="closeMachineModal()">Annuler</button>
+      <button class="btn-gold" id="machineModalSaveBtn" onclick="saveMachine()">
+        <span>💾</span> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+{{-- ════════════════════════════════════════
+     MINI 3D VIEWER MODAL
+════════════════════════════════════════ --}}
+<div class="mini-viewer-modal" id="miniViewerModal">
+  <div class="mini-viewer-box">
+    <div class="mini-viewer-header">
+      <h3 id="miniViewerTitle">Vue 3D</h3>
+      <button class="mini-viewer-close" onclick="closeMiniViewer()">✕</button>
+    </div>
+    <canvas id="miniViewerCanvas"></canvas>
+    <p style="color:rgba(255,255,255,.4);font-size:.75rem;text-align:center;margin-top:.75rem">
+      🖱 Cliquer + glisser pour orbiter
+    </p>
+  </div>
+</div>
+
+{{-- ════════════════════════════════════════
+     CONFIRM DIALOG
+════════════════════════════════════════ --}}
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon">⚠️</div>
+    <h3 id="confirmTitle">Confirmation</h3>
+    <p id="confirmMsg">Êtes-vous sûr de vouloir effectuer cette action ?</p>
+    <div class="confirm-btns">
+      <button class="btn-outline" onclick="closeConfirm()">Annuler</button>
+      <button class="btn-navy" id="confirmOkBtn">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+{{-- Toast container --}}
+<div class="toast-container" id="toastContainer"></div>
+
 @endsection
 
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-/* ═══════════════════════════════════════════════
-   GUARD
-═══════════════════════════════════════════════ */
-if (!getToken() || !getUser()) {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    window.location.replace('/login');
-}
-const user = getUser();
-if (user?.role === 'client') window.location.replace('/dashboard/client');
+/* ═══════════════════════════════════════════════════
+   RENTIFY — DASHBOARD OWNER
+   Stack: Laravel 11 | Blade | Sanctum | Vanilla JS
+═══════════════════════════════════════════════════ */
 
-let currentTab      = 'machines';
-let allMachines     = [];
+/* ══ CONSTANTS ══ */
+const TYPE_PHOTO = {
+  excavatrice:'/images/img3.png', grue:'/images/img4.png',
+  bulldozer:'/images/img1.png', chargeuse:'/images/img2.png',
+  compacteur:'/images/img8.png', nacelle:'/images/img5.png',
+  tractopelle:'/images/img7.png', camion:'/images/img9.png',
+};
+
+const STATUS_BADGE = {
+  pending:  '<span class="badge badge-pending">⏳ En attente</span>',
+  accepted: '<span class="badge badge-accepted">✅ Acceptée</span>',
+  rejected: '<span class="badge badge-rejected">❌ Refusée</span>',
+  completed:'<span class="badge badge-completed">🏆 Complétée</span>',
+  cancelled:'<span class="badge badge-cancelled">🚫 Annulée</span>',
+};
+
+const STATUS_DISPO = {
+  available:   '<span class="machine-card-status status-available">✅ Disponible</span>',
+  unavailable: '<span class="machine-card-status status-unavailable">❌ Indisponible</span>',
+  maintenance: '<span class="machine-card-status status-maintenance">🔧 Maintenance</span>',
+};
+
+/* ══ STATE ══ */
+let allMachines = [];
 let allReservations = [];
+let editMachineId = null;
+let currentDispo = 'available';
+let miniViewerAnim = null;
+let miniViewerRenderer = null;
+let confirmCallback = null;
+let revenueChart = null;
+let selectedFiles = [];
 
-/* ═══════════════════════════════════════════════
-   MINI 3D VIEWERS — instances actives
-═══════════════════════════════════════════════ */
-var _miniViewers = [];   // { renderer, animId }
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = window.getUser ? window.getUser() : JSON.parse(localStorage.getItem('auth_user'));
+  if (!user || user.role !== 'owner') {
+    window.location.href = '/login';
+    return;
+  }
 
-function destroyMiniViewers() {
-    _miniViewers.forEach(function(v) {
-        cancelAnimationFrame(v.animId);
-        v.renderer.dispose();
-    });
-    _miniViewers = [];
+  // Sidebar user info
+  document.getElementById('sidebarName').textContent = user.name || 'Propriétaire';
+  document.getElementById('headerGreeting').textContent =
+    `Bonjour ${user.name?.split(' ')[0] || ''} 👋 — bienvenue sur votre espace`;
+  const avatarWrap = document.getElementById('sidebarAvatarWrap');
+  if (user.profile_photo_path) {
+    avatarWrap.innerHTML = `<img src="/storage/${user.profile_photo_path}" class="sidebar-avatar" alt="Avatar">`;
+  }
+
+  await Promise.all([loadMachines(), loadReservations()]);
+  renderStats();
+  renderRevenueChart();
+  renderMachineRevenueList();
+  renderRecentReservations();
+  renderMachinesGrid();
+  renderReservationsTable();
+});
+
+/* ══════════════════════════════════
+   DATA LOADING
+══════════════════════════════════ */
+async function loadMachines() {
+  try {
+    const data = await window.API.get('/api/my-machines');
+    allMachines = Array.isArray(data) ? data : (data.data || data.machines || []);
+    document.getElementById('sideNavMachinesBadge').textContent = allMachines.length;
+    populateMachineFilter();
+  } catch(e) {
+    console.error('loadMachines', e);
+    allMachines = [];
+  }
 }
 
-/* ─── Palette par type ─── */
-var MINI_PAL = {
-    excavatrice: { main:0xF0900C, dark:0xBB6800 },
-    grue:        { main:0xf5e230, dark:0xb8a800 },
-    chargeuse:   { main:0xF0900C, dark:0xBB6800 },
-    bulldozer:   { main:0xf5a623, dark:0xc07a00 },
-    compacteur:  { main:0xff6b35, dark:0xc84b1c },
-    nacelle:     { main:0x42a5f5, dark:0x1565c0 },
-    camion:      { main:0xF0900C, dark:0xBB6800 },
-    manitou:     { main:0xf5a623, dark:0xc07a00 },
-    niveleuse:   { main:0xf5e230, dark:0xb8a800 },
-};
+async function loadReservations() {
+  try {
+    const data = await window.API.get('/api/reservations');
+    allReservations = Array.isArray(data) ? data : (data.data || data.reservations || []);
+    const pending = allReservations.filter(r => r.status === 'pending').length;
+    document.getElementById('sideNavResBadge').textContent = pending;
+  } catch(e) {
+    console.error('loadReservations', e);
+    allReservations = [];
+  }
+}
 
-function initMiniViewer(canvasId, machineType) {
-    var canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    var wrap = canvas.parentElement;
-    var W = wrap.clientWidth  || 280;
-    var H = wrap.clientHeight || 140;
+/* ══════════════════════════════════
+   STATS
+══════════════════════════════════ */
+function renderStats() {
+  const totalMachines = allMachines.length;
+  const available = allMachines.filter(m => m.status === 'available').length;
+  const totalRes = allReservations.length;
+  const pendingRes = allReservations.filter(r => r.status === 'pending').length;
+  const revenue = allReservations
+    .filter(r => ['accepted','completed'].includes(r.status))
+    .reduce((s, r) => s + parseFloat(r.total_price || 0), 0);
 
-    var TYPE = (machineType || 'excavatrice').toLowerCase();
-    var PAL  = MINI_PAL[TYPE] || MINI_PAL.excavatrice;
+  const cards = [
+    { icon:'🏗', value: totalMachines, label:'Mes machines', delta:`${available} disponibles`, up: available > 0 },
+    { icon:'📋', value: totalRes, label:'Réservations totales', delta:`${pendingRes} en attente`, up: pendingRes === 0 },
+    { icon:'💰', value: revenue.toLocaleString('fr-MA') + ' MAD', label:'Revenus générés', delta:'Réservations acceptées', up: true },
+    { icon:'⭐', value: calcAvgRating(), label:'Note moyenne', delta:'Sur vos machines', up: true },
+  ];
 
-    /* Renderer */
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-    renderer.setSize(W, H);
-    renderer.shadowMap.enabled = false;
+  document.getElementById('statsGrid').innerHTML = cards.map(c => `
+    <div class="stat-card">
+      <div class="stat-icon">${c.icon}</div>
+      <div class="stat-value">${c.value}</div>
+      <div class="stat-label">${c.label}</div>
+      <div class="stat-delta ${c.up ? 'up' : 'down'}">${c.delta}</div>
+    </div>
+  `).join('');
+}
 
-    /* Scene */
-    var scene  = new THREE.Scene();
-    scene.background = new THREE.Color(0x071018);
-    var camera = new THREE.PerspectiveCamera(46, W/H, 0.1, 80);
+function calcAvgRating() {
+  const ratings = allMachines.flatMap(m => m.ratings || []).map(r => parseFloat(r.rating));
+  if (!ratings.length) return '—';
+  const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+  return avg.toFixed(1) + ' ⭐';
+}
 
-    /* Lumières */
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    var sun = new THREE.DirectionalLight(0xfff5dd, 1.6);
-    sun.position.set(6, 10, 7); scene.add(sun);
-    var fill = new THREE.DirectionalLight(0x3355bb, 0.3);
-    fill.position.set(-5, 3, -5); scene.add(fill);
-
-    /* Sol léger */
-    scene.add(new THREE.GridHelper(14, 14, 0x1b3246, 0x111f2d));
-
-    /* ── Helpers matériaux ── */
-    var M  = function(c) { return new THREE.MeshLambertMaterial({ color: c }); };
-    var MT = function(c,o) { return new THREE.MeshLambertMaterial({ color:c, transparent:true, opacity:o }); };
-    var Y=M(PAL.main), YD=M(PAL.dark), BK=M(0x0d0d0d), SL=M(0x7a8898), DK=M(0x060c12);
-    var GL=MT(0x88c4ea,.4), RD=MT(0xff2200,.9), AM=MT(0xffbb00,.85);
-
-    /* ── Helpers géométrie ── */
-    var B = function(w,h,d,mat,x,y,z,rx,ry,rz) {
-        x=x||0;y=y||0;z=z||0;rx=rx||0;ry=ry||0;rz=rz||0;
-        var o = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
-        o.position.set(x,y,z); o.rotation.set(rx,ry,rz); return o;
-    };
-    var C = function(rt,rb,h,s,mat,x,y,z,rx,ry,rz) {
-        x=x||0;y=y||0;z=z||0;rx=rx||0;ry=ry||0;rz=rz||0;
-        var o = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,s), mat);
-        o.position.set(x,y,z); o.rotation.set(rx,ry,rz); return o;
-    };
-
-    /* ══════════════════════════════════════
-       MODÈLE MINI JCB 3CX (simplifié)
-    ══════════════════════════════════════ */
-    var JCB = new THREE.Group();
-
-    /* Chassis */
-    JCB.add(B(3.8,.19,1.8,YD,0,.48,0));
-    JCB.add(B(3.5,.36,1.6,Y, 0,.74,0));
-
-    /* Cab */
-    var cab = new THREE.Group(); cab.position.set(-.5,.92,0);
-    cab.add(B(1.2,1.3,1.4,Y, 0,.65,0));
-    cab.add(B(.06,.7,1.05,GL,-.6,.75,0));
-    cab.add(B(.06,.7,1.05,GL,.6,.75,0));
-    cab.add(B(1.1,.06,1.05,GL,0,1.32,0));
-    cab.add(B(1.2,.06,1.4,YD,0,1.33,0));
-    cab.add(B(.06,.7,.06,DK,-.6,.75,.7)); cab.add(B(.06,.7,.06,DK,-.6,.75,-.7));
-    cab.add(B(.06,.7,.06,DK,.6,.75,.7));  cab.add(B(.06,.7,.06,DK,.6,.75,-.7));
-    cab.add(B(.06,.13,.2,GL,-.6,.86,.6)); cab.add(B(.06,.13,.2,GL,-.6,.86,-.6));
-    JCB.add(cab);
-
-    /* Capot */
-    JCB.add(B(1.5,.82,1.55,Y,.88,1.16,0));
-    JCB.add(B(.06,.5,1.35,DK,1.65,1.1,0));
-    for(var i=0;i<4;i++) JCB.add(B(.07,.04,1.3,DK,1.64,.88+i*.1,0));
-    JCB.add(C(.05,.05,.55,8,SL,.68,1.83,.5));
-    JCB.add(B(.06,.14,.2,RD,1.65,1.02,.6));
-    JCB.add(B(.06,.14,.2,RD,1.65,1.02,-.6));
-
-    /* Roues (simplifiées) */
-    var addW = function(x,y,z,r,w) {
-        JCB.add(C(r,r,w,20,BK,x,y,z,Math.PI/2,0,0));
-        JCB.add(C(r*.48,r*.48,w+.02,14,SL,x,y,z,Math.PI/2,0,0));
-        JCB.add(C(r*.14,r*.14,w+.04,6,DK,x,y,z,Math.PI/2,0,0));
-    };
-    addW(-1.25,.44,.9,.44,.36); addW(-1.25,.44,-.9,.44,.36);
-    addW( 1.25,.48,.93,.48,.4); addW( 1.25,.48,-.93,.48,.4);
-    JCB.add(C(.06,.06,1.88,6,SL,-1.25,.44,0,Math.PI/2,0,0));
-    JCB.add(C(.06,.06,1.95,6,SL, 1.25,.48,0,Math.PI/2,0,0));
-
-    /* Loader avant */
-    var la = new THREE.Group(); la.position.set(-1.82,.75,0);
-    la.add(B(.11,1.2,.11,YD,0,.52,.63,-.22,0,0));
-    la.add(B(.11,1.2,.11,YD,0,.52,-.63,-.22,0,0));
-    la.add(B(.09,.09,1.38,YD,0,.92,0));
-    var lb = new THREE.Group(); lb.position.set(-.12,1.16,0);
-    lb.add(B(.46,.26,1.62,Y)); lb.add(B(.34,.06,1.62,YD,-.14,-.12,0,.32,0,0));
-    la.add(lb); JCB.add(la);
-
-    /* Backhoe arrière */
-    var bh = new THREE.Group(); bh.position.set(1.82,.75,0);
-    bh.add(B(.36,.6,.44,Y,0,.3,0));
-    var addStab = function(zs){
-        bh.add(B(.11,.06,.11,Y,.11,-.05,zs));
-        bh.add(B(.06,.62,.06,Y,.11,-.37,zs,.17*Math.sign(zs),0,0));
-        bh.add(B(.35,.06,.2,YD,.13,-.7,zs));
-    };
-    addStab(.98); addStab(-.98);
-    var boom = new THREE.Group(); boom.position.set(0,.6,0); boom.rotation.z=-.45;
-    boom.add(B(.16,1.9,.16,Y,0,.95,0));
-    var dipper = new THREE.Group(); dipper.position.set(0,1.9,0); dipper.rotation.z=.55;
-    dipper.add(B(.13,1.25,.13,Y,0,.62,0));
-    var bkt = new THREE.Group(); bkt.position.set(0,1.25,0); bkt.rotation.z=-.45;
-    bkt.add(B(.4,.32,.52,YD)); bkt.add(B(.33,.06,.52,Y,-.14,-.13,0,.28,0,0));
-    dipper.add(bkt); boom.add(dipper); bh.add(boom); JCB.add(bh);
-
-    scene.add(JCB);
-
-    /* ── Caméra orbitale auto ── */
-    var theta = .9, phi = .32, R = 9.2;
-    function camUpdate() {
-        camera.position.set(
-            R*Math.sin(theta)*Math.cos(phi),
-            R*Math.sin(phi)+1.2,
-            R*Math.cos(theta)*Math.cos(phi)
-        );
-        camera.lookAt(0, 1.2, 0);
-    }
-
-    /* ── Hover : animation du bras ── */
-    var hoverAnim = false, aT = 0;
-    var BOOM0=-.45, DIP0=.55, BKT0=-.45;
-    canvas.addEventListener('mouseenter', function(){ hoverAnim=true; });
-    canvas.addEventListener('mouseleave', function(){
-        hoverAnim=false;
-        boom.rotation.z=BOOM0; dipper.rotation.z=DIP0; bkt.rotation.z=BKT0;
-        la.rotation.z=0; aT=0;
+/* ══════════════════════════════════
+   CHARTS
+══════════════════════════════════ */
+function renderRevenueChart() {
+  // Build monthly revenue from reservations
+  const months = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
+  const monthlyRev = new Array(12).fill(0);
+  allReservations
+    .filter(r => ['accepted','completed'].includes(r.status))
+    .forEach(r => {
+      const d = new Date(r.start_date || r.created_at);
+      if (!isNaN(d)) monthlyRev[d.getMonth()] += parseFloat(r.total_price || 0);
     });
 
-    /* ── Loader ── */
-    var loader = document.getElementById('mini-loader-'+canvasId);
-    setTimeout(function(){ if(loader) loader.style.display='none'; }, 480);
-
-    /* ── Boucle ── */
-    var animId;
-    function loop() {
-        animId = requestAnimationFrame(loop);
-        theta += .006;
-        camUpdate();
-        if (hoverAnim) {
-            aT += .025;
-            boom.rotation.z   = BOOM0+Math.sin(aT)*.7;
-            dipper.rotation.z = DIP0 +Math.sin(aT*1.3+.9)*.5;
-            bkt.rotation.z    = BKT0 +Math.sin(aT*1.8+1.4)*.5;
-            la.rotation.z     = Math.sin(aT*.5)*.16;
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  if (revenueChart) revenueChart.destroy();
+  revenueChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Revenus (MAD)',
+        data: monthlyRev,
+        backgroundColor: 'rgba(212,175,55,.25)',
+        borderColor: '#D4AF37',
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(212,175,55,.08)' },
+          ticks: { color: '#9992a4', font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#9992a4', font: { size: 11 } }
         }
-        renderer.render(scene, camera);
+      }
     }
-    camUpdate(); loop();
-
-    _miniViewers.push({ renderer: renderer, animId: animId });
+  });
 }
 
-/* ═══════════════════════════════════════════════
-   LOAD DASHBOARD
-═══════════════════════════════════════════════ */
-async function loadOwnerDash() {
-    const root      = document.getElementById('dash-root');
-    const initial   = (user?.name || 'O').charAt(0).toUpperCase();
-    const firstName = (user?.name || 'Propriétaire').split(' ')[0];
-
-    try {
-        const d     = await API.get('/api/my-machines');
-        allMachines = d?.data || (Array.isArray(d) ? d : []);
-    } catch(e) { allMachines = getDemoMachines(); }
-
-    try {
-        const d         = await API.get('/api/reservations');
-        allReservations = d?.data || (Array.isArray(d) ? d : []);
-    } catch(e) { allReservations = getDemoReservations(); }
-
-    const totalRevenue = Array.isArray(allReservations)
-        ? allReservations.filter(r => r.status==='completed').reduce((s,r)=>s+(r.total_price||0),0) : 0;
-    const pending = Array.isArray(allReservations)
-        ? allReservations.filter(r=>r.status==='pending').length : 0;
-    const active  = Array.isArray(allReservations)
-        ? allReservations.filter(r=>r.status==='accepted').length : 0;
-
-    root.innerHTML = `
-    <aside class="dash-sidebar">
-        <div class="dash-user-block">
-            <div class="dash-avatar">${initial}</div>
-            <div>
-                <div class="dash-user-name">${user?.name||'Propriétaire'}</div>
-                <div class="dash-user-role"><i class="fas fa-circle" style="font-size:5px"></i> Propriétaire</div>
-            </div>
-        </div>
-        <nav class="dash-nav">
-            <a href="/dashboard/owner" class="dash-nav-item active"><i class="fas fa-th-large"></i> Tableau de bord</a>
-            <a href="/machines/create" class="dash-nav-item"><i class="fas fa-plus-circle"></i> Publier un engin</a>
-            <a href="/machines"        class="dash-nav-item"><i class="fas fa-search"></i> Parcourir</a>
-            <div class="dash-nav-sep"></div>
-            <a href="/dashboard/owner" class="dash-nav-item"><i class="fas fa-user"></i> Mon profil</a>
-            <button class="btn-logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
-        </nav>
-    </aside>
-
-    <main>
-        <div class="dash-header">
-            <div>
-                <div class="dash-title">Bonjour, ${firstName} 👋</div>
-                <div class="dash-subtitle">Gérez votre flotte et vos réservations</div>
-            </div>
-            <a href="/machines/create" class="btn-orange"><i class="fas fa-plus"></i> Publier un engin</a>
-        </div>
-
-        <div class="kpi-grid">
-            <div class="kpi-card fade-up" data-delay="0">
-                <div class="kpi-label"><i class="fas fa-truck"></i> Machines</div>
-                <div class="kpi-value">${allMachines.length}</div>
-                <div class="kpi-sub">dans ma flotte</div>
-            </div>
-            <div class="kpi-card fade-up" data-delay="70">
-                <div class="kpi-label"><i class="fas fa-bell"></i> En attente</div>
-                <div class="kpi-value">${pending}</div>
-                <div class="kpi-sub">demandes à traiter</div>
-            </div>
-            <div class="kpi-card fade-up" data-delay="140">
-                <div class="kpi-label"><i class="fas fa-check-circle"></i> Actives</div>
-                <div class="kpi-value">${active}</div>
-                <div class="kpi-sub">locations en cours</div>
-            </div>
-            <div class="kpi-card fade-up" data-delay="210">
-                <div class="kpi-label"><i class="fas fa-coins"></i> Revenus</div>
-                <div class="kpi-value">${parseInt(totalRevenue).toLocaleString('fr')}</div>
-                <div class="kpi-sub">DH total généré</div>
-            </div>
-        </div>
-
-        <div class="revenue-chart fade-up" data-delay="280">
-            <div class="rev-header">
-                <div>
-                    <div class="rev-title">Revenus mensuels</div>
-                    <div class="rev-total">${parseInt(totalRevenue||37800).toLocaleString('fr')} DH</div>
-                    <div class="rev-sub">Total 2025 <span style="color:#10B981">↑ +18%</span></div>
-                </div>
-                <div style="text-align:right">
-                    <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px">Meilleur mois</div>
-                    <div style="font-size:16px;font-weight:800;color:var(--orange)">Mai 2025</div>
-                </div>
-            </div>
-            <div class="rev-bars">
-                ${[['Jan',35],['Fév',55],['Mar',45],['Avr',70],['Mai',100],['Jun',80],
-                   ['Jui',65],['Aoû',75],['Sep',60],['Oct',85],['Nov',55],['Déc',90]]
-                  .map(([m,h],i)=>`
-                    <div class="rev-bar-wrap">
-                        <div class="rev-bar ${i===4?'highlight':''}" style="height:${h}%"></div>
-                        <div class="rev-month">${m}</div>
-                    </div>`).join('')}
-            </div>
-        </div>
-
-        <div class="owner-tabs">
-            <div class="owner-tab active" id="tab-machines" onclick="switchTab('machines',this)">
-                <i class="fas fa-truck"></i> Mes engins
-                <span class="tab-count">${allMachines.length}</span>
-            </div>
-            <div class="owner-tab" id="tab-demandes" onclick="switchTab('demandes',this)">
-                <i class="fas fa-inbox"></i> Demandes reçues
-                <span class="tab-count">${pending}</span>
-            </div>
-            <div class="owner-tab" id="tab-history" onclick="switchTab('history',this)">
-                <i class="fas fa-history"></i> Historique
-            </div>
-        </div>
-
-        <div id="tab-content"></div>
-    </main>`;
-
-    document.querySelectorAll('.fade-up').forEach(el => {
-        el.style.transitionDelay = (el.dataset.delay||0)+'ms';
-        setTimeout(()=>el.classList.add('visible'), 50);
+function renderMachineRevenueList() {
+  const revenueByMachine = {};
+  allReservations
+    .filter(r => ['accepted','completed'].includes(r.status))
+    .forEach(r => {
+      const name = r.machine?.name || `Machine #${r.machine_id}`;
+      revenueByMachine[name] = (revenueByMachine[name] || 0) + parseFloat(r.total_price || 0);
     });
 
-    switchTab('machines', document.getElementById('tab-machines'));
+  const sorted = Object.entries(revenueByMachine).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const max = sorted[0]?.[1] || 1;
+
+  const container = document.getElementById('machineRevenueList');
+  if (!sorted.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><p>Aucun revenu enregistré</p></div>`;
+    return;
+  }
+  container.innerHTML = sorted.map(([name, rev]) => `
+    <div class="revenue-row">
+      <div style="font-size:.82rem;color:var(--navy);font-weight:600;min-width:120px;max-width:140px;
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${name}">${name}</div>
+      <div class="revenue-bar-wrap">
+        <div class="revenue-bar" style="width:${(rev/max*100).toFixed(1)}%"></div>
+      </div>
+      <div class="revenue-amount">${rev.toLocaleString('fr-MA')} MAD</div>
+    </div>
+  `).join('');
 }
 
-/* ═══════════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════════ */
-function switchTab(tab, btn) {
-    currentTab = tab;
-    document.querySelectorAll('.owner-tab').forEach(t=>t.classList.remove('active'));
-    btn.classList.add('active');
-    const content = document.getElementById('tab-content');
+/* ══════════════════════════════════
+   RECENT RESERVATIONS
+══════════════════════════════════ */
+function renderRecentReservations() {
+  const recent = [...allReservations]
+    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 6);
 
-    /* Détruire les viewers précédents avant de reconstruire */
-    destroyMiniViewers();
-
-    if (tab==='machines') {
-        content.innerHTML = renderMachinesGrid();
-        /* Initialiser les mini viewers après que le DOM est prêt */
-        setTimeout(function() {
-            allMachines.forEach(function(m) {
-                initMiniViewer('mini3d-' + m.id, m.type);
-            });
-        }, 60);
-    }
-    if (tab==='demandes') content.innerHTML = renderDemandesTable(allReservations.filter(r=>r.status==='pending'));
-    if (tab==='history')  content.innerHTML = renderHistoryTable(allReservations.filter(r=>r.status!=='pending'));
+  document.getElementById('recentResTbody').innerHTML = recent.length
+    ? recent.map(r => buildResRow(r)).join('')
+    : `<tr><td colspan="7" class="empty-state"><div class="empty-state-icon">📭</div><p>Aucune réservation</p></td></tr>`;
 }
 
-/* ═══════════════════════════════════════════════
-   GRILLE MACHINES — canvas à la place de l'emoji
-═══════════════════════════════════════════════ */
-function renderMachinesGrid() {
-    const statusMap = {
-        available:   { label:'Disponible',  cls:'ms-available'   },
-        unavailable: { label:'En location', cls:'ms-rented'      },
-        rented:      { label:'En location', cls:'ms-rented'      },
-        maintenance: { label:'Maintenance', cls:'ms-maintenance'  },
-    };
-    let html = '<div class="machines-owner-grid">';
-    allMachines.forEach(function(m, i) {
-        const st = statusMap[m.status] || { label: m.status, cls:'ms-pending' };
-        html += `
-        <div class="mowner-card" style="animation-delay:${i*60}ms">
+/* ══════════════════════════════════
+   MACHINES GRID
+══════════════════════════════════ */
+function renderMachinesGrid(machines) {
+  const list = machines || allMachines;
+  const grid = document.getElementById('machinesGrid');
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-state-icon">🏗</div>
+        <h3>Aucune machine trouvée</h3>
+        <p>Ajoutez votre première machine pour commencer</p>
+        <button class="btn-gold" style="margin-top:1rem" onclick="openMachineModal()">➕ Ajouter</button>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = list.map(m => buildMachineCard(m)).join('');
+}
 
-            {{-- ── Mini viewer 3D ── --}}
-            <div class="mowner-img">
-                <canvas id="mini3d-${m.id}"></canvas>
-                <div id="mini-loader-mini3d-${m.id}" class="mini-loader">
-                    <div class="mini-loader-dot"></div>
-                </div>
-                <div class="mowner-status ${st.cls}">${st.label}</div>
-                <div class="mowner-img-hint">⟳ survol = animation</div>
-            </div>
+function buildMachineCard(m) {
+  const img = m.images?.[0]?.path
+    ? `/storage/${m.images[0].path}`
+    : (TYPE_PHOTO[m.type?.toLowerCase()] || '/images/img1.png');
 
-            <div class="mowner-body">
-                <div class="mowner-type">${m.type||'—'}</div>
-                <div class="mowner-name">${m.name}</div>
-                <div class="mowner-loc">
-                    <i class="fas fa-map-marker-alt"></i>${m.city||m.location||'—'}
-                </div>
-                <div class="mowner-stats">
-                    <div class="mowner-stat"><strong>${m.reservations_count||0}</strong> locations</div>
-                    <div class="mowner-stat">·</div>
-                    <div class="mowner-stat">⭐ ${m.ratings_avg?parseFloat(m.ratings_avg).toFixed(1):'—'}</div>
-                </div>
-                <div class="mowner-footer">
-                    <div class="mowner-price">
-                        ${parseInt(m.price_per_day).toLocaleString('fr')} <small>dh/j</small>
-                    </div>
-                    <div class="mowner-actions">
-                        <button class="btn-icon btn-icon-edit" onclick="editMachine(${m.id})" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-icon btn-icon-del" onclick="deleteMachine(${m.id})" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+  return `
+  <div class="machine-card" id="mc-${m.id}">
+    <div class="machine-card-img">
+      <img src="${img}" alt="${m.name}" loading="lazy"
+        onerror="this.src='${TYPE_PHOTO[m.type?.toLowerCase()]||'/images/img1.png'}'">
+      ${STATUS_DISPO[m.status] || ''}
+      <button class="machine-card-3d" onclick="openMiniViewer(${m.id},'${escHtml(m.name)}','${m.type?.toLowerCase()}')" title="Vue 3D">
+        🎲
+      </button>
+    </div>
+    <div class="machine-card-body">
+      <div class="machine-card-type">${m.type || 'Machine'}</div>
+      <div class="machine-card-name">${escHtml(m.name)}</div>
+      <div class="machine-card-city">📍 ${escHtml(m.city || '—')}</div>
+      <div class="machine-card-price">
+        <strong>${parseFloat(m.price_per_day||0).toLocaleString('fr-MA')}</strong>
+        <span>MAD/jour</span>
+        ${m.price_per_hour ? `<span style="color:var(--txt-light);margin-left:.5rem">· ${parseFloat(m.price_per_hour).toLocaleString('fr-MA')} MAD/h</span>` : ''}
+      </div>
+    </div>
+    <div class="machine-card-actions">
+      <button class="btn-outline btn-sm" onclick="openMachineModal(${m.id})">✏️ Modifier</button>
+      <button class="btn-outline btn-sm" onclick="changeStatus(${m.id})">🔄 Statut</button>
+      <button class="btn-icon danger" title="Supprimer" onclick="deleteMachine(${m.id},'${escHtml(m.name)}')">🗑</button>
+      <a href="https://wa.me/?text=Ma machine ${encodeURIComponent(m.name)} est disponible ! ${encodeURIComponent(window.location.origin+'/machines/'+m.id)}"
+         target="_blank" class="btn-icon success" title="Partager WhatsApp">💬</a>
+    </div>
+  </div>`;
+}
+
+function filterMachines() {
+  const q = document.getElementById('machineSearchInput').value.toLowerCase();
+  const type = document.getElementById('machineTypeFilter').value;
+  const status = document.getElementById('machineStatusFilter').value;
+  const filtered = allMachines.filter(m =>
+    (!q || m.name?.toLowerCase().includes(q) || m.city?.toLowerCase().includes(q)) &&
+    (!type || m.type?.toLowerCase() === type) &&
+    (!status || m.status === status)
+  );
+  renderMachinesGrid(filtered);
+}
+
+/* ══════════════════════════════════
+   RESERVATIONS TABLE
+══════════════════════════════════ */
+function renderReservationsTable(reservations) {
+  const list = reservations || allReservations;
+  const tbody = document.getElementById('reservationsTbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7">
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3>Aucune réservation</h3>
+        <p>Les demandes de location apparaîtront ici</p>
+      </div>
+    </td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(r => buildResRow(r, true)).join('');
+}
+
+function buildResRow(r, withActions = false) {
+  const clientInitial = (r.client?.name || 'C')[0].toUpperCase();
+  const start = r.start_date ? new Date(r.start_date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '—';
+  const end   = r.end_date   ? new Date(r.end_date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '—';
+  const price = parseFloat(r.total_price||0).toLocaleString('fr-MA');
+  const machineName = r.machine?.name || `Machine #${r.machine_id}`;
+
+  let actions = '';
+  if (withActions) {
+    if (r.status === 'pending') {
+      actions = `
+        <div class="res-actions">
+          <button class="btn-gold btn-sm" onclick="respondReservation(${r.id},'accept')">✅ Accepter</button>
+          <button class="btn-outline btn-sm" onclick="respondReservation(${r.id},'reject')" style="border-color:var(--red);color:var(--red)">❌ Refuser</button>
         </div>`;
+    } else if (r.status === 'accepted') {
+      actions = `
+        <div class="res-actions">
+          <button class="btn-outline btn-sm" onclick="respondReservation(${r.id},'complete')">🏆 Terminer</button>
+          <a href="https://wa.me/${r.client?.phone || ''}?text=Bonjour ${encodeURIComponent(r.client?.name||'')} !"
+             target="_blank" class="btn-outline btn-sm">💬 WhatsApp</a>
+        </div>`;
+    } else {
+      actions = `<span style="color:var(--txt-light);font-size:.8rem">—</span>`;
+    }
+  }
+
+  return `
+  <tr>
+    <td style="color:var(--txt-light);font-size:.8rem">#${r.id}</td>
+    <td>
+      <div class="client-info">
+        <div class="client-avatar">${clientInitial}</div>
+        <div>
+          <div style="font-weight:600;color:var(--navy);font-size:.85rem">${escHtml(r.client?.name||'—')}</div>
+          <div style="font-size:.75rem;color:var(--txt-light)">${escHtml(r.client?.phone||'')}</div>
+        </div>
+      </div>
+    </td>
+    <td style="font-weight:600;color:var(--navy)">${escHtml(machineName)}</td>
+    <td style="font-size:.82rem">${start} → ${end}</td>
+    <td><strong style="color:var(--navy)">${price} MAD</strong></td>
+    <td>${STATUS_BADGE[r.status] || r.status}</td>
+    <td>${actions}</td>
+  </tr>`;
+}
+
+function filterReservations() {
+  const q      = document.getElementById('resSearchInput').value.toLowerCase();
+  const status = document.getElementById('resStatusFilter').value;
+  const machId = document.getElementById('resMachineFilter').value;
+  const filtered = allReservations.filter(r =>
+    (!q || (r.client?.name||'').toLowerCase().includes(q) || (r.machine?.name||'').toLowerCase().includes(q)) &&
+    (!status || r.status === status) &&
+    (!machId || String(r.machine_id) === machId)
+  );
+  renderReservationsTable(filtered);
+}
+
+function populateMachineFilter() {
+  const sel = document.getElementById('resMachineFilter');
+  allMachines.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = m.name;
+    sel.appendChild(opt);
+  });
+}
+
+/* ══════════════════════════════════
+   RESPOND RESERVATION
+══════════════════════════════════ */
+async function respondReservation(id, action) {
+  const labels = {
+    accept: { title:'Accepter la réservation', msg:'Confirmer l\'acceptation de cette réservation ?', icon:'✅' },
+    reject: { title:'Refuser la réservation',  msg:'Confirmer le refus de cette réservation ?', icon:'❌' },
+    complete:{ title:'Marquer comme terminée', msg:'Confirmer la fin de cette location ?', icon:'🏆' },
+  };
+  const l = labels[action];
+  openConfirm(l.icon, l.title, l.msg, async () => {
+    try {
+      const res = await window.API.patch(`/api/reservations/${id}/${action}`);
+      if (res.ok || res.status === 200) {
+        // Update local state
+        const idx = allReservations.findIndex(r => r.id === id);
+        if (idx !== -1) {
+          const map = { accept:'accepted', reject:'rejected', complete:'completed' };
+          allReservations[idx].status = map[action];
+        }
+        await loadReservations(); // refresh badge
+        renderReservationsTable();
+        renderRecentReservations();
+        renderStats();
+        showToast('success', '✅ Réservation mise à jour');
+      } else {
+        showToast('error', '❌ Erreur : ' + (res.data?.message || 'Réessayez'));
+      }
+    } catch(e) {
+      showToast('error', '❌ Erreur réseau');
+    }
+  });
+}
+
+/* ══════════════════════════════════
+   MACHINE MODAL
+══════════════════════════════════ */
+function openMachineModal(id = null) {
+  editMachineId = id;
+  selectedFiles = [];
+  document.getElementById('imgPreviewGrid').innerHTML = '';
+  document.getElementById('machineImages').value = '';
+
+  if (id) {
+    const m = allMachines.find(x => x.id == id);
+    if (!m) return;
+    document.getElementById('machineModalTitle').textContent = 'Modifier la machine';
+    document.getElementById('machineModalSaveBtn').innerHTML = '<span>💾</span> Mettre à jour';
+    document.getElementById('machineName').value        = m.name || '';
+    document.getElementById('machineType').value        = m.type?.toLowerCase() || '';
+    document.getElementById('machinePriceDay').value    = m.price_per_day || '';
+    document.getElementById('machinePriceHour').value   = m.price_per_hour || '';
+    document.getElementById('machineCity').value        = m.city || '';
+    document.getElementById('machineLocation').value    = m.location || '';
+    document.getElementById('machineDescription').value = m.description || '';
+    setDispoVal(m.status || 'available');
+
+    // Show existing images
+    (m.images || []).forEach(img => {
+      const div = document.createElement('div');
+      div.className = 'img-preview-item';
+      div.innerHTML = `<img src="/storage/${img.path}" alt=""><button class="img-preview-remove" onclick="this.parentNode.remove()">✕</button>`;
+      document.getElementById('imgPreviewGrid').appendChild(div);
     });
-    html += `
-    <div class="add-machine-card" onclick="window.location.href='/machines/create'">
-        <div class="add-machine-icon">+</div>
-        <div class="add-machine-text">Publier un nouvel engin</div>
-    </div></div>`;
-    return html;
+  } else {
+    document.getElementById('machineModalTitle').textContent = 'Ajouter une machine';
+    document.getElementById('machineModalSaveBtn').innerHTML = '<span>💾</span> Enregistrer';
+    document.getElementById('machineName').value        = '';
+    document.getElementById('machineType').value        = '';
+    document.getElementById('machinePriceDay').value    = '';
+    document.getElementById('machinePriceHour').value   = '';
+    document.getElementById('machineCity').value        = '';
+    document.getElementById('machineLocation').value    = '';
+    document.getElementById('machineDescription').value = '';
+    setDispoVal('available');
+  }
+
+  document.getElementById('machineModal').classList.add('open');
 }
 
-/* ═══════════════════════════════════════════════
-   TABLES DEMANDES / HISTORIQUE
-═══════════════════════════════════════════════ */
-function renderDemandesTable(reservations) {
-    if (!reservations.length) {
-        return `<div class="dash-panel"><div class="empty-state">
-            <div class="empty-state-icon">📬</div>
-            <div class="empty-state-title">Aucune demande en attente</div>
-            <div style="font-size:13px;color:var(--text-light)">Les nouvelles demandes apparaîtront ici</div>
-        </div></div>`;
+function closeMachineModal() {
+  document.getElementById('machineModal').classList.remove('open');
+  editMachineId = null;
+  selectedFiles = [];
+}
+
+function setDispo(btn) {
+  document.querySelectorAll('.dispo-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentDispo = btn.dataset.val;
+}
+
+function setDispoVal(val) {
+  currentDispo = val;
+  document.querySelectorAll('.dispo-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === val);
+  });
+}
+
+function previewImages(event) {
+  const files = Array.from(event.target.files);
+  selectedFiles = [...selectedFiles, ...files];
+  const grid = document.getElementById('imgPreviewGrid');
+  files.forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const div = document.createElement('div');
+      div.className = 'img-preview-item';
+      div.dataset.fileIdx = selectedFiles.length - files.length + i;
+      div.innerHTML = `
+        <img src="${e.target.result}" alt="">
+        <button class="img-preview-remove" onclick="removePreview(this,${selectedFiles.length - files.length + i})">✕</button>`;
+      grid.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removePreview(btn, idx) {
+  selectedFiles[idx] = null;
+  btn.parentNode.remove();
+}
+
+async function saveMachine() {
+  const name     = document.getElementById('machineName').value.trim();
+  const type     = document.getElementById('machineType').value;
+  const priceDay = document.getElementById('machinePriceDay').value;
+  const city     = document.getElementById('machineCity').value.trim();
+
+  if (!name || !type || !priceDay || !city) {
+    showToast('error', '⚠️ Veuillez remplir tous les champs obligatoires');
+    return;
+  }
+
+  const btn = document.getElementById('machineModalSaveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span>⏳</span> Enregistrement…';
+
+  try {
+    const formData = new FormData();
+    formData.append('name',          name);
+    formData.append('type',          type);
+    formData.append('price_per_day', priceDay);
+    formData.append('price_per_hour',document.getElementById('machinePriceHour').value || 0);
+    formData.append('city',          city);
+    formData.append('location',      document.getElementById('machineLocation').value.trim());
+    formData.append('description',   document.getElementById('machineDescription').value.trim());
+    formData.append('status',        currentDispo);
+
+    selectedFiles.filter(Boolean).forEach((f, i) => formData.append(`images[${i}]`, f));
+
+    const token = window.getToken ? window.getToken() : localStorage.getItem('auth_token');
+    const url   = editMachineId ? `/api/machines/${editMachineId}` : '/api/machines';
+    const method= editMachineId ? 'POST' : 'POST'; // Laravel: POST + _method for PUT
+    if (editMachineId) formData.append('_method', 'PUT');
+
+    const response = await fetch(url, {
+      method,
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+      body: formData,
+    });
+    const data = await response.json();
+
+    if (response.ok) {
+      showToast('success', editMachineId ? '✅ Machine mise à jour !' : '✅ Machine ajoutée !');
+      closeMachineModal();
+      await loadMachines();
+      renderMachinesGrid();
+      renderStats();
+    } else {
+      const errs = data.errors ? Object.values(data.errors).flat().join(' | ') : (data.message || 'Erreur');
+      showToast('error', '❌ ' + errs);
     }
-    return `
-    <div class="dash-panel">
-        <div class="panel-header">
-            <div class="panel-title">Demandes en attente</div>
-            <div class="panel-badge">${reservations.length} à traiter</div>
-        </div>
-        <table class="res-table">
-            <thead><tr>
-                <th>Client</th><th>Machine</th><th>Dates</th><th>Total</th><th>Actions</th>
-            </tr></thead>
-            <tbody>${reservations.map((r,i)=>`
-            <tr id="res-row-${i}">
-                <td>
-                    <div style="font-weight:700">${r.client?.name||'—'}</div>
-                    <div style="font-size:11px;color:var(--text-light)">${r.client?.phone||''}</div>
-                </td>
-                <td>
-                    <div style="font-weight:700">${r.machine?.name||'—'}</div>
-                    <div style="font-size:11px;color:var(--text-light)">${r.machine?.type||''}</div>
-                </td>
-                <td>
-                    ${r.start_date||'—'}<br>
-                    <span style="color:var(--text-light);font-size:11px">→ ${r.end_date||'—'} · ${r.nb_days||'—'} j</span>
-                </td>
-                <td style="font-weight:800">${parseInt(r.total_price||0).toLocaleString('fr')} DH</td>
-                <td>
-                    <div style="display:flex;gap:6px">
-                        <button class="btn-accept" onclick="respondRes(${r.id},'accept',${i})">
-                            <i class="fas fa-check"></i> Accepter
-                        </button>
-                        <button class="btn-reject" onclick="respondRes(${r.id},'reject',${i})">
-                            <i class="fas fa-times"></i> Refuser
-                        </button>
-                    </div>
-                </td>
-            </tr>`).join('')}</tbody>
-        </table>
-    </div>`;
+  } catch(e) {
+    showToast('error', '❌ Erreur réseau');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = editMachineId ? '<span>💾</span> Mettre à jour' : '<span>💾</span> Enregistrer';
+  }
 }
 
-function renderHistoryTable(reservations) {
-    if (!reservations.length) {
-        return `<div class="dash-panel"><div class="empty-state">
-            <div class="empty-state-icon">📋</div>
-            <div class="empty-state-title">Aucun historique</div>
-        </div></div>`;
+/* ══════════════════════════════════
+   CHANGE STATUS (quick modal)
+══════════════════════════════════ */
+function changeStatus(id) {
+  const m = allMachines.find(x => x.id == id);
+  if (!m) return;
+  const nextStatus = { available:'unavailable', unavailable:'maintenance', maintenance:'available' };
+  const next = nextStatus[m.status] || 'available';
+  const labels = { available:'Disponible ✅', unavailable:'Indisponible ❌', maintenance:'Maintenance 🔧' };
+  openConfirm('🔄', 'Changer le statut', `Passer la machine "${m.name}" en : ${labels[next]} ?`, async () => {
+    try {
+      const res = await window.API.put(`/api/machines/${id}`, { status: next });
+      if (res.ok || res.status === 200) {
+        const idx = allMachines.findIndex(x => x.id == id);
+        if (idx !== -1) allMachines[idx].status = next;
+        renderMachinesGrid();
+        renderStats();
+        showToast('success', `✅ Statut mis à jour : ${labels[next]}`);
+      } else {
+        showToast('error', '❌ Erreur lors de la mise à jour');
+      }
+    } catch(e) {
+      showToast('error', '❌ Erreur réseau');
     }
-    const statusMap   = { accepted:'sb-accepted', rejected:'sb-rejected', completed:'sb-completed', cancelled:'sb-default' };
-    const statusLabel = { accepted:'Confirmée',   rejected:'Refusée',     completed:'Terminée',    cancelled:'Annulée' };
-    return `
-    <div class="dash-panel">
-        <div class="panel-header">
-            <div class="panel-title">Historique des locations</div>
-            <div class="panel-badge">${reservations.length} au total</div>
-        </div>
-        <table class="res-table">
-            <thead><tr>
-                <th>Client</th><th>Machine</th><th>Dates</th><th>Durée</th><th>Total</th><th>Statut</th>
-            </tr></thead>
-            <tbody>${reservations.map(r=>`
-            <tr>
-                <td style="font-weight:600">${r.client?.name||'—'}</td>
-                <td><div style="font-weight:700">${r.machine?.name||'—'}</div></td>
-                <td><small>${r.start_date||'—'} → ${r.end_date||'—'}</small></td>
-                <td>${r.nb_days||'—'} jour(s)</td>
-                <td style="font-weight:800">${parseInt(r.total_price||0).toLocaleString('fr')} DH</td>
-                <td><span class="stat-badge ${statusMap[r.status]||'sb-default'}">${statusLabel[r.status]||r.status}</span></td>
-            </tr>`).join('')}</tbody>
-        </table>
-    </div>`;
+  });
 }
 
-/* ═══════════════════════════════════════════════
-   ACTIONS
-═══════════════════════════════════════════════ */
-async function respondRes(id, action, rowIdx) {
-    try { await API.patch(`/api/reservations/${id}/${action}`); } catch(e) {}
-    const row = document.getElementById(`res-row-${rowIdx}`);
-    if (row) {
-        row.style.background = action==='accept' ? '#F0FDF4' : '#FEF2F2';
-        row.querySelector('td:last-child').innerHTML =
-            `<span class="stat-badge ${action==='accept'?'sb-accepted':'sb-rejected'}">
-                ${action==='accept'?'✓ Acceptée':'✗ Refusée'}
-             </span>`;
+/* ══════════════════════════════════
+   DELETE MACHINE
+══════════════════════════════════ */
+function deleteMachine(id, name) {
+  openConfirm('🗑', 'Supprimer la machine',
+    `Êtes-vous sûr de vouloir supprimer "${name}" ? Cette action est irréversible.`,
+    async () => {
+      try {
+        const res = await window.API.delete(`/api/machines/${id}`);
+        if (res.ok || res.status === 200 || res.status === 204) {
+          allMachines = allMachines.filter(m => m.id != id);
+          allReservations = allReservations.filter(r => r.machine_id != id);
+          renderMachinesGrid();
+          renderStats();
+          renderRecentReservations();
+          renderReservationsTable();
+          showToast('success', '✅ Machine supprimée');
+        } else {
+          showToast('error', '❌ Impossible de supprimer cette machine');
+        }
+      } catch(e) {
+        showToast('error', '❌ Erreur réseau');
+      }
     }
-    showFlash(action==='accept'?'Réservation confirmée ✓':'Réservation refusée', action==='accept'?'success':'warning');
+  );
 }
 
-function editMachine(id) { window.location.href=`/machines/${id}/edit`; }
-
-async function deleteMachine(id) {
-    if (!confirm('Voulez-vous vraiment supprimer cette machine ?')) return;
-    try { await API.delete(`/api/machines/${id}`); } catch(e) {}
-    allMachines = allMachines.filter(m=>m.id!==id);
-    switchTab('machines', document.getElementById('tab-machines'));
-    showFlash('Machine supprimée', 'success');
-}
-
-/* ═══════════════════════════════════════════════
-   DEMO DATA
-═══════════════════════════════════════════════ */
-function getDemoMachines() {
-    return [
-        { id:1, type:'Excavatrice', name:'JCB 3CX Backhoe Loader',  city:'Casablanca', status:'available',   price_per_day:2400, reservations_count:12, ratings_avg:4.9 },
-        { id:2, type:'Camion',      name:'Camion Benne Volvo FH16',  city:'Rabat',      status:'rented',      price_per_day:1300, reservations_count:8,  ratings_avg:4.7 },
-        { id:3, type:'Grue',        name:'Grue Mobile Liebherr LTM', city:'Marrakech',  status:'available',   price_per_day:3600, reservations_count:5,  ratings_avg:4.9 },
-    ];
-}
-function getDemoReservations() {
-    return [
-        { id:1, client:{name:'BTP Atlas',     phone:'+212600000001'}, machine:{name:'JCB 3CX',           type:'Excavatrice'}, start_date:'2025-05-10', end_date:'2025-05-14', nb_days:5, total_price:12600, status:'pending'   },
-        { id:2, client:{name:'Travaux Maroc', phone:'+212600000002'}, machine:{name:'Camion Benne Volvo', type:'Camion'},      start_date:'2025-04-28', end_date:'2025-04-30', nb_days:3, total_price:4095,  status:'completed' },
-        { id:3, client:{name:'Bâtiment SA',   phone:'+212600000003'}, machine:{name:'Grue Liebherr',      type:'Grue'},        start_date:'2025-04-05', end_date:'2025-04-11', nb_days:7, total_price:26460, status:'completed' },
-    ];
-}
-
-/* ═══════════════════════════════════════════════
-   LOGOUT
-═══════════════════════════════════════════════ */
-window.doLogout = function() {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
-    API.post('/api/logout',{}).finally(()=>window.location.replace('/'));
+/* ══════════════════════════════════
+   MINI 3D VIEWER (Three.js r128)
+   — No OrbitControls (CDN indispo)
+   — Manual orbit via mouse/touch
+══════════════════════════════════ */
+const PALETTE_3D = {
+  excavatrice:{ body:0xD4AF37, arm:0x9A7D20, cabin:0x0F1B2D },
+  grue:       { body:0xD4AF37, arm:0x5a5660, cabin:0x162540 },
+  bulldozer:  { body:0xF97316, arm:0x9A7D20, cabin:0x0F1B2D },
+  chargeuse:  { body:0x22c55e, arm:0x9A7D20, cabin:0x0F1B2D },
+  compacteur: { body:0xef4444, arm:0x5a5660, cabin:0x162540 },
+  nacelle:    { body:0x3b82f6, arm:0x9A7D20, cabin:0x0F1B2D },
+  tractopelle:{ body:0xD4AF37, arm:0x9A7D20, cabin:0x0F1B2D },
+  camion:     { body:0xD4AF37, arm:0x5a5660, cabin:0x162540 },
 };
 
-loadOwnerDash();
+function openMiniViewer(machineId, name, type) {
+  document.getElementById('miniViewerTitle').textContent = name;
+  document.getElementById('miniViewerModal').classList.add('open');
+  setTimeout(() => initMiniViewer(type), 50);
+}
+
+function closeMiniViewer() {
+  document.getElementById('miniViewerModal').classList.remove('open');
+  destroyMiniViewer();
+}
+
+function destroyMiniViewer() {
+  if (miniViewerAnim) { cancelAnimationFrame(miniViewerAnim); miniViewerAnim = null; }
+  if (miniViewerRenderer) { miniViewerRenderer.dispose(); miniViewerRenderer = null; }
+}
+
+function initMiniViewer(type) {
+  destroyMiniViewer();
+  const canvas  = document.getElementById('miniViewerCanvas');
+  const W = canvas.clientWidth  || 380;
+  const H = canvas.clientHeight || 280;
+  const pal = PALETTE_3D[type?.toLowerCase()] || PALETTE_3D.excavatrice;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  miniViewerRenderer = renderer;
+
+  const scene  = new THREE.Scene();
+  scene.background = new THREE.Color(0x0d1a2e);
+
+  const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+  camera.position.set(4, 3, 5);
+  camera.lookAt(0, 0.5, 0);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dir = new THREE.DirectionalLight(0xD4AF37, 1.2);
+  dir.position.set(5, 8, 5);
+  dir.castShadow = true;
+  scene.add(dir);
+  scene.add(new THREE.PointLight(0x162540, 0.8, 20));
+
+  // Ground
+  const groundGeo = new THREE.CylinderGeometry(3, 3, 0.1, 32);
+  const groundMat = new THREE.MeshStandardMaterial({ color:0x162540 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.position.y = -0.3;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Build machine by type
+  const group = new THREE.Group();
+  buildMachine3D(group, type?.toLowerCase() || 'excavatrice', pal);
+  scene.add(group);
+
+  // Grid helper
+  const grid = new THREE.GridHelper(6, 6, 0x1a2f4a, 0x1a2f4a);
+  grid.position.y = -0.25;
+  scene.add(grid);
+
+  // Manual orbit state
+  let isDragging = false, prevX = 0, prevY = 0;
+  let rotY = 0, rotX = 0.2;
+
+  canvas.addEventListener('mousedown',  e => { isDragging=true; prevX=e.clientX; prevY=e.clientY; });
+  canvas.addEventListener('mousemove',  e => {
+    if (!isDragging) return;
+    rotY += (e.clientX - prevX) * 0.01;
+    rotX += (e.clientY - prevY) * 0.008;
+    rotX  = Math.max(-0.5, Math.min(0.8, rotX));
+    prevX = e.clientX; prevY = e.clientY;
+  });
+  canvas.addEventListener('mouseup',    () => isDragging=false);
+  canvas.addEventListener('mouseleave', () => isDragging=false);
+  // Touch
+  canvas.addEventListener('touchstart', e => { prevX=e.touches[0].clientX; prevY=e.touches[0].clientY; });
+  canvas.addEventListener('touchmove',  e => {
+    e.preventDefault();
+    rotY += (e.touches[0].clientX - prevX) * 0.01;
+    rotX += (e.touches[0].clientY - prevY) * 0.008;
+    rotX  = Math.max(-0.5, Math.min(0.8, rotX));
+    prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
+  }, { passive:false });
+
+  function animate() {
+    miniViewerAnim = requestAnimationFrame(animate);
+    if (!isDragging) rotY += 0.007; // auto-rotate
+    group.rotation.y = rotY;
+    // Orbit camera vertically
+    const radius = 6;
+    camera.position.x = radius * Math.sin(rotY) * Math.cos(rotX);
+    camera.position.z = radius * Math.cos(rotY) * Math.cos(rotX);
+    camera.position.y = radius * Math.sin(rotX) + 1;
+    camera.lookAt(0, 0.5, 0);
+    renderer.render(scene, camera);
+  }
+  animate();
+}
+
+function buildMachine3D(group, type, pal) {
+  const matBody   = new THREE.MeshStandardMaterial({ color:pal.body,   metalness:.4, roughness:.5 });
+  const matArm    = new THREE.MeshStandardMaterial({ color:pal.arm,    metalness:.3, roughness:.6 });
+  const matCabin  = new THREE.MeshStandardMaterial({ color:pal.cabin,  metalness:.6, roughness:.3 });
+  const matWheel  = new THREE.MeshStandardMaterial({ color:0x222222,   metalness:.2, roughness:.8 });
+  const matGlass  = new THREE.MeshStandardMaterial({ color:0x88bbff,   transparent:true, opacity:.6, metalness:.1 });
+
+  const addMesh = (geo, mat, x=0,y=0,z=0, rx=0,ry=0,rz=0) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x,y,z);
+    m.rotation.set(rx,ry,rz);
+    m.castShadow = true;
+    group.add(m);
+    return m;
+  };
+
+  if (type === 'excavatrice' || type === 'tractopelle') {
+    // Body
+    addMesh(new THREE.BoxGeometry(2,.8,1.2), matBody, 0,.4,0);
+    // Cabin
+    addMesh(new THREE.BoxGeometry(1,.8,1), matCabin, -.4,1.2,0);
+    addMesh(new THREE.BoxGeometry(.9,.6,.9), matGlass, -.4,1.6,0);
+    // Tracks
+    addMesh(new THREE.BoxGeometry(2.2,.35,1.6), matArm, 0,.05,0);
+    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, s*0.85,-.1,.7));
+    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, s*0.85,-.1,-.7));
+    // Arm
+    addMesh(new THREE.BoxGeometry(.25,1.2,.2), matArm, .6,1.4,0, 0,0,-.4);
+    addMesh(new THREE.BoxGeometry(.2,.9,.18), matArm, 1.25,.9,0, 0,0,.35);
+    addMesh(new THREE.BoxGeometry(.5,.25,.15), matArm, 1.6,.3,0, 0,0,.5);
+
+  } else if (type === 'grue') {
+    // Base
+    addMesh(new THREE.CylinderGeometry(.6,.8,.4,8), matBody, 0,.2,0);
+    // Tower
+    addMesh(new THREE.BoxGeometry(.35,4,.35), matBody, 0,2,0);
+    // Horizontal beam
+    addMesh(new THREE.BoxGeometry(3.5,.2,.2), matArm, .5,4,0);
+    // Counter weight
+    addMesh(new THREE.BoxGeometry(.8,.4,.4), matArm, -1,4.2,0);
+    // Cabin
+    addMesh(new THREE.BoxGeometry(.7,.7,.6), matCabin, .1,3.3,0);
+    addMesh(new THREE.BoxGeometry(.6,.5,.5), matGlass, .1,3.6,0);
+    // Cable
+    addMesh(new THREE.CylinderGeometry(.03,.03,2.5,6), matArm, 1.8,2.7,0);
+    // Hook
+    addMesh(new THREE.BoxGeometry(.35,.2,.2), matArm, 1.8,1.4,0);
+    // Wheels
+    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.4,.4,.25,8), matWheel, s*.8,0,0, 0,0,Math.PI/2));
+
+  } else if (type === 'bulldozer') {
+    // Body
+    addMesh(new THREE.BoxGeometry(2.2,1,1.6), matBody, 0,.5,0);
+    // Cabin
+    addMesh(new THREE.BoxGeometry(1,1,1.3), matCabin, -.3,1.2,0);
+    addMesh(new THREE.BoxGeometry(.9,.7,1.1), matGlass, -.3,1.55,0);
+    // Blade front
+    addMesh(new THREE.BoxGeometry(.2,1.1,1.8), matArm, 1.3,.7,0, 0,0,-.15);
+    // Tracks
+    [-1,1].forEach(s => {
+      addMesh(new THREE.BoxGeometry(2.4,.35,.4), matArm, 0,.05,s*.7);
+      addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, .85,.05,s*.7);
+      addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, -.85,.05,s*.7);
+    });
+
+  } else if (type === 'chargeuse') {
+    addMesh(new THREE.BoxGeometry(2,.9,1.4), matBody, 0,.45,0);
+    addMesh(new THREE.BoxGeometry(.9,.9,1.1), matCabin, -.3,1.1,0);
+    addMesh(new THREE.BoxGeometry(.8,.65,.9), matGlass, -.3,1.4,0);
+    // Bucket
+    addMesh(new THREE.BoxGeometry(.15,.5,1.5), matArm, 1.1,.8,0);
+    addMesh(new THREE.BoxGeometry(.8,.15,1.5), matArm, 1.4,.55,0);
+    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel, s*.8,.05,s*.55, 0,0,Math.PI/2));
+
+  } else { // default: camion / nacelle / compacteur
+    addMesh(new THREE.BoxGeometry(2.5,.8,1.4), matBody, .3,.4,0);
+    addMesh(new THREE.BoxGeometry(1.1,1.1,1.3), matCabin, -1,1,0);
+    addMesh(new THREE.BoxGeometry(.9,.8,1.1), matGlass, -1,1.3,0);
+    // Cargo bed
+    addMesh(new THREE.BoxGeometry(1.8,.15,1.4), matArm, .5,.8,0);
+    addMesh(new THREE.BoxGeometry(.1,.5,1.4), matArm, 1.35,.95,0);
+    addMesh(new THREE.BoxGeometry(.1,.5,1.4), matArm, -.4,.95,0);
+    [-1,1].forEach(s => {
+      addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel, -1.2,0,s*.55, 0,0,Math.PI/2);
+      addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel,  .8,0,s*.55, 0,0,Math.PI/2);
+    });
+  }
+}
+
+/* ══════════════════════════════════
+   TABS NAVIGATION
+══════════════════════════════════ */
+function switchSideTab(tabId, link) {
+  // Update panels
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById(`tab-${tabId}`);
+  if (panel) panel.classList.add('active');
+
+  // Update sidebar links
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  if (link) link.classList.add('active');
+
+  // Destroy 3D viewers on tab change
+  destroyMiniViewer();
+}
+
+/* ══════════════════════════════════
+   CONFIRM DIALOG
+══════════════════════════════════ */
+function openConfirm(icon, title, msg, callback) {
+  document.getElementById('confirmIcon').textContent  = icon;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent   = msg;
+  confirmCallback = callback;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = () => {
+    closeConfirm();
+    callback();
+  };
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+}
+
+/* ══════════════════════════════════
+   TOAST
+══════════════════════════════════ */
+function showToast(type, message) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
+  toast.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span>${message}</span>`;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 3500);
+}
+
+/* ══════════════════════════════════
+   LOGOUT
+══════════════════════════════════ */
+async function handleLogout() {
+  try {
+    await window.API.post('/api/logout');
+  } catch(e) {}
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('auth_user');
+  window.location.href = '/login';
+}
+
+/* ══════════════════════════════════
+   UTILS
+══════════════════════════════════ */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Close modals on overlay click
+document.getElementById('machineModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeMachineModal();
+});
+document.getElementById('miniViewerModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeMiniViewer();
+});
+document.getElementById('confirmOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeConfirm();
+});
+// ESC key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeMachineModal(); closeMiniViewer(); closeConfirm(); }
+});
 </script>
 @endpush

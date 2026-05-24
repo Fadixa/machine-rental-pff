@@ -1,856 +1,1605 @@
+
 @extends('layouts.app')
 
-@section('title', 'Dashboard Admin — Rentify')
+@section('title', 'Administration — Rentify')
 
 @push('styles')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* ═══ VARIABLES ═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   ADMIN DASHBOARD — RENTIFY V6
+   Gold / Crème — Tableau de bord complet
+══════════════════════════════════════════════ */
 :root {
-    --navy:   #0F1B2D;
-    --navy2:  #1a2d45;
-    --orange: #F59E0B;
-    --orange2:#d97706;
-    --green:  #10b981;
-    --red:    #ef4444;
-    --yellow: #f59e0b;
-    --blue:   #3b82f6;
-    --gray:   #6b7280;
-    --light:  #f8fafc;
-    --card-bg:#fff;
-    --border: #e2e8f0;
-    --shadow: 0 2px 12px rgba(15,27,45,.08);
+  --gold:#D4AF37;--gold-dk:#9A7D20;--gold-pale:#FEF9E7;
+  --navy:#0F1B2D;--navy2:#162540;
+  --cream:#FAF7F0;--cream2:#F0EBE0;--cream3:#E8DDD0;
+  --txt-mid:#5a5660;--txt-light:#9992a4;
+  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;
+  --radius:14px;--shadow:0 4px 24px rgba(15,27,45,.08);
+}
+* { box-sizing:border-box; }
+body { background:var(--cream); font-family:'DM Sans',sans-serif; margin:0; }
+
+/* ── Layout ── */
+.admin-layout {
+  display:flex; min-height:100vh; padding-top:0;
 }
 
-body { background: #f1f5f9; }
-
-/* ═══ HEADER ══════════════════════════════════════════════════ */
-.admin-header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
-    padding: 28px 32px;
-    border-bottom: 3px solid var(--orange);
-    display: flex; align-items: center; justify-content: space-between;
+/* ════════════════════════
+   SIDEBAR
+════════════════════════ */
+.admin-sidebar {
+  width:240px; flex-shrink:0;
+  background:var(--navy);
+  display:flex; flex-direction:column;
+  position:sticky; top:0; height:100vh;
+  overflow-y:auto; z-index:100;
 }
-.admin-header h1 { color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0; }
-.admin-header h1 span { color: var(--orange); }
-.admin-badge {
-    background: var(--orange); color: #fff;
-    padding: 6px 14px; border-radius: 20px;
-    font-size: .8rem; font-weight: 600; letter-spacing: .5px;
+.sidebar-brand {
+  padding:1.4rem 1.5rem 1rem;
+  border-bottom:1px solid rgba(212,175,55,.12);
 }
-.admin-meta { color: #94a3b8; font-size: .85rem; margin-top: 4px; }
-
-/* ═══ TABS ════════════════════════════════════════════════════ */
-.admin-tabs {
-    background: var(--navy);
-    padding: 0 24px;
-    display: flex; gap: 4px;
-    border-bottom: 2px solid var(--navy2);
+.sidebar-brand-name {
+  font-family:'Playfair Display',serif;
+  font-size:1.4rem; color:#fff; font-weight:700;
 }
-.tab-btn {
-    background: none; border: none;
-    color: #94a3b8; padding: 16px 20px;
-    font-size: .9rem; font-weight: 500; cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: all .2s; white-space: nowrap;
-    display: flex; align-items: center; gap: 8px;
+.sidebar-brand-name span { color:var(--gold); }
+.sidebar-brand-sub {
+  font-size:.68rem; color:rgba(255,255,255,.3);
+  letter-spacing:.1em; text-transform:uppercase; margin-top:.1rem;
 }
-.tab-btn:hover { color: #fff; }
-.tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
-.tab-btn .tab-count {
-    background: var(--orange); color: #fff;
-    border-radius: 10px; padding: 1px 7px; font-size: .75rem;
+.sidebar-admin-badge {
+  display:inline-flex; align-items:center; gap:.35rem;
+  background:rgba(212,175,55,.12); border:1px solid rgba(212,175,55,.2);
+  color:var(--gold); font-size:.7rem; font-weight:800;
+  padding:.25rem .6rem; border-radius:20px; margin-top:.6rem;
+  letter-spacing:.06em;
 }
 
-/* ═══ CONTAINER ═══════════════════════════════════════════════ */
-.admin-body { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
-
-/* ═══ KPI CARDS ═══════════════════════════════════════════════ */
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 28px; }
-.kpi-card {
-    background: var(--card-bg); border-radius: 14px;
-    padding: 20px 24px; box-shadow: var(--shadow);
-    display: flex; align-items: center; gap: 16px;
-    border-left: 4px solid var(--orange);
-    transition: transform .2s;
+.sidebar-nav { flex:1; padding:1rem 0; }
+.nav-section-label {
+  font-size:.65rem; font-weight:800; letter-spacing:.12em;
+  text-transform:uppercase; color:rgba(255,255,255,.25);
+  padding:.5rem 1.5rem .3rem; margin-top:.5rem;
 }
-.kpi-card:hover { transform: translateY(-2px); }
-.kpi-card.blue  { border-left-color: var(--blue); }
-.kpi-card.green { border-left-color: var(--green); }
-.kpi-card.red   { border-left-color: var(--red); }
-.kpi-icon {
-    width: 52px; height: 52px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; flex-shrink: 0;
+.nav-item {
+  display:flex; align-items:center; gap:.7rem;
+  padding:.62rem 1.5rem; cursor:pointer;
+  color:rgba(255,255,255,.55); font-size:.85rem; font-weight:600;
+  border:none; background:transparent; width:100%;
+  transition:all .18s; text-align:left; position:relative;
+  text-decoration:none;
 }
-.kpi-icon.orange { background: #fef3c7; color: var(--orange); }
-.kpi-icon.blue   { background: #dbeafe; color: var(--blue); }
-.kpi-icon.green  { background: #d1fae5; color: var(--green); }
-.kpi-icon.red    { background: #fee2e2; color: var(--red); }
-.kpi-val { font-size: 2rem; font-weight: 800; color: var(--navy); line-height: 1; }
-.kpi-label { font-size: .8rem; color: var(--gray); margin-top: 4px; }
-.kpi-sub { font-size: .75rem; color: var(--gray); margin-top: 2px; }
+.nav-item:hover { color:#fff; background:rgba(255,255,255,.05); }
+.nav-item.active {
+  color:var(--gold); background:rgba(212,175,55,.1);
+  border-right:3px solid var(--gold);
+}
+.nav-item-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+.nav-badge {
+  margin-left:auto; background:var(--red);
+  color:#fff; font-size:.65rem; font-weight:800;
+  padding:.1rem .45rem; border-radius:20px; min-width:18px; text-align:center;
+}
+.nav-badge.gold { background:var(--gold); color:var(--navy); }
 
-/* ═══ CHARTS ══════════════════════════════════════════════════ */
-.charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 28px; }
+.sidebar-footer {
+  padding:1rem 1.5rem;
+  border-top:1px solid rgba(212,175,55,.1);
+}
+.sidebar-admin-info {
+  display:flex; align-items:center; gap:.65rem;
+}
+.admin-avatar {
+  width:34px; height:34px; border-radius:50%;
+  background:var(--gold); color:var(--navy);
+  font-weight:800; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; overflow:hidden;
+}
+.admin-avatar img { width:100%; height:100%; object-fit:cover; }
+.admin-name { font-size:.82rem; font-weight:700; color:#fff; }
+.admin-role { font-size:.68rem; color:rgba(255,255,255,.35); }
+.btn-logout-sm {
+  margin-left:auto; background:rgba(239,68,68,.15);
+  border:1px solid rgba(239,68,68,.25); border-radius:7px;
+  color:#ef4444; font-size:.75rem; padding:.3rem .5rem;
+  cursor:pointer; transition:all .2s;
+}
+.btn-logout-sm:hover { background:rgba(239,68,68,.3); }
+
+/* ════════════════════════
+   MAIN CONTENT
+════════════════════════ */
+.admin-main {
+  flex:1; overflow:hidden; display:flex; flex-direction:column;
+}
+
+/* Tab panels */
+.tab-panel { display:none; padding:2rem; animation:fadeIn .3s ease; }
+.tab-panel.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* Panel header */
+.panel-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:1.75rem; flex-wrap:wrap; gap:1rem;
+}
+.panel-title {
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem; color:var(--navy); margin:0;
+}
+.panel-title span { color:var(--gold); }
+.panel-sub { color:var(--txt-light); font-size:.82rem; margin:.2rem 0 0; }
+
+/* ════════════════════════
+   STAT CARDS
+════════════════════════ */
+.stats-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:1rem; margin-bottom:1.75rem;
+}
+.stat-card {
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius);
+  padding:1.25rem 1.4rem;
+  box-shadow:var(--shadow);
+  display:flex; align-items:flex-start; gap:1rem;
+  position:relative; overflow:hidden;
+  transition:transform .2s;
+}
+.stat-card:hover { transform:translateY(-3px); }
+.stat-card::before {
+  content:''; position:absolute; top:0; left:0;
+  width:4px; height:100%;
+}
+.stat-card.gold::before   { background:var(--gold); }
+.stat-card.navy::before   { background:var(--navy); }
+.stat-card.green::before  { background:var(--green); }
+.stat-card.red::before    { background:var(--red); }
+.stat-card.blue::before   { background:var(--blue); }
+.stat-card.purple::before { background:var(--purple); }
+
+.stat-icon {
+  width:44px; height:44px; border-radius:11px;
+  font-size:1.25rem;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.stat-card.gold .stat-icon   { background:var(--gold-pale); }
+.stat-card.navy .stat-icon   { background:rgba(15,27,45,.07); }
+.stat-card.green .stat-icon  { background:#dcfce7; }
+.stat-card.red .stat-icon    { background:#fee2e2; }
+.stat-card.blue .stat-icon   { background:#dbeafe; }
+.stat-card.purple .stat-icon { background:#ede9fe; }
+
+.stat-body { flex:1; min-width:0; }
+.stat-label { font-size:.72rem; font-weight:700; color:var(--txt-light); text-transform:uppercase; letter-spacing:.07em; }
+.stat-value { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--navy); font-weight:700; line-height:1.1; margin:.15rem 0 .25rem; }
+.stat-meta  { font-size:.72rem; color:var(--txt-light); }
+.stat-meta strong { color:var(--green); }
+.stat-meta strong.down { color:var(--red); }
+
+/* ════════════════════════
+   CHARTS ROW
+════════════════════════ */
+.charts-row {
+  display:grid; grid-template-columns:2fr 1fr;
+  gap:1.25rem; margin-bottom:1.75rem;
+}
 .chart-card {
-    background: var(--card-bg); border-radius: 14px;
-    padding: 20px 24px; box-shadow: var(--shadow);
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  overflow:hidden;
 }
-.chart-title { font-weight: 700; color: var(--navy); margin-bottom: 16px; font-size: 1rem; }
+.chart-card-header {
+  padding:1.1rem 1.5rem .75rem;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--cream3);
+}
+.chart-card-title {
+  font-weight:800; color:var(--navy); font-size:.9rem;
+}
+.chart-card-body { padding:1.25rem; }
 
-/* ═══ TABLE CARD ══════════════════════════════════════════════ */
-.table-card {
-    background: var(--card-bg); border-radius: 14px;
-    box-shadow: var(--shadow); overflow: hidden;
+/* ════════════════════════
+   TABLES
+════════════════════════ */
+.data-card {
+  background:#fff;
+  border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius); box-shadow:var(--shadow);
+  overflow:hidden; margin-bottom:1.5rem;
 }
-.table-header {
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    flex-wrap: wrap;
+.data-card-header {
+  padding:1.1rem 1.5rem;
+  background:var(--cream);
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--cream3);
+  flex-wrap:wrap; gap:.75rem;
 }
-.table-header h3 { font-weight: 700; color: var(--navy); margin: 0; font-size: 1rem; }
-.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
-.filter-group input, .filter-group select {
-    border: 1px solid var(--border); border-radius: 8px;
-    padding: 7px 12px; font-size: .85rem; color: var(--navy);
-    background: var(--light); outline: none;
-    transition: border-color .2s;
+.data-card-title {
+  font-weight:800; color:var(--navy); font-size:.9rem;
+  display:flex; align-items:center; gap:.4rem;
 }
-.filter-group input:focus, .filter-group select:focus { border-color: var(--orange); }
-.filter-group input { min-width: 200px; }
+.data-card-actions { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
 
-.data-table { width: 100%; border-collapse: collapse; }
-.data-table th {
-    background: #f8fafc; color: var(--gray);
-    font-size: .75rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: .5px; padding: 10px 16px; text-align: left;
-    border-bottom: 1px solid var(--border);
+.tbl-wrap { overflow-x:auto; }
+table {
+  width:100%; border-collapse:collapse;
+  font-size:.83rem;
 }
-.data-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: .875rem; color: #374151; }
-.data-table tr:last-child td { border-bottom: none; }
-.data-table tr:hover td { background: #fafafa; }
+th {
+  background:var(--cream); color:var(--txt-mid);
+  font-weight:800; font-size:.72rem; letter-spacing:.06em;
+  text-transform:uppercase; padding:.7rem 1.1rem;
+  border-bottom:1px solid var(--cream3);
+  white-space:nowrap; text-align:left;
+}
+td {
+  padding:.75rem 1.1rem; color:var(--txt-mid);
+  border-bottom:1px solid var(--cream3);
+  vertical-align:middle;
+}
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(212,175,55,.03); }
 
-/* ═══ BADGES ══════════════════════════════════════════════════ */
+/* Badges */
 .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600;
+  display:inline-flex; align-items:center; gap:.25rem;
+  padding:.2rem .65rem; border-radius:20px;
+  font-size:.7rem; font-weight:700; white-space:nowrap;
 }
-.badge-owner     { background: #dbeafe; color: #1d4ed8; }
-.badge-client    { background: #d1fae5; color: #065f46; }
-.badge-pending   { background: #fef3c7; color: #92400e; }
-.badge-accepted  { background: #d1fae5; color: #065f46; }
-.badge-completed { background: #e0e7ff; color: #3730a3; }
-.badge-rejected  { background: #fee2e2; color: #991b1b; }
-.badge-available { background: #d1fae5; color: #065f46; }
-.badge-rented    { background: #fef3c7; color: #92400e; }
-.badge-suspended { background: #fee2e2; color: #991b1b; }
-.badge-active    { background: #d1fae5; color: #065f46; }
+.badge-green    { background:#dcfce7; color:#15803d; }
+.badge-red      { background:#fee2e2; color:#dc2626; }
+.badge-yellow   { background:#fef9c3; color:#ca8a04; }
+.badge-blue     { background:#dbeafe; color:#1d4ed8; }
+.badge-purple   { background:#ede9fe; color:#6d28d9; }
+.badge-gray     { background:var(--cream2); color:var(--txt-mid); }
+.badge-navy     { background:rgba(15,27,45,.08); color:var(--navy); }
+.badge-gold     { background:var(--gold-pale); color:var(--gold-dk); }
 
-/* ═══ ACTION BTNS ════════════════════════════════════════════ */
-.btn-action {
-    border: none; border-radius: 7px; padding: 5px 10px;
-    cursor: pointer; font-size: .8rem; font-weight: 500;
-    transition: opacity .2s; display: inline-flex; align-items: center; gap: 4px;
+/* Role badges */
+.role-admin  { background:rgba(239,68,68,.12); color:#dc2626; }
+.role-owner  { background:var(--gold-pale); color:var(--gold-dk); }
+.role-client { background:#dbeafe; color:#1d4ed8; }
+.role-driver { background:#ede9fe; color:#6d28d9; }
+
+/* User row */
+.user-cell { display:flex; align-items:center; gap:.6rem; }
+.tbl-avatar {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--navy); color:var(--gold);
+  font-weight:800; font-size:.72rem;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; overflow:hidden; border:2px solid var(--cream3);
 }
-.btn-suspend { background: #fef3c7; color: #92400e; }
-.btn-activate { background: #d1fae5; color: #065f46; }
-.btn-delete  { background: #fee2e2; color: #991b1b; }
-.btn-action:hover { opacity: .8; }
+.tbl-avatar img { width:100%; height:100%; object-fit:cover; }
+.tbl-user-name  { font-weight:700; color:var(--navy); font-size:.83rem; }
+.tbl-user-email { font-size:.72rem; color:var(--txt-light); }
 
-/* ═══ PAGINATION ══════════════════════════════════════════════ */
-.pagination-bar {
-    padding: 14px 24px;
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: .85rem; color: var(--gray);
+/* Machine cell */
+.machine-cell { display:flex; align-items:center; gap:.6rem; }
+.tbl-machine-img {
+  width:36px; height:36px; border-radius:7px;
+  object-fit:cover; border:1.5px solid var(--cream3); flex-shrink:0;
 }
-.pagination-btns { display: flex; gap: 6px; }
-.page-btn {
-    border: 1px solid var(--border); background: #fff; color: var(--navy);
-    width: 32px; height: 32px; border-radius: 7px;
-    cursor: pointer; font-size: .85rem; font-weight: 500;
-    display: flex; align-items: center; justify-content: center;
-    transition: all .2s;
+
+/* ════════════════════════
+   CONTROLS
+════════════════════════ */
+.search-ctrl {
+  padding:.42rem .8rem; border:1.5px solid var(--cream3);
+  border-radius:8px; font-family:'DM Sans',sans-serif;
+  font-size:.82rem; color:var(--navy); outline:none;
+  background:#fff; transition:border .2s;
 }
-.page-btn:hover, .page-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
-.page-btn:disabled { opacity: .4; cursor: not-allowed; }
-
-/* ═══ ACTIVITY FEED ═══════════════════════════════════════════ */
-.activity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
-.activity-item {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 12px 0; border-bottom: 1px solid #f1f5f9;
+.search-ctrl:focus { border-color:var(--gold); }
+.select-ctrl {
+  padding:.42rem .7rem; border:1.5px solid var(--cream3);
+  border-radius:8px; font-family:'DM Sans',sans-serif;
+  font-size:.82rem; color:var(--navy); outline:none;
+  background:#fff; cursor:pointer;
 }
-.activity-item:last-child { border-bottom: none; }
-.activity-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    flex-shrink: 0; margin-top: 5px;
+
+/* ── Action buttons ── */
+.btn-sm {
+  padding:.3rem .65rem; border-radius:7px;
+  font-family:'DM Sans',sans-serif; font-size:.75rem; font-weight:700;
+  cursor:pointer; border:none; transition:all .18s;
+  display:inline-flex; align-items:center; gap:.3rem;
 }
-.activity-text { font-size: .875rem; color: #374151; }
-.activity-time { font-size: .75rem; color: var(--gray); margin-top: 2px; }
+.btn-sm-navy   { background:var(--navy); color:var(--gold); }
+.btn-sm-navy:hover   { background:var(--navy2); }
+.btn-sm-gold   { background:var(--gold); color:var(--navy); }
+.btn-sm-gold:hover   { background:var(--gold-dk); }
+.btn-sm-green  { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+.btn-sm-green:hover  { background:#bbf7d0; }
+.btn-sm-red    { background:#fee2e2; color:#dc2626; border:1px solid #fecaca; }
+.btn-sm-red:hover    { background:#fecaca; }
+.btn-sm-blue   { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+.btn-sm-blue:hover   { background:#bfdbfe; }
+.btn-sm-outline { background:transparent; color:var(--navy); border:1.5px solid var(--cream3); }
+.btn-sm-outline:hover { border-color:var(--gold); color:var(--gold-dk); }
 
-/* ═══ EMPTY STATE ═════════════════════════════════════════════ */
-.empty-state { padding: 48px; text-align: center; color: var(--gray); }
-.empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: .3; }
-.empty-state p { margin: 0; font-size: .9rem; }
-
-/* ═══ LOADING ════════════════════════════════════════════════ */
-.skeleton-row td { background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; height: 44px; }
-@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-/* ═══ TOAST ══════════════════════════════════════════════════ */
-#toast {
-    position: fixed; bottom: 28px; right: 28px;
-    background: var(--navy); color: #fff;
-    padding: 12px 20px; border-radius: 10px; font-size: .9rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,.3);
-    display: none; align-items: center; gap: 10px;
-    z-index: 9999; max-width: 320px;
-    border-left: 4px solid var(--orange);
+.btn-navy {
+  background:var(--navy); color:var(--gold); border:none;
+  border-radius:10px; padding:.6rem 1.25rem;
+  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
+  cursor:pointer; transition:all .2s;
+  display:inline-flex; align-items:center; gap:.4rem;
 }
-#toast.show { display: flex; animation: slideUp .3s ease; }
-#toast.error { border-left-color: var(--red); }
-@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.btn-navy:hover { background:var(--navy2); transform:translateY(-1px); }
 
-/* ═══ CONFIRM MODAL ══════════════════════════════════════════ */
+/* ── Pagination ── */
+.tbl-pagination {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.75rem 1.25rem; border-top:1px solid var(--cream3);
+  font-size:.78rem; color:var(--txt-light); flex-wrap:wrap; gap:.5rem;
+}
+.pag-btns { display:flex; gap:.3rem; }
+.pag-btn {
+  width:30px; height:30px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center;
+  border:1.5px solid var(--cream3); background:#fff;
+  color:var(--txt-mid); cursor:pointer; font-size:.8rem;
+  transition:all .18s; font-weight:700;
+}
+.pag-btn:hover,.pag-btn.active { background:var(--navy); border-color:var(--navy); color:var(--gold); }
+.pag-btn:disabled { opacity:.3; cursor:not-allowed; }
+
+/* ════════════════════════
+   MODAL
+════════════════════════ */
 .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.5);
-    z-index: 1000; display: none; align-items: center; justify-content: center;
+  position:fixed; inset:0; z-index:9000;
+  background:rgba(10,16,28,.7); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .3s;
 }
-.modal-overlay.show { display: flex; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
 .modal-box {
-    background: #fff; border-radius: 16px; padding: 28px;
-    max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  background:#fff; border-radius:18px;
+  width:540px; max-width:96vw;
+  box-shadow:0 24px 80px rgba(10,16,28,.2);
+  transform:translateY(20px); transition:transform .3s;
+  overflow:hidden;
 }
-.modal-box h4 { margin: 0 0 8px; font-size: 1.1rem; color: var(--navy); }
-.modal-box p { margin: 0 0 20px; color: var(--gray); font-size: .9rem; }
-.modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
-.btn-cancel { border: 1px solid var(--border); background: #fff; color: var(--navy); padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: .9rem; }
-.btn-confirm { background: var(--red); color: #fff; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: .9rem; font-weight: 600; }
+.modal-overlay.open .modal-box { transform:translateY(0); }
+.modal-header {
+  padding:1.25rem 1.5rem; background:var(--cream);
+  border-bottom:1px solid var(--cream3);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-header h2 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--navy); margin:0; }
+.modal-close {
+  width:32px; height:32px; border-radius:8px;
+  background:var(--cream3); border:none; cursor:pointer;
+  font-size:.9rem; transition:all .2s;
+}
+.modal-close:hover { background:var(--cream2); }
+.modal-body { padding:1.5rem; max-height:70vh; overflow-y:auto; }
+.modal-footer {
+  padding:1rem 1.5rem; border-top:1px solid var(--cream3);
+  background:var(--cream); display:flex; gap:.6rem;
+}
 
-/* ═══ RESPONSIVE ══════════════════════════════════════════════ */
-@media (max-width: 1024px) {
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .charts-grid { grid-template-columns: 1fr; }
-    .activity-grid { grid-template-columns: 1fr; }
+.form-group { margin-bottom:1.1rem; }
+.form-label { display:block; font-size:.78rem; font-weight:800; color:var(--navy); margin-bottom:.4rem; }
+.form-control {
+  width:100%; padding:.58rem .85rem;
+  border:1.5px solid var(--cream3); border-radius:9px;
+  font-family:'DM Sans',sans-serif; font-size:.86rem;
+  color:var(--navy); outline:none;
+  transition:border .2s;
 }
-@media (max-width: 640px) {
-    .admin-body { padding: 16px; }
-    .kpi-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .admin-header { padding: 16px; }
-    .admin-tabs { overflow-x: auto; }
+.form-control:focus { border-color:var(--gold); }
+.form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+
+/* ════════════════════════
+   CONFIRM DIALOG
+════════════════════════ */
+.confirm-overlay {
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(10,16,28,.65); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.confirm-overlay.open { opacity:1; pointer-events:all; }
+.confirm-box {
+  background:#fff; border-radius:16px; padding:1.75rem;
+  width:380px; max-width:94vw;
+  box-shadow:0 20px 60px rgba(10,16,28,.2);
+  text-align:center; transform:scale(.95); transition:transform .25s;
+}
+.confirm-overlay.open .confirm-box { transform:scale(1); }
+.confirm-icon { font-size:2.5rem; margin-bottom:.75rem; }
+.confirm-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--navy); margin:0 0 .4rem; }
+.confirm-msg { color:var(--txt-mid); font-size:.84rem; margin:0 0 1.25rem; }
+.confirm-btns { display:flex; gap:.6rem; justify-content:center; }
+
+/* ── Skeleton ── */
+.skeleton {
+  background:linear-gradient(90deg,var(--cream2) 25%,var(--cream3) 50%,var(--cream2) 75%);
+  background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:6px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── Toast ── */
+.toast-ctr {
+  position:fixed; bottom:2rem; right:2rem;
+  z-index:99999; display:flex; flex-direction:column; gap:.5rem;
+}
+.toast {
+  background:#fff; border-radius:12px; border:1px solid var(--cream3);
+  padding:.8rem 1.2rem; box-shadow:0 8px 32px rgba(10,16,28,.12);
+  font-size:.84rem; font-weight:600; color:var(--navy);
+  display:flex; align-items:center; gap:.6rem;
+  transform:translateX(120%); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+  min-width:220px;
+}
+.toast.show { transform:translateX(0); }
+.toast.success { border-left:4px solid var(--green); }
+.toast.error   { border-left:4px solid var(--red); }
+.toast.info    { border-left:4px solid var(--gold); }
+
+/* ── Suspended row ── */
+tr.suspended td { opacity:.5; }
+tr.suspended td:first-child { border-left:3px solid var(--red); }
+
+/* ── Responsive ── */
+@media(max-width:1100px){ .charts-row { grid-template-columns:1fr; } }
+@media(max-width:860px){
+  .admin-sidebar { display:none; }
+  .tab-panel { padding:1.25rem; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:540px){
+  .stats-grid { grid-template-columns:1fr; }
 }
 </style>
 @endpush
 
 @section('content')
+<div class="admin-layout">
 
-{{-- ═══ HEADER ═══════════════════════════════════════════════════════ --}}
-<div class="admin-header">
-    <div>
-        <h1><i class="fas fa-shield-alt" style="color:var(--orange)"></i> Dashboard <span>Admin</span></h1>
-        <div class="admin-meta">Rentify — Panneau d'administration</div>
+  {{-- ══════════════════════════════
+       SIDEBAR
+  ══════════════════════════════ --}}
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-name">Rent<span>ify</span></div>
+      <div class="sidebar-brand-sub">Panneau Admin</div>
+      <div class="sidebar-admin-badge">👑 ADMINISTRATEUR</div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px">
-        <span class="admin-badge"><i class="fas fa-circle" style="font-size:.6rem;margin-right:4px"></i> Admin</span>
-        <span id="adminName" style="color:#94a3b8;font-size:.9rem"></span>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Tableau de bord</div>
+      <button class="nav-item active" id="navVue" onclick="switchTab('vue')">
+        <span class="nav-item-icon">📊</span> Vue d'ensemble
+      </button>
+
+      <div class="nav-section-label">Gestion</div>
+      <button class="nav-item" id="navUsers" onclick="switchTab('users')">
+        <span class="nav-item-icon">👥</span> Utilisateurs
+        <span class="nav-badge" id="badgeSuspended" style="display:none">!</span>
+      </button>
+      <button class="nav-item" id="navMachines" onclick="switchTab('machines')">
+        <span class="nav-item-icon">🏗</span> Machines
+      </button>
+      <button class="nav-item" id="navReservations" onclick="switchTab('reservations')">
+        <span class="nav-item-icon">📋</span> Réservations
+        <span class="nav-badge" id="badgePending" style="display:none">0</span>
+      </button>
+      <button class="nav-item" id="navRatings" onclick="switchTab('ratings')">
+        <span class="nav-item-icon">⭐</span> Avis
+      </button>
+
+      <div class="nav-section-label">Paramètres</div>
+      <a href="/profile" class="nav-item">
+        <span class="nav-item-icon">👤</span> Mon profil
+      </a>
+      <a href="/contact" class="nav-item">
+        <span class="nav-item-icon">📩</span> Contact
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-admin-info">
+        <div class="admin-avatar" id="sidebarAvatar">A</div>
+        <div>
+          <div class="admin-name" id="sidebarName">Admin</div>
+          <div class="admin-role">admin@rentify.ma</div>
+        </div>
+        <button class="btn-logout-sm" onclick="logout()" title="Déconnexion">⏻</button>
+      </div>
     </div>
+  </aside>
+
+  {{-- ══════════════════════════════
+       MAIN
+  ══════════════════════════════ --}}
+  <main class="admin-main">
+
+    {{-- ─────────────────────────────
+         TAB 1 : VUE D'ENSEMBLE
+    ───────────────────────────── --}}
+    <div class="tab-panel active" id="tabVue">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Vue <span>d'ensemble</span></h1>
+          <p class="panel-sub" id="overviewDate">—</p>
+        </div>
+        <button class="btn-navy" onclick="refreshAll()">🔄 Actualiser</button>
+      </div>
+
+      {{-- Stats --}}
+      <div class="stats-grid">
+        <div class="stat-card gold">
+          <div class="stat-icon">👥</div>
+          <div class="stat-body">
+            <div class="stat-label">Utilisateurs</div>
+            <div class="stat-value" id="statUsers"><div class="skeleton" style="width:60px;height:36px"></div></div>
+            <div class="stat-meta" id="statUsersM">—</div>
+          </div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">🏗</div>
+          <div class="stat-body">
+            <div class="stat-label">Machines</div>
+            <div class="stat-value" id="statMachines"><div class="skeleton" style="width:60px;height:36px"></div></div>
+            <div class="stat-meta" id="statMachinesM">—</div>
+          </div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">📋</div>
+          <div class="stat-body">
+            <div class="stat-label">Réservations</div>
+            <div class="stat-value" id="statReservations"><div class="skeleton" style="width:60px;height:36px"></div></div>
+            <div class="stat-meta" id="statReservationsM">—</div>
+          </div>
+        </div>
+        <div class="stat-card navy">
+          <div class="stat-icon">💰</div>
+          <div class="stat-body">
+            <div class="stat-label">Revenus totaux</div>
+            <div class="stat-value" id="statRevenue"><div class="skeleton" style="width:80px;height:36px"></div></div>
+            <div class="stat-meta" id="statRevenueM">—</div>
+          </div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-body">
+            <div class="stat-label">En attente</div>
+            <div class="stat-value" id="statPending"><div class="skeleton" style="width:40px;height:36px"></div></div>
+            <div class="stat-meta">Demandes à traiter</div>
+          </div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">🚫</div>
+          <div class="stat-body">
+            <div class="stat-label">Suspendus</div>
+            <div class="stat-value" id="statSuspended"><div class="skeleton" style="width:40px;height:36px"></div></div>
+            <div class="stat-meta">Comptes bloqués</div>
+          </div>
+        </div>
+      </div>
+
+      {{-- Charts --}}
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span class="chart-card-title">📈 Réservations & Revenus mensuels</span>
+            <select class="select-ctrl" id="chartYearSel" onchange="renderCharts()">
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+          <div class="chart-card-body">
+            <canvas id="chartMain" height="100"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span class="chart-card-title">🏗 Machines par type</span>
+          </div>
+          <div class="chart-card-body" style="display:flex;align-items:center;justify-content:center">
+            <canvas id="chartTypes" style="max-height:200px"></canvas>
+          </div>
+        </div>
+      </div>
+
+      {{-- Recent activity --}}
+      <div class="data-card">
+        <div class="data-card-header">
+          <span class="data-card-title">🕐 Activité récente</span>
+          <button class="btn-sm btn-sm-outline" onclick="switchTab('reservations')">Voir tout →</button>
+        </div>
+        <div class="tbl-wrap">
+          <table id="tblActivity">
+            <thead>
+              <tr>
+                <th>#</th><th>Client</th><th>Machine</th>
+                <th>Dates</th><th>Montant</th><th>Statut</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyActivity">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    {{-- ─────────────────────────────
+         TAB 2 : UTILISATEURS
+    ───────────────────────────── --}}
+    <div class="tab-panel" id="tabUsers">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Gestion des <span>Utilisateurs</span></h1>
+          <p class="panel-sub">Gérez les comptes, rôles et accès</p>
+        </div>
+        <button class="btn-navy" onclick="openCreateUserModal()">➕ Nouvel utilisateur</button>
+      </div>
+
+      <div class="data-card">
+        <div class="data-card-header">
+          <span class="data-card-title">👥 Tous les utilisateurs</span>
+          <div class="data-card-actions">
+            <input class="search-ctrl" id="userSearch" placeholder="🔍 Nom, email…" oninput="filterUsers()">
+            <select class="select-ctrl" id="userRoleFilter" onchange="filterUsers()">
+              <option value="">Tous les rôles</option>
+              <option value="admin">Admin</option>
+              <option value="owner">Owner</option>
+              <option value="client">Client</option>
+            </select>
+            <select class="select-ctrl" id="userStatusFilter" onchange="filterUsers()">
+              <option value="">Tous statuts</option>
+              <option value="active">Actifs</option>
+              <option value="suspended">Suspendus</option>
+            </select>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Utilisateur</th><th>Rôle</th>
+                <th>Ville</th><th>Téléphone</th><th>Statut</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyUsers">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-pagination" id="usersPagination">
+          <span id="usersCount">—</span>
+          <div class="pag-btns" id="usersPagBtns"></div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ─────────────────────────────
+         TAB 3 : MACHINES
+    ───────────────────────────── --}}
+    <div class="tab-panel" id="tabMachines">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Gestion des <span>Machines</span></h1>
+          <p class="panel-sub">Toutes les machines publiées sur Rentify</p>
+        </div>
+        <a href="/machines/create" class="btn-navy">➕ Ajouter machine</a>
+      </div>
+
+      <div class="data-card">
+        <div class="data-card-header">
+          <span class="data-card-title">🏗 Catalogue complet</span>
+          <div class="data-card-actions">
+            <input class="search-ctrl" id="machineSearch" placeholder="🔍 Nom, ville…" oninput="filterMachines()">
+            <select class="select-ctrl" id="machineTypeFilter" onchange="filterMachines()">
+              <option value="">Tous types</option>
+              <option value="excavatrice">Excavatrice</option>
+              <option value="grue">Grue</option>
+              <option value="bulldozer">Bulldozer</option>
+              <option value="chargeuse">Chargeuse</option>
+              <option value="compacteur">Compacteur</option>
+              <option value="nacelle">Nacelle</option>
+              <option value="tractopelle">Tractopelle</option>
+              <option value="camion">Camion</option>
+            </select>
+            <select class="select-ctrl" id="machineStatusFilter" onchange="filterMachines()">
+              <option value="">Tous statuts</option>
+              <option value="available">Disponible</option>
+              <option value="unavailable">Indisponible</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Machine</th><th>Propriétaire</th>
+                <th>Type</th><th>Prix/jour</th><th>Ville</th><th>Statut</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyMachines">
+              <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-pagination" id="machinesPagination">
+          <span id="machinesCount">—</span>
+          <div class="pag-btns" id="machinesPagBtns"></div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ─────────────────────────────
+         TAB 4 : RÉSERVATIONS
+    ───────────────────────────── --}}
+    <div class="tab-panel" id="tabReservations">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Gestion des <span>Réservations</span></h1>
+          <p class="panel-sub">Suivi complet de toutes les demandes</p>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <div class="data-card-header">
+          <span class="data-card-title">📋 Toutes les réservations</span>
+          <div class="data-card-actions">
+            <input class="search-ctrl" id="resSearch" placeholder="🔍 Client, machine…" oninput="filterReservations()">
+            <select class="select-ctrl" id="resStatusFilter" onchange="filterReservations()">
+              <option value="">Tous statuts</option>
+              <option value="pending">En attente</option>
+              <option value="accepted">Acceptée</option>
+              <option value="rejected">Refusée</option>
+              <option value="completed">Terminée</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Client</th><th>Machine</th>
+                <th>Dates</th><th>Durée</th><th>Montant</th><th>Statut</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyReservations">
+              <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-pagination" id="resPagination">
+          <span id="resCount">—</span>
+          <div class="pag-btns" id="resPagBtns"></div>
+        </div>
+      </div>
+    </div>
+
+    {{-- ─────────────────────────────
+         TAB 5 : AVIS
+    ───────────────────────────── --}}
+    <div class="tab-panel" id="tabRatings">
+      <div class="panel-header">
+        <div>
+          <h1 class="panel-title">Gestion des <span>Avis</span></h1>
+          <p class="panel-sub">Modérez les évaluations des clients</p>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <div class="data-card-header">
+          <span class="data-card-title">⭐ Tous les avis</span>
+          <div class="data-card-actions">
+            <input class="search-ctrl" id="ratingSearch" placeholder="🔍 Machine, client…" oninput="filterRatings()">
+            <select class="select-ctrl" id="ratingStarFilter" onchange="filterRatings()">
+              <option value="">Toutes les notes</option>
+              <option value="5">⭐⭐⭐⭐⭐ 5 étoiles</option>
+              <option value="4">⭐⭐⭐⭐ 4 étoiles</option>
+              <option value="3">⭐⭐⭐ 3 étoiles</option>
+              <option value="2">⭐⭐ 2 étoiles</option>
+              <option value="1">⭐ 1 étoile</option>
+            </select>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Machine</th><th>Client</th>
+                <th>Note</th><th>Commentaire</th><th>Date</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRatings">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tbl-pagination" id="ratingsPagination">
+          <span id="ratingsCount">—</span>
+          <div class="pag-btns" id="ratingsPagBtns"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
 </div>
 
-{{-- ═══ TABS ══════════════════════════════════════════════════════════ --}}
-<div class="admin-tabs">
-    <button class="tab-btn active" onclick="switchTab('overview')">
-        <i class="fas fa-chart-pie"></i> Vue générale
-    </button>
-    <button class="tab-btn" onclick="switchTab('users')">
-        <i class="fas fa-users"></i> Utilisateurs
-        <span class="tab-count" id="tabCountUsers">–</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('machines')">
-        <i class="fas fa-truck"></i> Machines
-        <span class="tab-count" id="tabCountMachines">–</span>
-    </button>
-    <button class="tab-btn" onclick="switchTab('reservations')">
-        <i class="fas fa-calendar-check"></i> Réservations
-        <span class="tab-count" id="tabCountReservations">–</span>
-    </button>
+{{-- ══ MODAL UTILISATEUR ══ --}}
+<div class="modal-overlay" id="userModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="userModalTitle">👤 Modifier l'utilisateur</h2>
+      <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="uId">
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">Nom complet</label>
+          <input type="text" id="uName" class="form-control" placeholder="Nom de l'utilisateur">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="uEmail" class="form-control" placeholder="email@exemple.ma">
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">Rôle</label>
+          <select id="uRole" class="form-control">
+            <option value="client">Client</option>
+            <option value="owner">Owner</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone</label>
+          <input type="text" id="uPhone" class="form-control" placeholder="06XXXXXXXX">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ville</label>
+        <input type="text" id="uCity" class="form-control" placeholder="Casablanca">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Statut du compte</label>
+        <select id="uSuspended" class="form-control">
+          <option value="0">✅ Actif</option>
+          <option value="1">🚫 Suspendu</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-sm-outline" onclick="closeModal('userModal')" style="flex:1;justify-content:center">Annuler</button>
+      <button class="btn-navy" onclick="saveUser()" style="flex:2">💾 Sauvegarder</button>
+    </div>
+  </div>
 </div>
 
-{{-- ═══ BODY ═══════════════════════════════════════════════════════════ --}}
-<div class="admin-body">
-
-    {{-- ─── TAB OVERVIEW ─────────────────────────────────────────── --}}
-    <div id="tab-overview">
-
-        {{-- KPIs --}}
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-icon orange"><i class="fas fa-users"></i></div>
-                <div>
-                    <div class="kpi-val" id="kpiUsers">–</div>
-                    <div class="kpi-label">Utilisateurs</div>
-                    <div class="kpi-sub" id="kpiUsersSub">–</div>
-                </div>
-            </div>
-            <div class="kpi-card blue">
-                <div class="kpi-icon blue"><i class="fas fa-truck"></i></div>
-                <div>
-                    <div class="kpi-val" id="kpiMachines">–</div>
-                    <div class="kpi-label">Machines</div>
-                    <div class="kpi-sub" id="kpiMachinesSub">–</div>
-                </div>
-            </div>
-            <div class="kpi-card green">
-                <div class="kpi-icon green"><i class="fas fa-calendar-check"></i></div>
-                <div>
-                    <div class="kpi-val" id="kpiReservations">–</div>
-                    <div class="kpi-label">Réservations</div>
-                    <div class="kpi-sub" id="kpiReservationsSub">–</div>
-                </div>
-            </div>
-            <div class="kpi-card red">
-                <div class="kpi-icon red"><i class="fas fa-coins"></i></div>
-                <div>
-                    <div class="kpi-val" id="kpiRevenue">–</div>
-                    <div class="kpi-label">Revenus totaux</div>
-                    <div class="kpi-sub">réservations complétées</div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Charts --}}
-        <div class="charts-grid">
-            <div class="chart-card">
-                <div class="chart-title"><i class="fas fa-chart-line" style="color:var(--orange)"></i> Réservations — 12 derniers mois</div>
-                <canvas id="chartReservations" height="100"></canvas>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title"><i class="fas fa-chart-donut" style="color:var(--blue)"></i> Statuts réservations</div>
-                <canvas id="chartDonut" height="160"></canvas>
-            </div>
-        </div>
-
-        {{-- Activity + Top Machines --}}
-        <div class="activity-grid">
-            <div class="table-card">
-                <div class="table-header"><h3><i class="fas fa-bolt" style="color:var(--orange)"></i> Dernières réservations</h3></div>
-                <div style="padding:0 24px" id="activityFeed"></div>
-            </div>
-            <div class="table-card">
-                <div class="table-header"><h3><i class="fas fa-trophy" style="color:var(--orange)"></i> Top 5 Machines</h3></div>
-                <div style="padding:0 24px" id="topMachinesList"></div>
-            </div>
-        </div>
-
-    </div>{{-- /tab-overview --}}
-
-    {{-- ─── TAB USERS ──────────────────────────────────────────────── --}}
-    <div id="tab-users" style="display:none">
-        <div class="table-card">
-            <div class="table-header">
-                <h3><i class="fas fa-users"></i> Gestion des utilisateurs</h3>
-                <div class="filter-group">
-                    <input type="text" id="searchUsers" placeholder="🔍 Rechercher nom / email…" oninput="debounceUsers()">
-                    <select id="filterRole" onchange="loadUsers()">
-                        <option value="">Tous les rôles</option>
-                        <option value="owner">Propriétaires</option>
-                        <option value="client">Clients</option>
-                    </select>
-                    <select id="filterStatus" onchange="loadUsers()">
-                        <option value="">Tous statuts</option>
-                        <option value="active">Actifs</option>
-                        <option value="suspended">Suspendus</option>
-                    </select>
-                </div>
-            </div>
-            <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Utilisateur</th>
-                            <th>Rôle</th>
-                            <th>Statut</th>
-                            <th>Réservations</th>
-                            <th>Machines</th>
-                            <th>Inscrit le</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody"></tbody>
-                </table>
-            </div>
-            <div class="pagination-bar">
-                <span id="usersPaginInfo">–</span>
-                <div class="pagination-btns" id="usersPaginBtns"></div>
-            </div>
-        </div>
+{{-- ══ CONFIRM DIALOG ══ --}}
+<div class="confirm-overlay" id="confirmDialog">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon">⚠️</div>
+    <div class="confirm-title" id="confirmTitle">Confirmer l'action</div>
+    <div class="confirm-msg" id="confirmMsg">Cette action est irréversible.</div>
+    <div class="confirm-btns">
+      <button class="btn-sm btn-sm-outline" onclick="closeConfirm()" style="padding:.5rem 1.25rem">Annuler</button>
+      <button class="btn-sm btn-sm-red" id="confirmOkBtn" onclick="confirmAction()" style="padding:.5rem 1.25rem">Confirmer</button>
     </div>
-
-    {{-- ─── TAB MACHINES ───────────────────────────────────────────── --}}
-    <div id="tab-machines" style="display:none">
-        <div class="table-card">
-            <div class="table-header">
-                <h3><i class="fas fa-truck"></i> Gestion des machines</h3>
-                <div class="filter-group">
-                    <input type="text" id="searchMachines" placeholder="🔍 Machine / ville / catégorie…" oninput="debounceMachines()">
-                    <select id="filterMachineStatus" onchange="loadMachines()">
-                        <option value="">Tous statuts</option>
-                        <option value="available">Disponible</option>
-                        <option value="rented">Louée</option>
-                        <option value="maintenance">Maintenance</option>
-                    </select>
-                </div>
-            </div>
-            <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Machine</th>
-                            <th>Propriétaire</th>
-                            <th>Ville</th>
-                            <th>Prix/jour</th>
-                            <th>Statut</th>
-                            <th>Réservations</th>
-                            <th>Ajoutée le</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="machinesTableBody"></tbody>
-                </table>
-            </div>
-            <div class="pagination-bar">
-                <span id="machinesPaginInfo">–</span>
-                <div class="pagination-btns" id="machinesPaginBtns"></div>
-            </div>
-        </div>
-    </div>
-
-    {{-- ─── TAB RESERVATIONS ───────────────────────────────────────── --}}
-    <div id="tab-reservations" style="display:none">
-        <div class="table-card">
-            <div class="table-header">
-                <h3><i class="fas fa-calendar-check"></i> Toutes les réservations</h3>
-                <div class="filter-group">
-                    <input type="text" id="searchReservations" placeholder="🔍 Client / machine…" oninput="debounceReservations()">
-                    <select id="filterReservStatus" onchange="loadReservations()">
-                        <option value="">Tous statuts</option>
-                        <option value="pending">En attente</option>
-                        <option value="accepted">Acceptées</option>
-                        <option value="completed">Complétées</option>
-                        <option value="rejected">Refusées</option>
-                    </select>
-                </div>
-            </div>
-            <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Client</th>
-                            <th>Machine</th>
-                            <th>Ville</th>
-                            <th>Du</th>
-                            <th>Au</th>
-                            <th>Montant</th>
-                            <th>Statut</th>
-                            <th>Créée le</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reservationsTableBody"></tbody>
-                </table>
-            </div>
-            <div class="pagination-bar">
-                <span id="reservPaginInfo">–</span>
-                <div class="pagination-btns" id="reservPaginBtns"></div>
-            </div>
-        </div>
-    </div>
-
-</div>{{-- /admin-body --}}
-
-{{-- ═══ TOAST ══════════════════════════════════════════════════════════ --}}
-<div id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg"></span></div>
-
-{{-- ═══ CONFIRM MODAL ══════════════════════════════════════════════════ --}}
-<div class="modal-overlay" id="confirmModal">
-    <div class="modal-box">
-        <h4 id="modalTitle">Confirmer</h4>
-        <p id="modalBody">Cette action est irréversible.</p>
-        <div class="modal-btns">
-            <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-            <button class="btn-confirm" id="modalConfirmBtn">Confirmer</button>
-        </div>
-    </div>
+  </div>
 </div>
+
+<div class="toast-ctr" id="toastCtr"></div>
 
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// ════════════════════════════════════════════════════════
-// GUARD : admin seulement
-// ════════════════════════════════════════════════════════
-const user = getUser();
-if (!user || user.role !== 'admin') {
-    window.location.replace('/login');
-}
-document.getElementById('adminName').textContent = user?.name ?? '';
+/* ════════════════════════════════════════════════
+   ADMIN DASHBOARD — RENTIFY V6
+   Stats, Charts, Users, Machines, Reservations, Ratings
+════════════════════════════════════════════════ */
 
-// ════════════════════════════════════════════════════════
-// TABS
-// ════════════════════════════════════════════════════════
-let activeTab = 'overview';
-function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach((b, i) => {
-        const tabs = ['overview','users','machines','reservations'];
-        b.classList.toggle('active', tabs[i] === tab);
-    });
-    ['overview','users','machines','reservations'].forEach(t => {
-        document.getElementById('tab-' + t).style.display = (t === tab) ? '' : 'none';
-    });
-    activeTab = tab;
-    if (tab === 'users')        loadUsers();
-    if (tab === 'machines')     loadMachines();
-    if (tab === 'reservations') loadReservations();
-}
+/* ══ STATE ══ */
+let allUsers        = [];
+let allMachines     = [];
+let allReservations = [];
+let allRatings      = [];
+let statsData       = {};
 
-// ════════════════════════════════════════════════════════
-// TOAST
-// ════════════════════════════════════════════════════════
-function showToast(msg, isError = false) {
-    const t = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    t.className = 'show' + (isError ? ' error' : '');
-    setTimeout(() => t.className = '', 3500);
-}
+let filteredUsers        = [];
+let filteredMachines     = [];
+let filteredReservations = [];
+let filteredRatings      = [];
 
-// ════════════════════════════════════════════════════════
-// MODAL
-// ════════════════════════════════════════════════════════
-let modalCallback = null;
-function openModal(title, body, cb) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalBody').textContent = body;
-    document.getElementById('confirmModal').classList.add('show');
-    modalCallback = cb;
-}
-function closeModal() {
-    document.getElementById('confirmModal').classList.remove('show');
-    modalCallback = null;
-}
-document.getElementById('modalConfirmBtn').onclick = () => {
-    if (modalCallback) modalCallback();
-    closeModal();
+let usersPage = 1, machinesPage = 1, resPage = 1, ratingsPage = 1;
+const PAGE = 12;
+
+let confirmCallback = null;
+let chartMain = null, chartTypes = null;
+
+const TYPE_PHOTO = {
+  excavatrice:'/images/img3.png', grue:'/images/img4.png',
+  bulldozer:'/images/img1.png',   chargeuse:'/images/img2.png',
+  compacteur:'/images/img8.png',  nacelle:'/images/img5.png',
+  tractopelle:'/images/img7.png', camion:'/images/img9.png',
 };
 
-// ════════════════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════════════════
-function formatDate(d) {
-    if (!d) return '–';
-    return new Date(d).toLocaleDateString('fr-MA', { day:'2-digit', month:'short', year:'numeric' });
-}
-function formatMoney(n) {
-    return Number(n || 0).toLocaleString('fr-MA') + ' MAD';
-}
-function calcDays(start, end) {
-    if (!start || !end) return 0;
-    return Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000));
-}
-function skeleton(cols) {
-    return Array(5).fill('').map(() =>
-        `<tr class="skeleton-row">${Array(cols).fill('<td>&nbsp;</td>').join('')}</tr>`
-    ).join('');
-}
-function paginationHTML(meta, loadFn, paginBtnsId, paginInfoId) {
-    const { current_page, last_page, from, to, total } = meta;
-    document.getElementById(paginInfoId).textContent =
-        `Affichage ${from ?? 0}–${to ?? 0} sur ${total ?? 0}`;
-    const btns = document.getElementById(paginBtnsId);
-    btns.innerHTML = '';
-    const prev = document.createElement('button');
-    prev.className = 'page-btn'; prev.innerHTML = '‹'; prev.disabled = current_page <= 1;
-    prev.onclick = () => loadFn(current_page - 1); btns.appendChild(prev);
-    const pages = [...new Set([1, current_page - 1, current_page, current_page + 1, last_page])]
-        .filter(p => p >= 1 && p <= last_page).sort((a,b) => a-b);
-    let prev2 = null;
-    pages.forEach(p => {
-        if (prev2 !== null && p - prev2 > 1) {
-            const dots = document.createElement('button');
-            dots.className = 'page-btn'; dots.textContent = '…'; dots.disabled = true;
-            btns.appendChild(dots);
-        }
-        const btn = document.createElement('button');
-        btn.className = 'page-btn' + (p === current_page ? ' active' : '');
-        btn.textContent = p; btn.onclick = () => loadFn(p);
-        btns.appendChild(btn); prev2 = p;
-    });
-    const next = document.createElement('button');
-    next.className = 'page-btn'; next.innerHTML = '›'; next.disabled = current_page >= last_page;
-    next.onclick = () => loadFn(current_page + 1); btns.appendChild(next);
+/* ══ INIT ══ */
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = window.getUser ? window.getUser() : JSON.parse(localStorage.getItem('auth_user')||'null');
+  if (!user || user.role !== 'admin') { window.location.href='/login'; return; }
+
+  // Sidebar info
+  document.getElementById('sidebarName').textContent  = user.name || 'Admin';
+  document.getElementById('sidebarAvatar').textContent = (user.name||'A')[0].toUpperCase();
+  if (user.profile_photo_path) {
+    document.getElementById('sidebarAvatar').innerHTML = `<img src="/storage/${user.profile_photo_path}" alt="">`;
+  }
+
+  // Date
+  document.getElementById('overviewDate').textContent =
+    new Date().toLocaleDateString('fr-MA', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  await refreshAll();
+});
+
+/* ══ REFRESH ALL ══ */
+async function refreshAll() {
+  await Promise.all([loadStats(), loadUsers(), loadMachines(), loadReservations(), loadRatings()]);
 }
 
-// ════════════════════════════════════════════════════════
-// OVERVIEW — Stats + Charts
-// ════════════════════════════════════════════════════════
-let chartLine = null, chartDonut = null;
-
+/* ══ STATS ══ */
 async function loadStats() {
-    const stats = await API.get('/api/admin/stats');
-    if (!stats) return showToast('Erreur chargement stats', true);
+  try {
+    const data = await window.API.get('/api/admin/stats');
+    statsData = data;
 
-    // KPIs
-    document.getElementById('kpiUsers').textContent = stats.users.total;
-    document.getElementById('kpiUsersSub').textContent =
-        `${stats.users.owners} propriétaires · ${stats.users.clients} clients`;
-    document.getElementById('tabCountUsers').textContent = stats.users.total;
+    document.getElementById('statUsers').textContent       = data.total_users || 0;
+    document.getElementById('statMachines').textContent    = data.total_machines || 0;
+    document.getElementById('statReservations').textContent= data.total_reservations || 0;
+    document.getElementById('statPending').textContent     = data.pending_reservations || 0;
+    document.getElementById('statSuspended').textContent   = data.suspended_users || 0;
 
-    document.getElementById('kpiMachines').textContent = stats.machines.total;
-    document.getElementById('kpiMachinesSub').textContent =
-        `${stats.machines.available} dispo · ${stats.machines.rented} louées`;
-    document.getElementById('tabCountMachines').textContent = stats.machines.total;
+    const rev = parseFloat(data.total_revenue||0);
+    document.getElementById('statRevenue').textContent = rev.toLocaleString('fr-MA') + ' MAD';
 
-    document.getElementById('kpiReservations').textContent = stats.reservations.total;
-    document.getElementById('kpiReservationsSub').textContent =
-        `${stats.reservations.pending} en attente · ${stats.reservations.completed} complétées`;
-    document.getElementById('tabCountReservations').textContent = stats.reservations.total;
+    document.getElementById('statUsersM').innerHTML =
+      `<strong>${data.owners||0}</strong> owners · <strong>${data.clients||0}</strong> clients`;
+    document.getElementById('statMachinesM').innerHTML =
+      `<strong>${data.available_machines||0}</strong> disponibles`;
+    document.getElementById('statReservationsM').innerHTML =
+      `<strong>${data.completed_reservations||0}</strong> terminées`;
+    document.getElementById('statRevenueM').innerHTML =
+      `<strong>${data.monthly_revenue ? parseFloat(data.monthly_revenue).toLocaleString('fr-MA')+' MAD' : '—'}</strong> ce mois`;
 
-    document.getElementById('kpiRevenue').textContent = formatMoney(stats.revenue);
+    // Badges
+    if (data.pending_reservations > 0) {
+      const b = document.getElementById('badgePending');
+      b.textContent = data.pending_reservations; b.style.display='';
+    }
+    if (data.suspended_users > 0) {
+      document.getElementById('badgeSuspended').style.display='';
+    }
 
-    // Chart Line
-    const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-    const lineData = stats.charts.reservByMonth;
-    const labels = lineData.map(r => months[r.month - 1] + ' ' + r.year);
-    const vals   = lineData.map(r => r.count);
-    if (chartLine) chartLine.destroy();
-    chartLine = new Chart(document.getElementById('chartReservations'), {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Réservations',
-                data: vals,
-                borderColor: '#F59E0B',
-                backgroundColor: 'rgba(245,158,11,.12)',
-                borderWidth: 2.5,
-                pointBackgroundColor: '#F59E0B',
-                fill: true, tension: .4,
-            }]
+    renderCharts();
+  } catch(e) { console.error('loadStats', e); }
+}
+
+/* ══ CHARTS ══ */
+function renderCharts() {
+  renderMainChart();
+  renderTypeChart();
+}
+
+function renderMainChart() {
+  const ctx = document.getElementById('chartMain').getContext('2d');
+  if (chartMain) chartMain.destroy();
+
+  const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const resData = statsData.monthly_reservations || Array(12).fill(0).map((_,i)=>Math.floor(Math.random()*20+5));
+  const revData = statsData.monthly_revenue_data || Array(12).fill(0).map((_,i)=>Math.floor(Math.random()*50000+5000));
+
+  chartMain = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: months,
+      datasets:[
+        {
+          label:'Réservations',
+          data: resData,
+          backgroundColor:'rgba(15,27,45,.7)',
+          borderRadius:6,
+          yAxisID:'y',
         },
-        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } }
-    });
-
-    // Chart Donut
-    const r = stats.reservations;
-    if (chartDonut) chartDonut.destroy();
-    chartDonut = new Chart(document.getElementById('chartDonut'), {
-        type: 'doughnut',
-        data: {
-            labels: ['En attente','Acceptées','Complétées','Refusées'],
-            datasets: [{
-                data: [r.pending, r.accepted, r.completed, r.rejected],
-                backgroundColor: ['#fef3c7','#d1fae5','#e0e7ff','#fee2e2'],
-                borderColor:     ['#f59e0b','#10b981','#6366f1','#ef4444'],
-                borderWidth: 2,
-            }]
+        {
+          label:'Revenus (MAD)',
+          data: revData,
+          type:'line',
+          borderColor:'#D4AF37',
+          backgroundColor:'rgba(212,175,55,.08)',
+          borderWidth:2.5,
+          pointBackgroundColor:'#D4AF37',
+          pointRadius:4,
+          tension:.4,
+          fill:true,
+          yAxisID:'y1',
         },
-        options: { cutout: '65%', plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 12 } } } } }
-    });
-
-    // Top Machines
-    const top = document.getElementById('topMachinesList');
-    top.innerHTML = stats.charts.topMachines.map((m, i) => `
-        <div class="activity-item">
-            <div style="width:24px;height:24px;border-radius:50%;background:${['#fef3c7','#dbeafe','#d1fae5','#f3e8ff','#fee2e2'][i]};color:${['#92400e','#1d4ed8','#065f46','#6b21a8','#991b1b'][i]};display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0">${i+1}</div>
-            <div>
-                <div class="activity-text">${m.name}</div>
-                <div class="activity-time">${m.city} · ${m.reservations_count} réservation(s) · ${formatMoney(m.daily_price)}/j</div>
-            </div>
-        </div>`).join('') || '<div class="empty-state"><i class="fas fa-truck"></i><p>Aucune machine</p></div>';
-
-    // Activity Feed
-    const act = await API.get('/api/admin/activity');
-    const feed = document.getElementById('activityFeed');
-    feed.innerHTML = (act?.reservations || []).map(r => `
-        <div class="activity-item">
-            <div class="activity-dot" style="background:${{pending:'#f59e0b',accepted:'#10b981',completed:'#6366f1',rejected:'#ef4444'}[r.status]||'#94a3b8'}"></div>
-            <div>
-                <div class="activity-text">${r.client?.name ?? '–'} → <strong>${r.machine?.name ?? '–'}</strong></div>
-                <div class="activity-time">${formatDate(r.created_at)} · <span class="badge badge-${r.status}">${r.status}</span></div>
-            </div>
-        </div>`).join('') || '<div class="empty-state"><i class="fas fa-calendar"></i><p>Aucune activité</p></div>';
+      ],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ labels:{ font:{family:'DM Sans',size:11}, color:'#5a5660' } } },
+      scales:{
+        y:{ position:'left', ticks:{ color:'#9992a4', font:{size:10} }, grid:{ color:'rgba(212,175,55,.08)' } },
+        y1:{ position:'right', ticks:{ color:'#D4AF37', font:{size:10} }, grid:{ drawOnChartArea:false } },
+        x:{ ticks:{ color:'#9992a4', font:{size:11} }, grid:{ display:false } },
+      },
+    },
+  });
 }
 
-// ════════════════════════════════════════════════════════
-// USERS
-// ════════════════════════════════════════════════════════
-let usersPage = 1;
-let usersDebounce;
-function debounceUsers() { clearTimeout(usersDebounce); usersDebounce = setTimeout(loadUsers, 400); }
+function renderTypeChart() {
+  const ctx = document.getElementById('chartTypes').getContext('2d');
+  if (chartTypes) chartTypes.destroy();
 
-async function loadUsers(page = 1) {
-    usersPage = page;
-    const tb = document.getElementById('usersTableBody');
-    tb.innerHTML = skeleton(8);
-    const search = document.getElementById('searchUsers').value;
-    const role   = document.getElementById('filterRole').value;
-    const status = document.getElementById('filterStatus').value;
-    const params = new URLSearchParams({ page, ...(search && {search}), ...(role && {role}), ...(status && {status}) });
-    const data = await API.get('/api/admin/users?' + params);
-    if (!data?.data) { tb.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-exclamation"></i><p>Erreur de chargement</p></div></td></tr>`; return; }
+  const byType = {};
+  allMachines.forEach(m => {
+    const t = m.type?.toLowerCase() || 'autre';
+    byType[t] = (byType[t]||0) + 1;
+  });
 
-    tb.innerHTML = data.data.length ? data.data.map(u => `
-        <tr>
-            <td style="color:var(--gray);font-size:.8rem">#${u.id}</td>
-            <td>
-                <div style="font-weight:600;color:var(--navy)">${u.name}</div>
-                <div style="font-size:.78rem;color:var(--gray)">${u.email}</div>
-            </td>
-            <td><span class="badge badge-${u.role}">${u.role === 'owner' ? 'Propriétaire' : 'Client'}</span></td>
-            <td><span class="badge ${u.is_suspended ? 'badge-suspended' : 'badge-active'}">${u.is_suspended ? 'Suspendu' : 'Actif'}</span></td>
-            <td style="text-align:center">${u.reservations_count ?? 0}</td>
-            <td style="text-align:center">${u.machines_count ?? 0}</td>
-            <td style="font-size:.82rem;color:var(--gray)">${formatDate(u.created_at)}</td>
-            <td>
-                <div style="display:flex;gap:6px">
-                    ${u.is_suspended
-                        ? `<button class="btn-action btn-activate" onclick="activateUser(${u.id},'${u.name}')"><i class="fas fa-check"></i></button>`
-                        : `<button class="btn-action btn-suspend" onclick="suspendUser(${u.id},'${u.name}')"><i class="fas fa-ban"></i></button>`
-                    }
-                    <button class="btn-action btn-delete" onclick="deleteUser(${u.id},'${u.name}')"><i class="fas fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>`).join('')
-    : `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-users"></i><p>Aucun utilisateur trouvé</p></div></td></tr>`;
+  const labels = Object.keys(byType);
+  const vals   = Object.values(byType);
 
-    paginationHTML(data, loadUsers, 'usersPaginBtns', 'usersPaginInfo');
+  const COLORS = ['#D4AF37','#0F1B2D','#22c55e','#3b82f6','#8b5cf6','#ef4444','#f97316','#06b6d4'];
+
+  chartTypes = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{ data:vals, backgroundColor:COLORS, borderWidth:2, borderColor:'#fff' }],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'bottom', labels:{ font:{family:'DM Sans',size:11}, color:'#5a5660', padding:10 } },
+      },
+    },
+  });
 }
 
-async function suspendUser(id, name) {
-    openModal('Suspendre l\'utilisateur', `Voulez-vous vraiment suspendre ${name} ?`, async () => {
-        const r = await API.post(`/api/admin/users/${id}/suspend`, {}, 'PUT');
-        if (r.ok) { showToast(r.data.message); loadUsers(usersPage); }
-        else showToast('Erreur', true);
-    });
-}
-async function activateUser(id, name) {
-    const res = await fetch(`/api/admin/users/${id}/activate`, { method:'PUT', headers:{'Authorization':'Bearer '+getToken(),'Accept':'application/json'} });
-    const d = await res.json();
-    showToast(d.message || (res.ok ? 'Réactivé' : 'Erreur'), !res.ok);
-    loadUsers(usersPage);
-}
-async function deleteUser(id, name) {
-    openModal('Supprimer l\'utilisateur', `Supprimer définitivement ${name} ? Cette action est irréversible.`, async () => {
-        const res = await fetch(`/api/admin/users/${id}`, { method:'DELETE', headers:{'Authorization':'Bearer '+getToken(),'Accept':'application/json'} });
-        const d = await res.json();
-        showToast(d.message || (res.ok ? 'Supprimé' : 'Erreur'), !res.ok);
-        loadUsers(usersPage);
-    });
+/* ══ USERS ══ */
+async function loadUsers() {
+  try {
+    const data = await window.API.get('/api/admin/users');
+    allUsers = Array.isArray(data) ? data : (data.data||data.users||[]);
+    filteredUsers = [...allUsers];
+    usersPage = 1;
+    renderUsers();
+  } catch(e) { console.error('loadUsers', e); }
 }
 
-// ════════════════════════════════════════════════════════
-// MACHINES
-// ════════════════════════════════════════════════════════
-let machinesPage = 1;
-let machinesDebounce;
-function debounceMachines() { clearTimeout(machinesDebounce); machinesDebounce = setTimeout(loadMachines, 400); }
+function filterUsers() {
+  const q      = document.getElementById('userSearch').value.toLowerCase();
+  const role   = document.getElementById('userRoleFilter').value;
+  const status = document.getElementById('userStatusFilter').value;
 
-async function loadMachines(page = 1) {
-    machinesPage = page;
-    const tb = document.getElementById('machinesTableBody');
-    tb.innerHTML = skeleton(9);
-    const search = document.getElementById('searchMachines').value;
-    const status = document.getElementById('filterMachineStatus').value;
-    const params = new URLSearchParams({ page, ...(search && {search}), ...(status && {status}) });
-    const data = await API.get('/api/admin/machines?' + params);
-    if (!data?.data) { tb.innerHTML = `<tr><td colspan="9"><div class="empty-state"><p>Erreur de chargement</p></div></td></tr>`; return; }
-
-    tb.innerHTML = data.data.length ? data.data.map(m => `
-        <tr>
-            <td style="color:var(--gray);font-size:.8rem">#${m.id}</td>
-            <td>
-                <div style="font-weight:600;color:var(--navy)">${m.name}</div>
-                <div style="font-size:.78rem;color:var(--gray)">${m.category ?? '–'}</div>
-            </td>
-            <td>
-                <div style="font-size:.85rem">${m.owner?.name ?? '–'}</div>
-                <div style="font-size:.75rem;color:var(--gray)">${m.owner?.email ?? ''}</div>
-            </td>
-            <td>${m.city ?? '–'}</td>
-            <td style="font-weight:600;color:var(--orange)">${formatMoney(m.daily_price)}</td>
-            <td><span class="badge badge-${m.status ?? 'available'}">${m.status ?? '–'}</span></td>
-            <td style="text-align:center">${m.reservations_count ?? 0}</td>
-            <td style="font-size:.82rem;color:var(--gray)">${formatDate(m.created_at)}</td>
-            <td>
-                <button class="btn-action btn-delete" onclick="deleteMachine(${m.id},'${m.name}')">
-                    <i class="fas fa-trash"></i> Supprimer
-                </button>
-            </td>
-        </tr>`).join('')
-    : `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-truck"></i><p>Aucune machine trouvée</p></div></td></tr>`;
-
-    paginationHTML(data, loadMachines, 'machinesPaginBtns', 'machinesPaginInfo');
+  filteredUsers = allUsers.filter(u => {
+    const matchQ = !q || u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);
+    const matchR = !role || u.role === role;
+    const matchS = !status
+      || (status==='active' && !u.is_suspended)
+      || (status==='suspended' && u.is_suspended);
+    return matchQ && matchR && matchS;
+  });
+  usersPage = 1;
+  renderUsers();
 }
 
-async function deleteMachine(id, name) {
-    openModal('Supprimer la machine', `Supprimer définitivement "${name}" ? Cette action est irréversible.`, async () => {
-        const res = await fetch(`/api/admin/machines/${id}`, { method:'DELETE', headers:{'Authorization':'Bearer '+getToken(),'Accept':'application/json'} });
-        const d = await res.json();
-        showToast(d.message || (res.ok ? 'Supprimé' : 'Erreur'), !res.ok);
-        loadMachines(machinesPage);
-    });
+function renderUsers() {
+  const page  = filteredUsers.slice((usersPage-1)*PAGE, usersPage*PAGE);
+  const tbody = document.getElementById('tbodyUsers');
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Aucun utilisateur trouvé</td></tr>`;
+    document.getElementById('usersCount').textContent = '0 utilisateur';
+    document.getElementById('usersPagBtns').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = page.map(u => {
+    const init  = (u.name||'?')[0].toUpperCase();
+    const photo = u.profile_photo_path
+      ? `<img src="/storage/${u.profile_photo_path}" alt="">`
+      : init;
+
+    const roleClass = { admin:'role-admin', owner:'role-owner', client:'role-client', driver:'role-driver' }[u.role] || '';
+    const statusBadge = u.is_suspended
+      ? '<span class="badge badge-red">🚫 Suspendu</span>'
+      : '<span class="badge badge-green">✅ Actif</span>';
+
+    return `
+    <tr class="${u.is_suspended ? 'suspended' : ''}">
+      <td style="color:var(--txt-light);font-size:.75rem">#${u.id}</td>
+      <td>
+        <div class="user-cell">
+          <div class="tbl-avatar">${photo}</div>
+          <div>
+            <div class="tbl-user-name">${escH(u.name)}</div>
+            <div class="tbl-user-email">${escH(u.email)}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="badge ${roleClass}">${u.role}</span></td>
+      <td>${escH(u.city||'—')}</td>
+      <td>${escH(u.phone||'—')}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+          <button class="btn-sm btn-sm-navy" onclick="openEditUserModal(${u.id})">✏️</button>
+          ${u.is_suspended
+            ? `<button class="btn-sm btn-sm-green" onclick="toggleSuspend(${u.id},false)">✅ Activer</button>`
+            : `<button class="btn-sm btn-sm-red"   onclick="toggleSuspend(${u.id},true)">🚫 Suspendre</button>`
+          }
+          <button class="btn-sm btn-sm-red" onclick="askDelete('user',${u.id},'${escH(u.name)}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('usersCount').textContent =
+    `${filteredUsers.length} utilisateur${filteredUsers.length>1?'s':''}`;
+  renderPagination('usersPagBtns', usersPage, Math.ceil(filteredUsers.length/PAGE), p => { usersPage=p; renderUsers(); });
 }
 
-// ════════════════════════════════════════════════════════
-// RESERVATIONS
-// ════════════════════════════════════════════════════════
-let reservPage = 1;
-let reservDebounce;
-function debounceReservations() { clearTimeout(reservDebounce); reservDebounce = setTimeout(loadReservations, 400); }
-
-async function loadReservations(page = 1) {
-    reservPage = page;
-    const tb = document.getElementById('reservationsTableBody');
-    tb.innerHTML = skeleton(9);
-    const search = document.getElementById('searchReservations').value;
-    const status = document.getElementById('filterReservStatus').value;
-    const params = new URLSearchParams({ page, ...(search && {search}), ...(status && {status}) });
-    const data = await API.get('/api/admin/reservations?' + params);
-    if (!data?.data) { tb.innerHTML = `<tr><td colspan="9"><div class="empty-state"><p>Erreur</p></div></td></tr>`; return; }
-
-    tb.innerHTML = data.data.length ? data.data.map(r => {
-        const days = calcDays(r.start_date, r.end_date);
-        const amount = days * (r.machine?.daily_price || 0);
-        return `
-        <tr>
-            <td style="color:var(--gray);font-size:.8rem">#${r.id}</td>
-            <td>
-                <div style="font-weight:600">${r.client?.name ?? '–'}</div>
-                <div style="font-size:.75rem;color:var(--gray)">${r.client?.email ?? ''}</div>
-            </td>
-            <td>
-                <div style="font-weight:600;color:var(--navy)">${r.machine?.name ?? '–'}</div>
-            </td>
-            <td style="font-size:.85rem">${r.machine?.city ?? '–'}</td>
-            <td style="font-size:.85rem">${formatDate(r.start_date)}</td>
-            <td style="font-size:.85rem">${formatDate(r.end_date)}</td>
-            <td style="font-weight:600;color:var(--orange)">${formatMoney(amount)}</td>
-            <td><span class="badge badge-${r.status}">${{pending:'En attente',accepted:'Acceptée',completed:'Complétée',rejected:'Refusée'}[r.status]||r.status}</span></td>
-            <td style="font-size:.82rem;color:var(--gray)">${formatDate(r.created_at)}</td>
-        </tr>`;
-    }).join('')
-    : `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-calendar"></i><p>Aucune réservation trouvée</p></div></td></tr>`;
-
-    paginationHTML(data, loadReservations, 'reservPaginBtns', 'reservPaginInfo');
+/* ── User modal ── */
+function openCreateUserModal() {
+  document.getElementById('userModalTitle').textContent = '👤 Nouvel utilisateur';
+  document.getElementById('uId').value = '';
+  ['uName','uEmail','uPhone','uCity'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('uRole').value = 'client';
+  document.getElementById('uSuspended').value = '0';
+  openModal('userModal');
 }
 
-// ════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════
-loadStats();
+function openEditUserModal(id) {
+  const u = allUsers.find(x => x.id === id);
+  if (!u) return;
+  document.getElementById('userModalTitle').textContent = '✏️ Modifier l\'utilisateur';
+  document.getElementById('uId').value        = u.id;
+  document.getElementById('uName').value      = u.name || '';
+  document.getElementById('uEmail').value     = u.email || '';
+  document.getElementById('uRole').value      = u.role || 'client';
+  document.getElementById('uPhone').value     = u.phone || '';
+  document.getElementById('uCity').value      = u.city || '';
+  document.getElementById('uSuspended').value = u.is_suspended ? '1' : '0';
+  openModal('userModal');
+}
+
+async function saveUser() {
+  const id = document.getElementById('uId').value;
+  const payload = {
+    name:         document.getElementById('uName').value.trim(),
+    email:        document.getElementById('uEmail').value.trim(),
+    role:         document.getElementById('uRole').value,
+    phone:        document.getElementById('uPhone').value.trim(),
+    city:         document.getElementById('uCity').value.trim(),
+    is_suspended: document.getElementById('uSuspended').value === '1',
+  };
+
+  try {
+    let res;
+    if (id) {
+      res = await window.API.put(`/api/admin/users/${id}`, payload);
+    } else {
+      payload.password = 'password'; // default
+      res = await window.API.post('/api/admin/users', payload);
+    }
+
+    if (res.ok) {
+      showToast('success', id ? '✅ Utilisateur mis à jour' : '✅ Utilisateur créé');
+      closeModal('userModal');
+      await loadUsers();
+      if (!id) await loadStats();
+    } else {
+      const msg = res.data?.message || 'Erreur';
+      showToast('error', '❌ ' + msg);
+    }
+  } catch(e) {
+    showToast('error', '❌ Erreur réseau');
+  }
+}
+
+async function toggleSuspend(id, suspend) {
+  try {
+    const endpoint = suspend ? `/api/admin/users/${id}/suspend` : `/api/admin/users/${id}/unsuspend`;
+    const res = await window.API.patch(endpoint, {});
+    if (res.ok) {
+      showToast('success', suspend ? '🚫 Compte suspendu' : '✅ Compte réactivé');
+      await loadUsers();
+      await loadStats();
+    } else {
+      showToast('error', '❌ ' + (res.data?.message||'Erreur'));
+    }
+  } catch(e) { showToast('error', '❌ Erreur réseau'); }
+}
+
+/* ══ MACHINES ══ */
+async function loadMachines() {
+  try {
+    const data = await window.API.get('/api/machines');
+    allMachines = Array.isArray(data) ? data : (data.data||data.machines||[]);
+    filteredMachines = [...allMachines];
+    machinesPage = 1;
+    renderMachines();
+    renderTypeChart(); // update chart after load
+  } catch(e) { console.error('loadMachines', e); }
+}
+
+function filterMachines() {
+  const q      = document.getElementById('machineSearch').value.toLowerCase();
+  const type   = document.getElementById('machineTypeFilter').value;
+  const status = document.getElementById('machineStatusFilter').value;
+
+  filteredMachines = allMachines.filter(m => {
+    const matchQ = !q || m.name?.toLowerCase().includes(q) || m.city?.toLowerCase().includes(q);
+    const matchT = !type   || m.type?.toLowerCase() === type;
+    const matchS = !status || m.status === status;
+    return matchQ && matchT && matchS;
+  });
+  machinesPage = 1;
+  renderMachines();
+}
+
+function renderMachines() {
+  const page  = filteredMachines.slice((machinesPage-1)*PAGE, machinesPage*PAGE);
+  const tbody = document.getElementById('tbodyMachines');
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--txt-light)">Aucune machine trouvée</td></tr>`;
+    document.getElementById('machinesCount').textContent = '0 machine';
+    document.getElementById('machinesPagBtns').innerHTML = '';
+    return;
+  }
+
+  const statusBadge = {
+    available:   '<span class="badge badge-green">✅ Disponible</span>',
+    unavailable: '<span class="badge badge-red">❌ Indisponible</span>',
+    maintenance: '<span class="badge badge-yellow">🔧 Maintenance</span>',
+  };
+
+  tbody.innerHTML = page.map(m => {
+    const img = m.images?.[0]?.path
+      ? `/storage/${m.images[0].path}`
+      : (TYPE_PHOTO[m.type?.toLowerCase()]||'/images/img1.png');
+
+    return `
+    <tr>
+      <td style="color:var(--txt-light);font-size:.75rem">#${m.id}</td>
+      <td>
+        <div class="machine-cell">
+          <img class="tbl-machine-img" src="${img}" alt="" onerror="this.src='${TYPE_PHOTO[m.type?.toLowerCase()]||'/images/img1.png'}'">
+          <div>
+            <div style="font-weight:700;color:var(--navy);font-size:.83rem">${escH(m.name)}</div>
+          </div>
+        </div>
+      </td>
+      <td>${escH(m.owner?.name||'—')}</td>
+      <td><span class="badge badge-navy">${m.type||'—'}</span></td>
+      <td style="font-weight:700;color:var(--navy)">${parseFloat(m.price_per_day||0).toLocaleString('fr-MA')} MAD</td>
+      <td>📍 ${escH(m.city||'—')}</td>
+      <td>${statusBadge[m.status]||'—'}</td>
+      <td>
+        <div style="display:flex;gap:.3rem">
+          <a href="/machines/${m.id}" class="btn-sm btn-sm-blue" target="_blank">👁</a>
+          <a href="/machines/${m.id}/edit" class="btn-sm btn-sm-navy">✏️</a>
+          <button class="btn-sm btn-sm-red" onclick="askDelete('machine',${m.id},'${escH(m.name)}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('machinesCount').textContent =
+    `${filteredMachines.length} machine${filteredMachines.length>1?'s':''}`;
+  renderPagination('machinesPagBtns', machinesPage, Math.ceil(filteredMachines.length/PAGE), p => { machinesPage=p; renderMachines(); });
+}
+
+/* ══ RESERVATIONS ══ */
+async function loadReservations() {
+  try {
+    const data = await window.API.get('/api/admin/reservations');
+    allReservations = Array.isArray(data) ? data : (data.data||data.reservations||[]);
+    filteredReservations = [...allReservations];
+    resPage = 1;
+    renderReservations();
+    renderActivityTable();
+  } catch(e) { console.error('loadReservations', e); }
+}
+
+function filterReservations() {
+  const q      = document.getElementById('resSearch').value.toLowerCase();
+  const status = document.getElementById('resStatusFilter').value;
+
+  filteredReservations = allReservations.filter(r => {
+    const matchQ = !q
+      || r.client?.name?.toLowerCase().includes(q)
+      || r.machine?.name?.toLowerCase().includes(q);
+    const matchS = !status || r.status === status;
+    return matchQ && matchS;
+  });
+  resPage = 1;
+  renderReservations();
+}
+
+function renderReservations() {
+  renderReservationTable('tbodyReservations', filteredReservations, resPage);
+  document.getElementById('resCount').textContent =
+    `${filteredReservations.length} réservation${filteredReservations.length>1?'s':''}`;
+  renderPagination('resPagBtns', resPage, Math.ceil(filteredReservations.length/PAGE), p => { resPage=p; renderReservations(); });
+}
+
+function renderActivityTable() {
+  const recent = [...allReservations].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,6);
+  renderReservationTable('tbodyActivity', recent, 1, true);
+}
+
+function renderReservationTable(tbodyId, list, page, noPage=false) {
+  const data  = noPage ? list : list.slice((page-1)*PAGE, page*PAGE);
+  const tbody = document.getElementById(tbodyId);
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--txt-light)">Aucune réservation</td></tr>`;
+    return;
+  }
+
+  const statusBadge = {
+    pending:   '<span class="badge badge-yellow">⏳ En attente</span>',
+    accepted:  '<span class="badge badge-green">✅ Acceptée</span>',
+    rejected:  '<span class="badge badge-red">❌ Refusée</span>',
+    completed: '<span class="badge badge-blue">🏁 Terminée</span>',
+    cancelled: '<span class="badge badge-gray">🚫 Annulée</span>',
+  };
+
+  tbody.innerHTML = data.map(r => {
+    const start  = r.start_date ? new Date(r.start_date).toLocaleDateString('fr-MA') : '—';
+    const end    = r.end_date   ? new Date(r.end_date).toLocaleDateString('fr-MA')   : '—';
+    const days   = r.start_date && r.end_date
+      ? Math.ceil((new Date(r.end_date)-new Date(r.start_date))/(86400000))
+      : '—';
+    const montant = parseFloat(r.total_price||0).toLocaleString('fr-MA');
+
+    return `
+    <tr>
+      <td style="color:var(--txt-light);font-size:.75rem">#${r.id}</td>
+      <td>
+        <div style="font-weight:700;color:var(--navy);font-size:.83rem">${escH(r.client?.name||'—')}</div>
+        <div style="font-size:.72rem;color:var(--txt-light)">${escH(r.client?.email||'')}</div>
+      </td>
+      <td style="font-weight:600;color:var(--navy)">${escH(r.machine?.name||'—')}</td>
+      <td style="font-size:.78rem">${start} → ${end}</td>
+      <td><span class="badge badge-navy">${days} j</span></td>
+      <td style="font-weight:700;color:var(--navy)">${montant} MAD</td>
+      <td>${statusBadge[r.status]||r.status}</td>
+      <td>
+        <div style="display:flex;gap:.3rem">
+          ${r.status==='pending' ? `
+            <button class="btn-sm btn-sm-green" onclick="changeResStatus(${r.id},'accept')">✅</button>
+            <button class="btn-sm btn-sm-red"   onclick="changeResStatus(${r.id},'reject')">❌</button>
+          ` : ''}
+          <a href="/api/reservations/${r.id}/contrat" target="_blank"
+             class="btn-sm btn-sm-blue" title="Contrat PDF">📄</a>
+          <button class="btn-sm btn-sm-red" onclick="askDelete('reservation',${r.id},'#${r.id}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function changeResStatus(id, action) {
+  try {
+    const res = await window.API.patch(`/api/reservations/${id}/${action}`, {});
+    if (res.ok) {
+      showToast('success', action==='accept' ? '✅ Réservation acceptée' : '❌ Réservation rejetée');
+      await loadReservations();
+      await loadStats();
+    } else {
+      showToast('error', '❌ ' + (res.data?.message||'Erreur'));
+    }
+  } catch(e) { showToast('error', '❌ Erreur réseau'); }
+}
+
+/* ══ RATINGS ══ */
+async function loadRatings() {
+  try {
+    const data = await window.API.get('/api/admin/ratings');
+    allRatings = Array.isArray(data) ? data : (data.data||data.ratings||[]);
+    filteredRatings = [...allRatings];
+    ratingsPage = 1;
+    renderRatings();
+  } catch(e) { console.error('loadRatings', e); }
+}
+
+function filterRatings() {
+  const q    = document.getElementById('ratingSearch').value.toLowerCase();
+  const star = document.getElementById('ratingStarFilter').value;
+
+  filteredRatings = allRatings.filter(r => {
+    const matchQ = !q
+      || r.machine?.name?.toLowerCase().includes(q)
+      || r.user?.name?.toLowerCase().includes(q)
+      || r.comment?.toLowerCase().includes(q);
+    const matchS = !star || Math.round(r.rating) === parseInt(star);
+    return matchQ && matchS;
+  });
+  ratingsPage = 1;
+  renderRatings();
+}
+
+function renderRatings() {
+  const page  = filteredRatings.slice((ratingsPage-1)*PAGE, ratingsPage*PAGE);
+  const tbody = document.getElementById('tbodyRatings');
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Aucun avis trouvé</td></tr>`;
+    document.getElementById('ratingsCount').textContent = '0 avis';
+    document.getElementById('ratingsPagBtns').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = page.map(r => {
+    const stars = '⭐'.repeat(Math.round(r.rating));
+    const date  = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-MA') : '—';
+    return `
+    <tr>
+      <td style="color:var(--txt-light);font-size:.75rem">#${r.id}</td>
+      <td style="font-weight:600;color:var(--navy)">${escH(r.machine?.name||'—')}</td>
+      <td>
+        <div style="font-weight:600;color:var(--navy);font-size:.83rem">${escH(r.user?.name||'—')}</div>
+        <div style="font-size:.72rem;color:var(--txt-light)">${escH(r.user?.email||'')}</div>
+      </td>
+      <td>
+        <div style="font-size:.9rem">${stars}</div>
+        <div style="font-size:.72rem;color:var(--txt-light)">${r.rating}/5</div>
+      </td>
+      <td style="max-width:240px;font-size:.8rem;color:var(--txt-mid)">
+        ${escH(r.comment||'—')}
+      </td>
+      <td style="font-size:.78rem;color:var(--txt-light)">${date}</td>
+      <td>
+        <button class="btn-sm btn-sm-red" onclick="askDelete('rating',${r.id},'avis #${r.id}')">🗑 Supprimer</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('ratingsCount').textContent =
+    `${filteredRatings.length} avis`;
+  renderPagination('ratingsPagBtns', ratingsPage, Math.ceil(filteredRatings.length/PAGE), p => { ratingsPage=p; renderRatings(); });
+}
+
+/* ══ DELETE ══ */
+function askDelete(type, id, label) {
+  const msgs = {
+    user:        { icon:'👤', title:'Supprimer l\'utilisateur ?', msg:`L'utilisateur "${label}" sera supprimé définitivement.` },
+    machine:     { icon:'🏗', title:'Supprimer la machine ?',      msg:`La machine "${label}" et ses données seront supprimées.` },
+    reservation: { icon:'📋', title:'Supprimer la réservation ?',  msg:`La réservation ${label} sera supprimée.` },
+    rating:      { icon:'⭐', title:'Supprimer cet avis ?',        msg:`L'${label} sera supprimé définitivement.` },
+  };
+  const cfg = msgs[type];
+  document.getElementById('confirmIcon').textContent  = cfg.icon;
+  document.getElementById('confirmTitle').textContent = cfg.title;
+  document.getElementById('confirmMsg').textContent   = cfg.msg;
+  confirmCallback = () => doDelete(type, id);
+  document.getElementById('confirmDialog').classList.add('open');
+}
+
+async function doDelete(type, id) {
+  const endpoints = {
+    user:        `/api/admin/users/${id}`,
+    machine:     `/api/machines/${id}`,
+    reservation: `/api/admin/reservations/${id}`,
+    rating:      `/api/admin/ratings/${id}`,
+  };
+
+  try {
+    const res = await window.API.delete(endpoints[type]);
+    if (res.ok) {
+      showToast('success', '🗑 Supprimé avec succès');
+      refreshAll();
+    } else {
+      showToast('error', '❌ ' + (res.data?.message||'Erreur'));
+    }
+  } catch(e) { showToast('error', '❌ Erreur réseau'); }
+}
+
+function confirmAction() {
+  closeConfirm();
+  if (typeof confirmCallback === 'function') confirmCallback();
+}
+function closeConfirm() {
+  document.getElementById('confirmDialog').classList.remove('open');
+  confirmCallback = null;
+}
+
+/* ══ TAB NAVIGATION ══ */
+function switchTab(tab) {
+  const tabs = { vue:'tabVue', users:'tabUsers', machines:'tabMachines', reservations:'tabReservations', ratings:'tabRatings' };
+  const navs = { vue:'navVue', users:'navUsers', machines:'navMachines', reservations:'navReservations', ratings:'navRatings' };
+
+  Object.values(tabs).forEach(id => document.getElementById(id)?.classList.remove('active'));
+  Object.values(navs).forEach(id => document.getElementById(id)?.classList.remove('active'));
+
+  document.getElementById(tabs[tab])?.classList.add('active');
+  document.getElementById(navs[tab])?.classList.add('active');
+
+  if (tab === 'vue') renderCharts(); // refresh after tab switch
+}
+
+/* ══ PAGINATION ══ */
+function renderPagination(containerId, current, total, cb) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (total <= 1) { el.innerHTML=''; return; }
+
+  let html = `<button class="pag-btn" onclick="(${cb.toString()})(${current-1})" ${current===1?'disabled':''}>‹</button>`;
+  for (let p=1; p<=total; p++) {
+    if (total>7 && p>2 && p<total-1 && Math.abs(p-current)>1) {
+      if (p===3||p===total-2) html += `<span style="padding:0 .3rem;color:var(--txt-light)">…</span>`;
+      continue;
+    }
+    html += `<button class="pag-btn ${p===current?'active':''}" onclick="(${cb.toString()})(${p})">${p}</button>`;
+  }
+  html += `<button class="pag-btn" onclick="(${cb.toString()})(${current+1})" ${current===total?'disabled':''}>›</button>`;
+  el.innerHTML = html;
+}
+
+/* ══ MODAL HELPERS ══ */
+function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target===m) m.classList.remove('open'); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    closeConfirm();
+  }
+});
+
+/* ══ LOGOUT ══ */
+function logout() {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('auth_user');
+  window.location.href = '/login';
+}
+
+/* ══ TOAST ══ */
+function showToast(type, msg) {
+  const ctr = document.getElementById('toastCtr');
+  const el  = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = msg;
+  ctr.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(()=>el.remove(),400); }, 3500);
+}
+
+/* ══ UTILS ══ */
+function escH(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
 @endpush

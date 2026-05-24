@@ -21,9 +21,9 @@ Route::get('/machines/{id}',         fn(int $id) => view('machines.show', ['id' 
 Route::get('/machines/{id}/edit',    fn(int $id) => view('machines.create', ['id' => $id, 'editMode' => true]))
      ->where('id', '[0-9]+');
 
-/* ── AUTHENTIFICATION ── */
-Route::get('/login',    fn() => view('auth.login'));
-Route::get('/register', fn() => view('auth.register'));
+
+
+
 Route::get('/logout',   fn() => redirect('/'));   // Le vrai logout se fait via POST API
 
 /* ── DASHBOARDS ── */
@@ -67,6 +67,7 @@ Route::get('/profile', function () {
     return view('profile.index');
 })->name('profile');
 
-Route::get('/machines/{id}', function($id) {
-    return view('machines.show');
-});
+Route::get('/favoris', fn() => view('client.favorites'));
+
+Route::get('/login', fn() => view('auth.auth_sliding'));
+Route::get('/register', fn() => view('auth.auth_sliding'));

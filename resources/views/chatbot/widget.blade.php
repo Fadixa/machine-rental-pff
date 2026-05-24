@@ -1,5 +1,3 @@
-
-
 {{-- ── Bouton flottant --}}
 <button id="chat-toggle" onclick="toggleChat()" aria-label="Ouvrir le chat">
     <i class="fa fa-comment-dots" id="chat-icon-open"></i>
@@ -80,12 +78,12 @@
     width: 58px;
     height: 58px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #F59E0B, #fbbf24);
+    background: #D4AF37;
     border: none;
     color: #0F1B2D;
     font-size: 1.3rem;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(245,158,11,0.45);
+    box-shadow: 0 6px 20px rgba(212,175,55,0.45);
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
     align-items: center;
@@ -93,7 +91,7 @@
 }
 #chat-toggle:hover {
     transform: scale(1.1);
-    box-shadow: 0 10px 30px rgba(245,158,11,0.55);
+    box-shadow: 0 10px 30px rgba(212,175,55,0.55);
 }
 
 /* Badge notification */
@@ -147,12 +145,12 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(245,158,11,0.2);
-    border: 2px solid #F59E0B;
+    background: rgba(212,175,55,0.2);
+    border: 2px solid #D4AF37;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #F59E0B;
+    color: #D4AF37;
     font-size: 1.1rem;
     flex-shrink: 0;
 }
@@ -227,7 +225,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 .msg.user .msg-bubble {
-    background: linear-gradient(135deg, #F59E0B, #fbbf24);
+    background: #D4AF37;
     color: #0F1B2D;
     border-bottom-right-radius: 4px;
 }
@@ -283,9 +281,9 @@
     white-space: nowrap;
 }
 .suggestion-btn:hover {
-    border-color: #F59E0B;
-    color: #F59E0B;
-    background: rgba(245,158,11,0.05);
+    border-color: #D4AF37;
+    color: #9A7D20;
+    background: rgba(212,175,55,0.05);
 }
 
 /* Zone de saisie */
@@ -310,14 +308,14 @@
     transition: border-color 0.2s;
 }
 .chat-input-wrap input:focus {
-    border-color: #F59E0B;
+    border-color: #D4AF37;
     background: #fff;
 }
 .chat-send-btn {
     width: 38px;
     height: 38px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #F59E0B, #fbbf24);
+    background: #D4AF37;
     border: none;
     color: #0F1B2D;
     cursor: pointer;
@@ -325,10 +323,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s;
+    transition: transform 0.15s, background 0.15s;
     flex-shrink: 0;
 }
-.chat-send-btn:hover { transform: scale(1.08); }
+.chat-send-btn:hover { transform: scale(1.08); background: #9A7D20; }
 
 /* Responsive mobile */
 @media (max-width: 480px) {
