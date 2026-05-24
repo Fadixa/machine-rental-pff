@@ -628,13 +628,13 @@ body{background:var(--cream);color:var(--txt-dark);font-family:'DM Sans',system-
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem" class="anim-up">
         <div style="text-align:center;padding:2rem 1.25rem;background:var(--cream);border:1px solid var(--cream3);border-radius:16px">
             <div style="width:70px;height:70px;border-radius:50%;background:var(--gold);border:3px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--navy);margin:0 auto 1rem">F</div>
-            <div style="font-size:.95rem;font-weight:700;color:var(--navy)">Fadwa</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--navy)">Fadwa Ait lahbib</div>
             <div style="font-size:.78rem;color:var(--gold-dk);margin-top:3px;font-weight:600">Développeuse Full Stack</div>
             <div style="font-size:.78rem;color:var(--txt-light);margin-top:6px">Laravel · Vue.js · MySQL</div>
         </div>
         <div style="text-align:center;padding:2rem 1.25rem;background:var(--cream);border:1px solid var(--cream3);border-radius:16px">
             <div style="width:70px;height:70px;border-radius:50%;background:var(--navy);border:3px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--gold);margin:0 auto 1rem">S</div>
-            <div style="font-size:.95rem;font-weight:700;color:var(--navy)">Salma</div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--navy)">Salma Najem</div>
             <div style="font-size:.78rem;color:var(--gold-dk);margin-top:3px;font-weight:600">Développeuse Full Stack</div>
             <div style="font-size:.78rem;color:var(--txt-light);margin-top:6px">Laravel · Blade · JS</div>
         </div>
@@ -642,7 +642,7 @@ body{background:var(--cream);color:var(--txt-dark);font-family:'DM Sans',system-
             <div style="width:70px;height:70px;border-radius:50%;background:var(--cream2);border:3px solid rgba(212,175,55,.3);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--navy);margin:0 auto 1rem">&#x1F3D7;</div>
             <div style="font-size:.95rem;font-weight:700;color:var(--navy)">Rentify</div>
             <div style="font-size:.78rem;color:var(--gold-dk);margin-top:3px;font-weight:600">Projet de Fin d'Études</div>
-            <div style="font-size:.78rem;color:var(--txt-light);margin-top:6px">BTS Développement Digital</div>
+            <div style="font-size:.78rem;color:var(--txt-light);margin-top:6px"> Développement Digital</div>
         </div>
     </div>
 </div>
