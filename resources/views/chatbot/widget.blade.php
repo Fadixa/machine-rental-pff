@@ -69,6 +69,12 @@
 {{-- CSS                                     --}}
 {{-- ═══════════════════════════════════════ --}}
 <style>
+:root {
+  --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
+  --navy:#0F1B2D; --cream:#FAF7F0; --cream2:#F0EBE0; --cream3:#E8DDD0;
+  --txt-dark:#1a1a2e; --txt-mid:#5a5660; --txt-light:#9992a4;
+}
+
 /* Bouton flottant */
 #chat-toggle {
     position: fixed;
@@ -78,9 +84,9 @@
     width: 58px;
     height: 58px;
     border-radius: 50%;
-    background: #D4AF37;
+    background: var(--gold);
     border: none;
-    color: #0F1B2D;
+    color: var(--txt-dark);
     font-size: 1.3rem;
     cursor: pointer;
     box-shadow: 0 6px 20px rgba(212,175,55,0.45);
@@ -121,7 +127,8 @@
     max-height: 530px;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(15,27,45,0.25);
+    box-shadow: 0 20px 60px rgba(15,27,45,0.2);
+    border: 1.5px solid rgba(212,175,55,.2);
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -132,9 +139,10 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Header */
+/* Header — V11 : gold-pale au lieu de navy */
 .chat-header {
-    background: #0F1B2D;
+    background: var(--gold-pale);
+    border-bottom: 1.5px solid rgba(212,175,55,.25);
     padding: 14px 18px;
     display: flex;
     align-items: center;
@@ -145,12 +153,12 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(212,175,55,0.2);
-    border: 2px solid #D4AF37;
+    background: rgba(212,175,55,0.15);
+    border: 2px solid var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #D4AF37;
+    color: var(--gold-dk);
     font-size: 1.1rem;
     flex-shrink: 0;
 }
@@ -160,12 +168,13 @@
     flex-direction: column;
 }
 .chat-header-info strong {
-    color: #fff;
+    color: var(--navy);
     font-size: 0.9rem;
+    font-weight: 700;
 }
 .chat-status {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.55);
+    color: var(--txt-mid);
     display: flex;
     align-items: center;
     gap: 5px;
@@ -183,14 +192,23 @@
     50%      { opacity: 0.4; }
 }
 .chat-close-btn {
-    background: none;
+    background: var(--cream2);
     border: none;
-    color: rgba(255,255,255,0.5);
+    color: var(--txt-mid);
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: color 0.2s;
+    font-size: 0.85rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 }
-.chat-close-btn:hover { color: #fff; }
+.chat-close-btn:hover {
+    background: var(--cream3);
+    color: var(--txt-dark);
+}
 
 /* Corps messages */
 #chat-body {
@@ -200,9 +218,9 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: #f8f9fa;
+    background: var(--cream);
     scrollbar-width: thin;
-    scrollbar-color: #e5e7eb transparent;
+    scrollbar-color: var(--cream3) transparent;
 }
 
 /* Bulles de messages */
@@ -218,20 +236,21 @@
     white-space: pre-line;
     word-break: break-word;
 }
-.msg.bot  .msg-bubble {
+.msg.bot .msg-bubble {
     background: #fff;
-    color: #1f2937;
+    color: var(--txt-dark);
     border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid rgba(212,175,55,.1);
 }
 .msg.user .msg-bubble {
-    background: #D4AF37;
-    color: #0F1B2D;
+    background: var(--gold);
+    color: var(--txt-dark);
     border-bottom-right-radius: 4px;
 }
 .msg-time {
     font-size: 0.68rem;
-    color: #9ca3af;
+    color: var(--txt-light);
     margin-top: 3px;
     padding: 0 4px;
 }
@@ -249,7 +268,7 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #9ca3af;
+    background: var(--txt-light);
     animation: bounce 1.2s infinite;
 }
 .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -265,25 +284,25 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--cream3);
     background: #fff;
     flex-shrink: 0;
 }
 .suggestion-btn {
     padding: 5px 12px;
-    border: 1.5px solid #e5e7eb;
+    border: 1.5px solid var(--cream3);
     border-radius: 99px;
     background: #fff;
-    color: #374151;
+    color: var(--txt-mid);
     font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
 }
 .suggestion-btn:hover {
-    border-color: #D4AF37;
-    color: #9A7D20;
-    background: rgba(212,175,55,0.05);
+    border-color: var(--gold);
+    color: var(--gold-dk);
+    background: var(--gold-pale);
 }
 
 /* Zone de saisie */
@@ -291,33 +310,35 @@
     display: flex;
     align-items: center;
     padding: 10px 14px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid var(--cream3);
     background: #fff;
     gap: 8px;
     flex-shrink: 0;
 }
 .chat-input-wrap input {
     flex: 1;
-    border: 1.5px solid #e5e7eb;
+    border: 1.5px solid var(--cream3);
     border-radius: 10px;
     padding: 9px 14px;
     font-size: 0.85rem;
     outline: none;
-    color: #1f2937;
-    background: #f9fafb;
+    color: var(--txt-dark);
+    background: var(--cream);
     transition: border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
 }
 .chat-input-wrap input:focus {
-    border-color: #D4AF37;
+    border-color: var(--gold);
     background: #fff;
 }
+.chat-input-wrap input::placeholder { color: var(--txt-light); }
 .chat-send-btn {
     width: 38px;
     height: 38px;
     border-radius: 10px;
-    background: #D4AF37;
+    background: var(--gold);
     border: none;
-    color: #0F1B2D;
+    color: var(--txt-dark);
     cursor: pointer;
     font-size: 0.9rem;
     display: flex;
@@ -326,7 +347,7 @@
     transition: transform 0.15s, background 0.15s;
     flex-shrink: 0;
 }
-.chat-send-btn:hover { transform: scale(1.08); background: #9A7D20; }
+.chat-send-btn:hover { transform: scale(1.08); background: var(--gold-dk); color: #fff; }
 
 /* Responsive mobile */
 @media (max-width: 480px) {
@@ -379,17 +400,13 @@
         const texte = input.value.trim();
         if (!texte) return;
 
-        // Afficher le message utilisateur
         ajouterMessage(texte, 'user');
         input.value = '';
 
-        // Cacher les suggestions après le premier message
         document.getElementById('chat-suggestions').style.display = 'none';
 
-        // Afficher l'indicateur "en train d'écrire..."
         const typingId = afficherTyping();
 
-        // Appel à l'API Laravel
         fetch('/api/chatbot', {
             method : 'POST',
             headers: {
@@ -413,7 +430,7 @@
 
     /* ── Ajoute une bulle de message ── */
     function ajouterMessage(texte, type, heure) {
-        const body    = document.getElementById('chat-body');
+        const body       = document.getElementById('chat-body');
         const maintenant = heure || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
         const div = document.createElement('div');

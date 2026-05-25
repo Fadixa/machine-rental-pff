@@ -5,15 +5,16 @@
 @push('styles')
 <style>
 /* ═══════════════════════════════════════════
-   DASHBOARD OWNER — RENTIFY V6
-   Gold / Crème Design System
+   DASHBOARD OWNER — RENTIFY V10
+   Gold / Crème Design System — ZÉRO NAVY BG
 ═══════════════════════════════════════════ */
 :root {
-  --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
-  --navy:#0F1B2D; --navy2:#162540;
+  --gold:#D4AF37; --gold-dk:#9A7D20; --gold-lt:#F5E88A; --gold-pale:#FEF9E7;
+  --gold-glow:rgba(212,175,55,.25);
+  --navy:#0F1B2D; --navy2:#162540; --navy3:#1E3356;
   --cream:#FAF7F0; --cream2:#F0EBE0; --cream3:#E8DDD0;
-  --txt-mid:#5a5660; --txt-light:#9992a4;
-  --green:#22c55e; --red:#ef4444; --orange:#f97316;
+  --txt-dark:#1a1a2e; --txt-mid:#5a5660; --txt-light:#9992a4;
+  --green:#22c55e; --red:#ef4444;
   --radius:14px; --shadow:0 4px 24px rgba(15,27,45,.08);
 }
 
@@ -23,27 +24,27 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .owner-layout {
   display:grid;
   grid-template-columns:260px 1fr;
-  min-height:calc(100vh - 64px); /* 64px = navbar height from app.blade */
-  padding-top:0; /* main déjà padding-top:64px dans app.blade.php */
+  min-height:calc(100vh - 64px);
+  padding-top:0;
 }
 
 /* ══════════════════════════════════
-   SIDEBAR
+   SIDEBAR — 100% CLAIR
 ══════════════════════════════════ */
 .owner-sidebar {
-  background:var(--navy);
+  background:var(--cream);
   padding:2rem 1.25rem;
   position:sticky;
-  top:0; /* main a déjà padding-top:64px via app.blade.php */
+  top:0;
   height:100vh;
   overflow-y:auto;
-  border-right:1px solid rgba(212,175,55,.15);
+  border-right:1.5px solid rgba(212,175,55,.2);
 }
 
 .sidebar-profile {
   text-align:center;
   padding-bottom:1.5rem;
-  border-bottom:1px solid rgba(212,175,55,.15);
+  border-bottom:1px solid rgba(212,175,55,.2);
   margin-bottom:1.5rem;
 }
 .sidebar-avatar {
@@ -51,20 +52,20 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   border:3px solid var(--gold);
   object-fit:cover; margin:0 auto 0.75rem;
   display:block;
-  background:var(--navy2);
+  background:var(--cream2);
 }
 .sidebar-avatar-placeholder {
   width:72px; height:72px; border-radius:50%;
   border:3px solid var(--gold);
-  background:var(--navy2);
+  background:var(--gold-pale);
   display:flex; align-items:center; justify-content:center;
   margin:0 auto 0.75rem;
   font-size:1.75rem; color:var(--gold);
 }
-.sidebar-name { color:#fff; font-weight:700; font-size:.95rem; }
+.sidebar-name { color:var(--navy); font-weight:700; font-size:.95rem; }
 .sidebar-role {
   display:inline-block; margin-top:.3rem;
-  background:rgba(212,175,55,.15); color:var(--gold);
+  background:rgba(212,175,55,.15); color:var(--gold-dk);
   font-size:.72rem; font-weight:600; letter-spacing:.08em;
   padding:.2rem .7rem; border-radius:20px; text-transform:uppercase;
 }
@@ -74,13 +75,13 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .sidebar-nav a {
   display:flex; align-items:center; gap:.75rem;
   padding:.7rem 1rem; border-radius:10px;
-  color:rgba(255,255,255,.65); font-size:.88rem; font-weight:500;
+  color:var(--txt-mid); font-size:.88rem; font-weight:500;
   text-decoration:none; transition:all .2s;
 }
-.sidebar-nav a:hover { background:rgba(212,175,55,.1); color:#fff; }
+.sidebar-nav a:hover { background:rgba(212,175,55,.1); color:var(--navy); }
 .sidebar-nav a.active {
   background:rgba(212,175,55,.18);
-  color:var(--gold);
+  color:var(--gold-dk);
   font-weight:700;
 }
 .sidebar-nav a .nav-icon {
@@ -88,7 +89,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   flex-shrink:0;
 }
 .sidebar-section-label {
-  color:rgba(255,255,255,.3); font-size:.7rem; font-weight:700;
+  color:var(--txt-light); font-size:.7rem; font-weight:700;
   letter-spacing:.1em; text-transform:uppercase;
   padding:.5rem 1rem .3rem; margin-top:.5rem;
 }
@@ -175,12 +176,12 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--gold-pale);
 }
 .tab-badge {
-  background:var(--navy); color:#fff;
+  background:var(--gold); color:var(--txt-dark);
   font-size:.68rem; font-weight:700;
   padding:.1rem .45rem; border-radius:20px;
   min-width:18px; text-align:center;
 }
-.tab-btn.active .tab-badge { background:var(--gold); color:var(--navy); }
+.tab-btn.active .tab-badge { background:var(--gold-dk); color:#fff; }
 
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
@@ -217,19 +218,20 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .toolbar select:focus { border-color:var(--gold); }
 
 /* ══════════════════════════════════
-   BUTTONS
+   BUTTONS — V10 GOLD SYSTEM
 ══════════════════════════════════ */
+/* .btn-navy = alias rétrocompat → gold bg */
 .btn-navy {
-  background:var(--navy); color:#fff;
-  border:2px solid var(--navy);
+  background:var(--gold); color:var(--txt-dark);
+  border:2px solid var(--gold);
   padding:.55rem 1.25rem; border-radius:10px;
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
   cursor:pointer; transition:all .2s; display:inline-flex;
   align-items:center; gap:.5rem; text-decoration:none; white-space:nowrap;
 }
-.btn-navy:hover { background:var(--navy2); border-color:var(--gold); color:var(--gold); }
+.btn-navy:hover { background:var(--gold-dk); border-color:var(--gold-dk); color:var(--txt-dark); }
 .btn-gold {
-  background:var(--gold); color:var(--navy);
+  background:var(--gold); color:var(--txt-dark);
   border:2px solid var(--gold);
   padding:.55rem 1.25rem; border-radius:10px;
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
@@ -238,7 +240,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 .btn-gold:hover { background:var(--gold-dk); border-color:var(--gold-dk); }
 .btn-outline {
-  background:transparent; color:var(--navy);
+  background:transparent; color:var(--txt-dark);
   border:2px solid var(--cream3);
   padding:.55rem 1.25rem; border-radius:10px;
   font-family:'DM Sans',sans-serif; font-weight:600; font-size:.85rem;
@@ -288,19 +290,20 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   padding:.25rem .65rem; border-radius:20px;
   font-size:.7rem; font-weight:700; letter-spacing:.05em;
 }
-.status-available { background:#dcfce7; color:#16a34a; }
+.status-available   { background:#dcfce7; color:#16a34a; }
 .status-unavailable { background:#fee2e2; color:#dc2626; }
-.status-maintenance { background:#fef9c3; color:#ca8a04; }
+.status-maintenance { background:#FEF9E7; color:var(--gold-dk); }
 
 .machine-card-3d {
   position:absolute; top:.7rem; left:.7rem;
   width:28px; height:28px; border-radius:6px;
-  background:rgba(15,27,45,.7); backdrop-filter:blur(4px);
+  background:rgba(250,247,240,.85); backdrop-filter:blur(4px);
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:var(--gold); font-size:.75rem;
+  cursor:pointer; color:var(--gold-dk); font-size:.75rem;
   transition:all .2s; z-index:2;
+  border:1px solid rgba(212,175,55,.3);
 }
-.machine-card-3d:hover { background:var(--gold); color:var(--navy); }
+.machine-card-3d:hover { background:var(--gold); color:var(--txt-dark); }
 
 .machine-card-body { padding:1.1rem 1.25rem; }
 .machine-card-type {
@@ -327,32 +330,34 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--cream);
 }
 
-/* Mini 3D viewer */
+/* Mini 3D viewer — fond crème */
 .mini-viewer-modal {
   position:fixed; inset:0; z-index:9999;
-  background:rgba(10,16,28,.8); backdrop-filter:blur(8px);
+  background:rgba(10,16,28,.75); backdrop-filter:blur(8px);
   display:flex; align-items:center; justify-content:center;
   opacity:0; pointer-events:none; transition:opacity .3s;
 }
 .mini-viewer-modal.open { opacity:1; pointer-events:all; }
 .mini-viewer-box {
-  background:var(--navy); border-radius:18px;
+  background:var(--cream);
+  border-radius:18px;
   padding:1.5rem; width:440px; max-width:95vw;
-  border:1px solid rgba(212,175,55,.2);
+  border:1.5px solid rgba(212,175,55,.3);
   transform:scale(.9); transition:transform .3s;
+  box-shadow:0 24px 64px rgba(10,16,28,.2);
 }
 .mini-viewer-modal.open .mini-viewer-box { transform:scale(1); }
 .mini-viewer-header {
   display:flex; align-items:center; justify-content:space-between;
   margin-bottom:1rem;
 }
-.mini-viewer-header h3 { color:#fff; font-size:1rem; margin:0; }
+.mini-viewer-header h3 { color:var(--navy); font-size:1rem; margin:0; font-weight:700; }
 .mini-viewer-close {
-  background:rgba(255,255,255,.1); border:none;
-  color:#fff; width:32px; height:32px; border-radius:8px;
+  background:var(--cream2); border:none;
+  color:var(--txt-dark); width:32px; height:32px; border-radius:8px;
   cursor:pointer; font-size:1.1rem; transition:all .2s;
 }
-.mini-viewer-close:hover { background:rgba(212,175,55,.3); color:var(--gold); }
+.mini-viewer-close:hover { background:var(--gold-pale); color:var(--gold-dk); border:1px solid var(--gold); }
 #miniViewerCanvas {
   width:100%; border-radius:10px;
   height:280px; display:block;
@@ -398,9 +403,9 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   font-size:.72rem; font-weight:700; letter-spacing:.04em;
   white-space:nowrap;
 }
-.badge-pending { background:#fef9c3; color:#92400e; }
-.badge-accepted { background:#dcfce7; color:#15803d; }
-.badge-rejected { background:#fee2e2; color:#b91c1c; }
+.badge-pending   { background:#FEF9E7; color:var(--gold-dk); }
+.badge-accepted  { background:#dcfce7; color:#15803d; }
+.badge-rejected  { background:#fee2e2; color:#b91c1c; }
 .badge-completed { background:rgba(212,175,55,.15); color:var(--gold-dk); }
 .badge-cancelled { background:var(--cream3); color:var(--txt-mid); }
 
@@ -512,9 +517,9 @@ select.form-control { cursor:pointer; }
   border:2px solid var(--cream3);
   background:#fff; color:var(--txt-mid); transition:all .2s;
 }
-.dispo-btn[data-val="available"].active { border-color:var(--green); background:#dcfce7; color:#15803d; }
-.dispo-btn[data-val="unavailable"].active { border-color:var(--red); background:#fee2e2; color:#dc2626; }
-.dispo-btn[data-val="maintenance"].active { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
+.dispo-btn[data-val="available"].active    { border-color:var(--green); background:#dcfce7; color:#15803d; }
+.dispo-btn[data-val="unavailable"].active  { border-color:var(--red); background:#fee2e2; color:#dc2626; }
+.dispo-btn[data-val="maintenance"].active  { border-color:var(--gold); background:#FEF9E7; color:var(--gold-dk); }
 
 /* ══════════════════════════════════
    CONFIRM DIALOG
@@ -530,14 +535,15 @@ select.form-control { cursor:pointer; }
   background:#fff; border-radius:16px;
   padding:2rem 2.25rem; width:400px; max-width:92vw;
   text-align:center;
+  border:1.5px solid rgba(212,175,55,.15);
 }
 .confirm-icon { font-size:2.5rem; margin-bottom:1rem; }
 .confirm-box h3 { color:var(--navy); font-size:1.1rem; margin:0 0 .5rem; }
-.confirm-box p { color:var(--txt-mid); font-size:.88rem; margin:0 0 1.5rem; }
-.confirm-btns { display:flex; gap:.75rem; justify-content:center; }
+.confirm-box p  { color:var(--txt-mid); font-size:.88rem; margin:0 0 1.5rem; }
+.confirm-btns   { display:flex; gap:.75rem; justify-content:center; }
 
 /* ══════════════════════════════════
-   TOAST
+   TOAST — fond blanc
 ══════════════════════════════════ */
 .toast-container {
   position:fixed; bottom:2rem; right:2rem;
@@ -548,15 +554,15 @@ select.form-control { cursor:pointer; }
   background:#fff; border:1px solid var(--cream3);
   border-radius:12px; padding:.85rem 1.25rem;
   box-shadow:0 8px 32px rgba(10,16,28,.15);
-  font-size:.85rem; font-weight:600; color:var(--navy);
+  font-size:.85rem; font-weight:600; color:var(--txt-dark);
   transform:translateX(120%); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
   min-width:240px; max-width:320px;
 }
 .toast.show { transform:translateX(0); }
-.toast-icon { font-size:1.1rem; flex-shrink:0; }
+.toast-icon  { font-size:1.1rem; flex-shrink:0; }
 .toast.success { border-left:4px solid var(--green); }
-.toast.error { border-left:4px solid var(--red); }
-.toast.info { border-left:4px solid var(--gold); }
+.toast.error   { border-left:4px solid var(--red); }
+.toast.info    { border-left:4px solid var(--gold); }
 
 /* ══════════════════════════════════
    REVENUE CHART
@@ -580,7 +586,7 @@ select.form-control { cursor:pointer; }
 }
 .empty-state-icon { font-size:3rem; margin-bottom:1rem; opacity:.5; }
 .empty-state h3 { color:var(--navy); font-size:1.1rem; margin:0 0 .5rem; }
-.empty-state p { color:var(--txt-mid); font-size:.88rem; }
+.empty-state p  { color:var(--txt-mid); font-size:.88rem; }
 
 /* ══════════════════════════════════
    LOADING SKELETON
@@ -613,16 +619,16 @@ select.form-control { cursor:pointer; }
   .owner-sidebar {
     position:static; height:auto;
     display:flex; flex-wrap:wrap; gap:.5rem;
-    padding:1rem; border-bottom:1px solid rgba(212,175,55,.15); border-right:none;
+    padding:1rem; border-bottom:1.5px solid rgba(212,175,55,.2); border-right:none;
   }
-  .sidebar-profile { display:none; }
-  .sidebar-section-label { display:none; }
+  .sidebar-profile      { display:none; }
+  .sidebar-section-label{ display:none; }
   .owner-main { padding:1.5rem 1.25rem; }
 }
 @media(max-width:600px) {
-  .stats-grid { grid-template-columns:1fr 1fr; }
-  .form-grid { grid-template-columns:1fr; }
-  .machines-grid { grid-template-columns:1fr; }
+  .stats-grid     { grid-template-columns:1fr 1fr; }
+  .form-grid      { grid-template-columns:1fr; }
+  .machines-grid  { grid-template-columns:1fr; }
 }
 </style>
 @endpush
@@ -658,7 +664,7 @@ select.form-control { cursor:pointer; }
       <li>
         <a href="#" data-tab="reservations" onclick="switchSideTab('reservations',this);return false;">
           <span class="nav-icon">📋</span> Réservations
-          <span class="tab-badge ms-auto" id="sideNavResBadge" style="background:#ef4444">0</span>
+          <span class="tab-badge ms-auto" id="sideNavResBadge" style="background:#ef4444;color:#fff">0</span>
         </a>
       </li>
       <li><span class="sidebar-section-label">Compte</span></li>
@@ -757,7 +763,7 @@ select.form-control { cursor:pointer; }
           <option value="unavailable">Indisponible</option>
           <option value="maintenance">Maintenance</option>
         </select>
-        <button class="btn-navy" onclick="openMachineModal()">
+        <button class="btn-gold" onclick="openMachineModal()">
           <span>➕</span> Ajouter
         </button>
       </div>
@@ -878,9 +884,9 @@ select.form-control { cursor:pointer; }
         <div class="form-group full">
           <label class="form-label">Disponibilité</label>
           <div class="dispo-group">
-            <button type="button" class="dispo-btn active" data-val="available" onclick="setDispo(this)">✅ Disponible</button>
-            <button type="button" class="dispo-btn" data-val="unavailable" onclick="setDispo(this)">❌ Indisponible</button>
-            <button type="button" class="dispo-btn" data-val="maintenance" onclick="setDispo(this)">🔧 Maintenance</button>
+            <button type="button" class="dispo-btn active" data-val="available"   onclick="setDispo(this)">✅ Disponible</button>
+            <button type="button" class="dispo-btn"        data-val="unavailable" onclick="setDispo(this)">❌ Indisponible</button>
+            <button type="button" class="dispo-btn"        data-val="maintenance" onclick="setDispo(this)">🔧 Maintenance</button>
           </div>
         </div>
 
@@ -916,7 +922,7 @@ select.form-control { cursor:pointer; }
       <button class="mini-viewer-close" onclick="closeMiniViewer()">✕</button>
     </div>
     <canvas id="miniViewerCanvas"></canvas>
-    <p style="color:rgba(255,255,255,.4);font-size:.75rem;text-align:center;margin-top:.75rem">
+    <p style="color:var(--txt-light);font-size:.75rem;text-align:center;margin-top:.75rem">
       🖱 Cliquer + glisser pour orbiter
     </p>
   </div>
@@ -932,7 +938,7 @@ select.form-control { cursor:pointer; }
     <p id="confirmMsg">Êtes-vous sûr de vouloir effectuer cette action ?</p>
     <div class="confirm-btns">
       <button class="btn-outline" onclick="closeConfirm()">Annuler</button>
-      <button class="btn-navy" id="confirmOkBtn">Confirmer</button>
+      <button class="btn-gold" id="confirmOkBtn">Confirmer</button>
     </div>
   </div>
 </div>
@@ -1079,7 +1085,6 @@ function calcAvgRating() {
    CHARTS
 ══════════════════════════════════ */
 function renderRevenueChart() {
-  // Build monthly revenue from reservations
   const months = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
   const monthlyRev = new Array(12).fill(0);
   allReservations
@@ -1324,22 +1329,21 @@ function populateMachineFilter() {
 ══════════════════════════════════ */
 async function respondReservation(id, action) {
   const labels = {
-    accept: { title:'Accepter la réservation', msg:'Confirmer l\'acceptation de cette réservation ?', icon:'✅' },
-    reject: { title:'Refuser la réservation',  msg:'Confirmer le refus de cette réservation ?', icon:'❌' },
-    complete:{ title:'Marquer comme terminée', msg:'Confirmer la fin de cette location ?', icon:'🏆' },
+    accept:  { title:'Accepter la réservation', msg:'Confirmer l\'acceptation de cette réservation ?', icon:'✅' },
+    reject:  { title:'Refuser la réservation',  msg:'Confirmer le refus de cette réservation ?',       icon:'❌' },
+    complete:{ title:'Marquer comme terminée',  msg:'Confirmer la fin de cette location ?',            icon:'🏆' },
   };
   const l = labels[action];
   openConfirm(l.icon, l.title, l.msg, async () => {
     try {
       const res = await window.API.patch(`/api/reservations/${id}/${action}`);
       if (res.ok || res.status === 200) {
-        // Update local state
         const idx = allReservations.findIndex(r => r.id === id);
         if (idx !== -1) {
           const map = { accept:'accepted', reject:'rejected', complete:'completed' };
           allReservations[idx].status = map[action];
         }
-        await loadReservations(); // refresh badge
+        await loadReservations();
         renderReservationsTable();
         renderRecentReservations();
         renderStats();
@@ -1376,7 +1380,6 @@ function openMachineModal(id = null) {
     document.getElementById('machineDescription').value = m.description || '';
     setDispoVal(m.status || 'available');
 
-    // Show existing images
     (m.images || []).forEach(img => {
       const div = document.createElement('div');
       div.className = 'img-preview-item';
@@ -1472,7 +1475,7 @@ async function saveMachine() {
 
     const token = window.getToken ? window.getToken() : localStorage.getItem('auth_token');
     const url   = editMachineId ? `/api/machines/${editMachineId}` : '/api/machines';
-    const method= editMachineId ? 'POST' : 'POST'; // Laravel: POST + _method for PUT
+    const method= 'POST';
     if (editMachineId) formData.append('_method', 'PUT');
 
     const response = await fetch(url, {
@@ -1501,7 +1504,7 @@ async function saveMachine() {
 }
 
 /* ══════════════════════════════════
-   CHANGE STATUS (quick modal)
+   CHANGE STATUS
 ══════════════════════════════════ */
 function changeStatus(id) {
   const m = allMachines.find(x => x.id == id);
@@ -1557,12 +1560,12 @@ function deleteMachine(id, name) {
 /* ══════════════════════════════════
    MINI 3D VIEWER (Three.js r128)
    — No OrbitControls (CDN indispo)
-   — Manual orbit via mouse/touch
+   — Palettes gold system
 ══════════════════════════════════ */
 const PALETTE_3D = {
   excavatrice:{ body:0xD4AF37, arm:0x9A7D20, cabin:0x0F1B2D },
   grue:       { body:0xD4AF37, arm:0x5a5660, cabin:0x162540 },
-  bulldozer:  { body:0xF97316, arm:0x9A7D20, cabin:0x0F1B2D },
+  bulldozer:  { body:0xD4AF37, arm:0x9A7D20, cabin:0x0F1B2D },
   chargeuse:  { body:0x22c55e, arm:0x9A7D20, cabin:0x0F1B2D },
   compacteur: { body:0xef4444, arm:0x5a5660, cabin:0x162540 },
   nacelle:    { body:0x3b82f6, arm:0x9A7D20, cabin:0x0F1B2D },
@@ -1582,13 +1585,13 @@ function closeMiniViewer() {
 }
 
 function destroyMiniViewer() {
-  if (miniViewerAnim) { cancelAnimationFrame(miniViewerAnim); miniViewerAnim = null; }
+  if (miniViewerAnim)     { cancelAnimationFrame(miniViewerAnim); miniViewerAnim = null; }
   if (miniViewerRenderer) { miniViewerRenderer.dispose(); miniViewerRenderer = null; }
 }
 
 function initMiniViewer(type) {
   destroyMiniViewer();
-  const canvas  = document.getElementById('miniViewerCanvas');
+  const canvas = document.getElementById('miniViewerCanvas');
   const W = canvas.clientWidth  || 380;
   const H = canvas.clientHeight || 280;
   const pal = PALETTE_3D[type?.toLowerCase()] || PALETTE_3D.excavatrice;
@@ -1599,14 +1602,13 @@ function initMiniViewer(type) {
   renderer.shadowMap.enabled = true;
   miniViewerRenderer = renderer;
 
-  const scene  = new THREE.Scene();
+  const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0d1a2e);
 
   const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
   camera.position.set(4, 3, 5);
   camera.lookAt(0, 0.5, 0);
 
-  // Lights
   scene.add(new THREE.AmbientLight(0xffffff, 0.6));
   const dir = new THREE.DirectionalLight(0xD4AF37, 1.2);
   dir.position.set(5, 8, 5);
@@ -1614,7 +1616,6 @@ function initMiniViewer(type) {
   scene.add(dir);
   scene.add(new THREE.PointLight(0x162540, 0.8, 20));
 
-  // Ground
   const groundGeo = new THREE.CylinderGeometry(3, 3, 0.1, 32);
   const groundMat = new THREE.MeshStandardMaterial({ color:0x162540 });
   const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -1622,17 +1623,14 @@ function initMiniViewer(type) {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Build machine by type
   const group = new THREE.Group();
   buildMachine3D(group, type?.toLowerCase() || 'excavatrice', pal);
   scene.add(group);
 
-  // Grid helper
   const grid = new THREE.GridHelper(6, 6, 0x1a2f4a, 0x1a2f4a);
   grid.position.y = -0.25;
   scene.add(grid);
 
-  // Manual orbit state
   let isDragging = false, prevX = 0, prevY = 0;
   let rotY = 0, rotX = 0.2;
 
@@ -1646,7 +1644,6 @@ function initMiniViewer(type) {
   });
   canvas.addEventListener('mouseup',    () => isDragging=false);
   canvas.addEventListener('mouseleave', () => isDragging=false);
-  // Touch
   canvas.addEventListener('touchstart', e => { prevX=e.touches[0].clientX; prevY=e.touches[0].clientY; });
   canvas.addEventListener('touchmove',  e => {
     e.preventDefault();
@@ -1658,9 +1655,8 @@ function initMiniViewer(type) {
 
   function animate() {
     miniViewerAnim = requestAnimationFrame(animate);
-    if (!isDragging) rotY += 0.007; // auto-rotate
+    if (!isDragging) rotY += 0.007;
     group.rotation.y = rotY;
-    // Orbit camera vertically
     const radius = 6;
     camera.position.x = radius * Math.sin(rotY) * Math.cos(rotX);
     camera.position.z = radius * Math.cos(rotY) * Math.cos(rotX);
@@ -1672,11 +1668,11 @@ function initMiniViewer(type) {
 }
 
 function buildMachine3D(group, type, pal) {
-  const matBody   = new THREE.MeshStandardMaterial({ color:pal.body,   metalness:.4, roughness:.5 });
-  const matArm    = new THREE.MeshStandardMaterial({ color:pal.arm,    metalness:.3, roughness:.6 });
-  const matCabin  = new THREE.MeshStandardMaterial({ color:pal.cabin,  metalness:.6, roughness:.3 });
-  const matWheel  = new THREE.MeshStandardMaterial({ color:0x222222,   metalness:.2, roughness:.8 });
-  const matGlass  = new THREE.MeshStandardMaterial({ color:0x88bbff,   transparent:true, opacity:.6, metalness:.1 });
+  const matBody  = new THREE.MeshStandardMaterial({ color:pal.body,  metalness:.4, roughness:.5 });
+  const matArm   = new THREE.MeshStandardMaterial({ color:pal.arm,   metalness:.3, roughness:.6 });
+  const matCabin = new THREE.MeshStandardMaterial({ color:pal.cabin, metalness:.6, roughness:.3 });
+  const matWheel = new THREE.MeshStandardMaterial({ color:0x222222,  metalness:.2, roughness:.8 });
+  const matGlass = new THREE.MeshStandardMaterial({ color:0x88bbff,  transparent:true, opacity:.6, metalness:.1 });
 
   const addMesh = (geo, mat, x=0,y=0,z=0, rx=0,ry=0,rz=0) => {
     const m = new THREE.Mesh(geo, mat);
@@ -1688,48 +1684,32 @@ function buildMachine3D(group, type, pal) {
   };
 
   if (type === 'excavatrice' || type === 'tractopelle') {
-    // Body
     addMesh(new THREE.BoxGeometry(2,.8,1.2), matBody, 0,.4,0);
-    // Cabin
     addMesh(new THREE.BoxGeometry(1,.8,1), matCabin, -.4,1.2,0);
     addMesh(new THREE.BoxGeometry(.9,.6,.9), matGlass, -.4,1.6,0);
-    // Tracks
     addMesh(new THREE.BoxGeometry(2.2,.35,1.6), matArm, 0,.05,0);
     [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, s*0.85,-.1,.7));
     [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, s*0.85,-.1,-.7));
-    // Arm
     addMesh(new THREE.BoxGeometry(.25,1.2,.2), matArm, .6,1.4,0, 0,0,-.4);
     addMesh(new THREE.BoxGeometry(.2,.9,.18), matArm, 1.25,.9,0, 0,0,.35);
     addMesh(new THREE.BoxGeometry(.5,.25,.15), matArm, 1.6,.3,0, 0,0,.5);
 
   } else if (type === 'grue') {
-    // Base
     addMesh(new THREE.CylinderGeometry(.6,.8,.4,8), matBody, 0,.2,0);
-    // Tower
     addMesh(new THREE.BoxGeometry(.35,4,.35), matBody, 0,2,0);
-    // Horizontal beam
     addMesh(new THREE.BoxGeometry(3.5,.2,.2), matArm, .5,4,0);
-    // Counter weight
     addMesh(new THREE.BoxGeometry(.8,.4,.4), matArm, -1,4.2,0);
-    // Cabin
     addMesh(new THREE.BoxGeometry(.7,.7,.6), matCabin, .1,3.3,0);
     addMesh(new THREE.BoxGeometry(.6,.5,.5), matGlass, .1,3.6,0);
-    // Cable
     addMesh(new THREE.CylinderGeometry(.03,.03,2.5,6), matArm, 1.8,2.7,0);
-    // Hook
     addMesh(new THREE.BoxGeometry(.35,.2,.2), matArm, 1.8,1.4,0);
-    // Wheels
     [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.4,.4,.25,8), matWheel, s*.8,0,0, 0,0,Math.PI/2));
 
   } else if (type === 'bulldozer') {
-    // Body
     addMesh(new THREE.BoxGeometry(2.2,1,1.6), matBody, 0,.5,0);
-    // Cabin
     addMesh(new THREE.BoxGeometry(1,1,1.3), matCabin, -.3,1.2,0);
     addMesh(new THREE.BoxGeometry(.9,.7,1.1), matGlass, -.3,1.55,0);
-    // Blade front
     addMesh(new THREE.BoxGeometry(.2,1.1,1.8), matArm, 1.3,.7,0, 0,0,-.15);
-    // Tracks
     [-1,1].forEach(s => {
       addMesh(new THREE.BoxGeometry(2.4,.35,.4), matArm, 0,.05,s*.7);
       addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, .85,.05,s*.7);
@@ -1740,16 +1720,14 @@ function buildMachine3D(group, type, pal) {
     addMesh(new THREE.BoxGeometry(2,.9,1.4), matBody, 0,.45,0);
     addMesh(new THREE.BoxGeometry(.9,.9,1.1), matCabin, -.3,1.1,0);
     addMesh(new THREE.BoxGeometry(.8,.65,.9), matGlass, -.3,1.4,0);
-    // Bucket
     addMesh(new THREE.BoxGeometry(.15,.5,1.5), matArm, 1.1,.8,0);
     addMesh(new THREE.BoxGeometry(.8,.15,1.5), matArm, 1.4,.55,0);
     [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel, s*.8,.05,s*.55, 0,0,Math.PI/2));
 
-  } else { // default: camion / nacelle / compacteur
+  } else {
     addMesh(new THREE.BoxGeometry(2.5,.8,1.4), matBody, .3,.4,0);
     addMesh(new THREE.BoxGeometry(1.1,1.1,1.3), matCabin, -1,1,0);
     addMesh(new THREE.BoxGeometry(.9,.8,1.1), matGlass, -1,1.3,0);
-    // Cargo bed
     addMesh(new THREE.BoxGeometry(1.8,.15,1.4), matArm, .5,.8,0);
     addMesh(new THREE.BoxGeometry(.1,.5,1.4), matArm, 1.35,.95,0);
     addMesh(new THREE.BoxGeometry(.1,.5,1.4), matArm, -.4,.95,0);
@@ -1764,16 +1742,11 @@ function buildMachine3D(group, type, pal) {
    TABS NAVIGATION
 ══════════════════════════════════ */
 function switchSideTab(tabId, link) {
-  // Update panels
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById(`tab-${tabId}`);
   if (panel) panel.classList.add('active');
-
-  // Update sidebar links
   document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
   if (link) link.classList.add('active');
-
-  // Destroy 3D viewers on tab change
   destroyMiniViewer();
 }
 
@@ -1816,9 +1789,7 @@ function showToast(type, message) {
    LOGOUT
 ══════════════════════════════════ */
 async function handleLogout() {
-  try {
-    await window.API.post('/api/logout');
-  } catch(e) {}
+  try { await window.API.post('/api/logout'); } catch(e) {}
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
   window.location.href = '/login';
@@ -1832,7 +1803,6 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Close modals on overlay click
 document.getElementById('machineModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeMachineModal();
 });
@@ -1842,7 +1812,6 @@ document.getElementById('miniViewerModal').addEventListener('click', e => {
 document.getElementById('confirmOverlay').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeConfirm();
 });
-// ESC key
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeMachineModal(); closeMiniViewer(); closeConfirm(); }
 });

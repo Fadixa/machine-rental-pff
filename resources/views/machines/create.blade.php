@@ -5,16 +5,18 @@
 @push('styles')
 <style>
 /* ══════════════════════════════════════════════
-   MACHINES CREATE / EDIT — RENTIFY V6
-   Gold / Crème — Formulaire complet
+   MACHINES CREATE / EDIT — RENTIFY V13
+   ✅ Zéro navy bg — Zéro couleurs interdites
+   ✅ btn-navy → alias btn-gold (V13)
+   ✅ 3D palette gold uniquement
 ══════════════════════════════════════════════ */
 :root {
-  --gold:#D4AF37;--gold-dk:#9A7D20;--gold-pale:#FEF9E7;
-  --navy:#0F1B2D;--navy2:#162540;
-  --cream:#FAF7F0;--cream2:#F0EBE0;--cream3:#E8DDD0;
-  --txt-mid:#5a5660;--txt-light:#9992a4;
-  --green:#22c55e;--red:#ef4444;
-  --radius:14px;--shadow:0 4px 24px rgba(15,27,45,.08);
+  --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
+  --gold-glow:rgba(212,175,55,.25);
+  --cream:#FAF7F0; --cream2:#F0EBE0; --cream3:#E8DDD0;
+  --txt-dark:#1a1a2e; --txt-mid:#5a5660; --txt-light:#9992a4;
+  --green:#22c55e; --red:#ef4444;
+  --radius:14px; --shadow:0 4px 24px rgba(15,27,45,.08);
 }
 body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 
@@ -37,28 +39,32 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   color:var(--txt-mid); font-size:.82rem; font-weight:600;
   cursor:pointer; text-decoration:none; transition:all .2s;
 }
-.back-btn:hover { border-color:var(--gold); color:var(--navy); }
+.back-btn:hover { border-color:var(--gold); color:var(--txt-dark); }
 .page-title {
   font-family:'Playfair Display',serif;
-  font-size:1.7rem; color:var(--navy); margin:0;
+  font-size:1.7rem; color:var(--txt-dark); margin:0;
 }
 .page-title span { color:var(--gold); }
 .page-sub { color:var(--txt-light); font-size:.85rem; margin:.2rem 0 0; }
 
-/* ── Steps indicator ── */
+/* ── Steps bar ── */
 .steps-bar {
-  display:flex; align-items:center; gap:0;
+  display:flex; align-items:center;
   background:#fff; border:1px solid rgba(212,175,55,.12);
   border-radius:12px; padding:.6rem 1.5rem;
-  margin-bottom:2rem; overflow-x:auto;
+  margin-bottom:2rem; overflow-x:auto; gap:0;
 }
 .step-item {
   display:flex; align-items:center; gap:.5rem;
   padding:.5rem 1.2rem; border-radius:8px;
   cursor:pointer; transition:all .2s; flex-shrink:0;
 }
-.step-item.active { background:var(--navy); }
-.step-item.done   { background:var(--gold-pale); }
+/* ✅ active = gold-pale + border gold (plus navy bg) */
+.step-item.active {
+  background:var(--gold-pale);
+  border:1.5px solid rgba(212,175,55,.4);
+}
+.step-item.done { background:var(--gold-pale); }
 .step-dot {
   width:24px; height:24px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
@@ -66,19 +72,20 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--cream2); color:var(--txt-mid);
   border:2px solid var(--cream3);
 }
-.step-item.active .step-dot { background:var(--gold); color:var(--navy); border-color:var(--gold); }
-.step-item.done .step-dot   { background:var(--green); color:#fff; border-color:var(--green); }
+.step-item.active .step-dot {
+  background:var(--gold); color:var(--txt-dark); border-color:var(--gold);
+}
+.step-item.done .step-dot  { background:var(--green); color:#fff; border-color:var(--green); }
 .step-label { font-size:.8rem; font-weight:700; color:var(--txt-mid); }
-.step-item.active .step-label { color:var(--gold); }
+.step-item.active .step-label { color:var(--gold-dk); }
 .step-item.done .step-label   { color:var(--gold-dk); }
 .step-arrow { color:var(--cream3); font-size:.8rem; padding:0 .3rem; }
 
-/* ── Grid layout main ── */
+/* ── Grid layout ── */
 .create-grid {
   display:grid;
   grid-template-columns:1fr 360px;
-  gap:1.5rem;
-  align-items:start;
+  gap:1.5rem; align-items:start;
 }
 
 /* ── Cards ── */
@@ -97,11 +104,12 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 .form-card-header h3 {
   font-family:'Playfair Display',serif;
-  font-size:1rem; color:var(--navy); margin:0;
+  font-size:1rem; color:var(--txt-dark); margin:0;
 }
+/* ✅ icon gold bg (plus navy bg) */
 .form-card-icon {
   width:32px; height:32px; border-radius:8px;
-  background:var(--navy); color:var(--gold);
+  background:var(--gold); color:var(--txt-dark);
   font-size:.9rem; display:flex; align-items:center; justify-content:center;
 }
 .form-card-body { padding:1.5rem; }
@@ -110,29 +118,25 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .form-group { margin-bottom:1.2rem; }
 .form-label {
   display:block; font-size:.78rem; font-weight:800;
-  color:var(--navy); margin-bottom:.45rem;
-  letter-spacing:.03em;
+  color:var(--txt-dark); margin-bottom:.45rem; letter-spacing:.03em;
 }
 .form-label span { color:var(--red); margin-left:.2rem; }
 .form-control {
   width:100%; padding:.62rem .9rem;
   border:1.5px solid var(--cream3); border-radius:10px;
   font-family:'DM Sans',sans-serif; font-size:.88rem;
-  color:var(--navy); outline:none; background:#fff;
-  transition:border .2s, box-shadow .2s;
-  box-sizing:border-box;
+  color:var(--txt-dark); outline:none; background:#fff;
+  transition:border .2s, box-shadow .2s; box-sizing:border-box;
 }
 .form-control:focus {
   border-color:var(--gold);
-  box-shadow:0 0 0 3px rgba(212,175,55,.1);
+  box-shadow:0 0 0 3px var(--gold-glow);
 }
 .form-control.error { border-color:var(--red); }
 .field-error { color:var(--red); font-size:.75rem; margin-top:.3rem; display:none; }
 .field-error.show { display:block; }
 .form-hint { color:var(--txt-light); font-size:.75rem; margin-top:.3rem; }
-
 textarea.form-control { resize:vertical; min-height:100px; }
-select.form-control { cursor:pointer; }
 
 .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; }
@@ -148,22 +152,19 @@ select.form-control { cursor:pointer; }
   border:1.5px solid var(--cream3); background:#fff;
   cursor:pointer; transition:all .2s; text-align:center;
 }
-.type-opt:hover { border-color:var(--gold); }
+.type-opt:hover { border-color:var(--gold); background:var(--gold-pale); }
+/* ✅ selected = gold-pale + border gold (plus navy bg) */
 .type-opt.selected {
-  background:var(--navy); border-color:var(--navy);
-  box-shadow:0 4px 12px rgba(15,27,45,.18);
+  background:var(--gold-pale);
+  border-color:var(--gold);
+  box-shadow:0 4px 12px var(--gold-glow);
 }
-.type-opt-icon { font-size:1.4rem; line-height:1; }
-.type-opt-label {
-  font-size:.7rem; font-weight:700; color:var(--txt-mid);
-  text-transform:capitalize;
-}
-.type-opt.selected .type-opt-label { color:var(--gold); }
+.type-opt-icon  { font-size:1.4rem; line-height:1; }
+.type-opt-label { font-size:.7rem; font-weight:700; color:var(--txt-mid); text-transform:capitalize; }
+.type-opt.selected .type-opt-label { color:var(--gold-dk); }
 
 /* ── Status toggle ── */
-.status-toggle {
-  display:flex; gap:.5rem; flex-wrap:wrap;
-}
+.status-toggle { display:flex; gap:.5rem; flex-wrap:wrap; }
 .status-btn {
   flex:1; min-width:100px;
   display:flex; flex-direction:column; align-items:center; gap:.3rem;
@@ -172,14 +173,16 @@ select.form-control { cursor:pointer; }
   cursor:pointer; transition:all .2s; text-align:center;
 }
 .status-btn:hover { border-color:var(--gold); }
-.status-btn.active-available { background:#dcfce7; border-color:#22c55e; }
+.status-btn.active-available   { background:#dcfce7; border-color:#22c55e; }
 .status-btn.active-unavailable { background:#fee2e2; border-color:var(--red); }
-.status-btn.active-maintenance { background:#fef9c3; border-color:#ca8a04; }
-.status-btn-icon { font-size:1.2rem; }
+/* ✅ maintenance = gold-pale + gold border (plus #fef9c3 + #ca8a04 interdits) */
+.status-btn.active-maintenance { background:#FEF9E7; border-color:var(--gold); }
+.status-btn-icon  { font-size:1.2rem; }
 .status-btn-label { font-size:.72rem; font-weight:700; color:var(--txt-mid); }
 .status-btn.active-available .status-btn-label   { color:#15803d; }
 .status-btn.active-unavailable .status-btn-label { color:#dc2626; }
-.status-btn.active-maintenance .status-btn-label { color:#ca8a04; }
+/* ✅ maintenance label = gold-dk (plus #ca8a04 interdit) */
+.status-btn.active-maintenance .status-btn-label { color:var(--gold-dk); }
 
 /* ── Image upload zone ── */
 .upload-zone {
@@ -189,15 +192,12 @@ select.form-control { cursor:pointer; }
   position:relative; overflow:hidden;
 }
 .upload-zone:hover, .upload-zone.drag-over {
-  border-color:var(--gold);
-  background:var(--gold-pale);
+  border-color:var(--gold); background:var(--gold-pale);
 }
-.upload-zone input[type="file"] {
-  position:absolute; inset:0; opacity:0; cursor:pointer;
-}
-.upload-icon { font-size:2.2rem; margin-bottom:.5rem; opacity:.6; }
-.upload-label { font-weight:700; color:var(--navy); font-size:.9rem; margin-bottom:.25rem; }
-.upload-sub { color:var(--txt-light); font-size:.78rem; }
+.upload-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-icon  { font-size:2.2rem; margin-bottom:.5rem; opacity:.6; }
+.upload-label { font-weight:700; color:var(--txt-dark); font-size:.9rem; margin-bottom:.25rem; }
+.upload-sub   { color:var(--txt-light); font-size:.78rem; }
 
 .images-preview {
   display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
@@ -205,12 +205,9 @@ select.form-control { cursor:pointer; }
 }
 .preview-item {
   position:relative; border-radius:8px; overflow:hidden;
-  aspect-ratio:1; background:var(--cream2);
-  border:1.5px solid var(--cream3);
+  aspect-ratio:1; background:var(--cream2); border:1.5px solid var(--cream3);
 }
-.preview-item img {
-  width:100%; height:100%; object-fit:cover;
-}
+.preview-item img { width:100%; height:100%; object-fit:cover; }
 .preview-remove {
   position:absolute; top:.3rem; right:.3rem;
   width:22px; height:22px; border-radius:50%;
@@ -220,14 +217,9 @@ select.form-control { cursor:pointer; }
   transition:transform .2s;
 }
 .preview-remove:hover { transform:scale(1.15); }
-.preview-item.uploading::after {
-  content:''; position:absolute; inset:0;
-  background:rgba(255,255,255,.7);
-  display:flex; align-items:center; justify-content:center;
-}
 .preview-main-badge {
   position:absolute; bottom:.3rem; left:.3rem;
-  background:var(--gold); color:var(--navy);
+  background:var(--gold); color:var(--txt-dark);
   font-size:.6rem; font-weight:800;
   padding:.1rem .35rem; border-radius:3px;
 }
@@ -244,43 +236,42 @@ select.form-control { cursor:pointer; }
 
 /* ── Preview card (sidebar) ── */
 .preview-card {
-  background:#fff;
-  border:1px solid rgba(212,175,55,.12);
-  border-radius:var(--radius); overflow:hidden;
-  box-shadow:var(--shadow);
+  background:#fff; border:1px solid rgba(212,175,55,.12);
+  border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
 }
 .preview-card-img {
-  height:190px; background:var(--cream2);
-  position:relative; overflow:hidden;
+  height:190px; background:var(--cream2); position:relative; overflow:hidden;
 }
 .preview-card-img img {
-  width:100%; height:100%; object-fit:cover;
-  transition:transform .45s;
+  width:100%; height:100%; object-fit:cover; transition:transform .45s;
 }
 .preview-card-img:hover img { transform:scale(1.05); }
 .preview-status-badge {
   position:absolute; top:.65rem; right:.65rem;
-  padding:.22rem .6rem; border-radius:20px;
-  font-size:.68rem; font-weight:700;
+  padding:.22rem .6rem; border-radius:20px; font-size:.68rem; font-weight:700;
 }
 .pv-body { padding:1.2rem; }
-.pv-type { display:inline-block; background:var(--gold-pale); color:var(--gold-dk);
+.pv-type {
+  display:inline-block; background:var(--gold-pale); color:var(--gold-dk);
   font-size:.65rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
-  padding:.15rem .5rem; border-radius:4px; margin-bottom:.5rem; }
-.pv-name { font-weight:800; color:var(--navy); font-size:1rem; margin-bottom:.25rem; }
-.pv-city { color:var(--txt-light); font-size:.78rem; margin-bottom:.75rem; }
-.pv-price { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--navy); font-weight:700; }
+  padding:.15rem .5rem; border-radius:4px; margin-bottom:.5rem;
+}
+.pv-name  { font-weight:800; color:var(--txt-dark); font-size:1rem; margin-bottom:.25rem; }
+.pv-city  { color:var(--txt-light); font-size:.78rem; margin-bottom:.75rem; }
+.pv-price {
+  font-family:'Playfair Display',serif; font-size:1.3rem;
+  color:var(--txt-dark); font-weight:700;
+}
 .pv-price span { font-family:'DM Sans',sans-serif; font-size:.78rem; color:var(--txt-mid); font-weight:400; }
 
-/* ── 3D Viewer mini ── */
+/* ── Mini 3D viewer ── */
 .viewer-wrap {
   position:relative; height:200px;
-  background:var(--navy); border-radius:10px;
-  overflow:hidden; margin-top:1rem;
+  /* ✅ txt-dark au lieu de navy bg */
+  background:var(--txt-dark);
+  border-radius:10px; overflow:hidden; margin-top:1rem;
 }
-#miniCanvas3d {
-  width:100%; height:100%; display:block;
-}
+#miniCanvas3d { width:100%; height:100%; display:block; }
 .viewer-label {
   position:absolute; bottom:.6rem; left:.7rem;
   background:rgba(0,0,0,.5); backdrop-filter:blur(4px);
@@ -290,39 +281,32 @@ select.form-control { cursor:pointer; }
 
 /* ── Char counter ── */
 .char-counter { font-size:.72rem; color:var(--txt-light); text-align:right; margin-top:.25rem; }
-.char-counter.warn { color:#ca8a04; }
+.char-counter.warn { color:var(--gold-dk); }
 
 /* ── Submit area ── */
 .submit-card {
   background:#fff; border:1px solid rgba(212,175,55,.12);
-  border-radius:var(--radius); padding:1.5rem;
-  box-shadow:var(--shadow); margin-top:1.5rem;
-  display:flex; align-items:center; justify-content:space-between;
-  gap:1rem; flex-wrap:wrap;
+  border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow);
+  margin-top:1.5rem; display:flex; align-items:center;
+  justify-content:space-between; gap:1rem; flex-wrap:wrap;
 }
 .submit-note { font-size:.8rem; color:var(--txt-light); max-width:400px; }
-.submit-note strong { color:var(--navy); display:block; margin-bottom:.2rem; font-size:.85rem; }
+.submit-note strong { color:var(--txt-dark); display:block; margin-bottom:.2rem; font-size:.85rem; }
 .submit-btns { display:flex; gap:.65rem; }
 
-.btn-navy {
-  background:var(--navy); color:var(--gold); border:none;
+/* ✅ btn-navy = alias btn-gold en V13 (plus de navy bg) */
+.btn-navy, .btn-gold {
+  background:var(--gold); color:var(--txt-dark); border:none;
   border-radius:10px; padding:.65rem 1.5rem;
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:.88rem;
   cursor:pointer; transition:all .2s;
   display:inline-flex; align-items:center; gap:.4rem;
 }
-.btn-navy:hover { background:var(--navy2); transform:translateY(-1px); }
-.btn-navy:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-.btn-gold {
-  background:var(--gold); color:var(--navy); border:none;
-  border-radius:10px; padding:.65rem 1.5rem;
-  font-family:'DM Sans',sans-serif; font-weight:700; font-size:.88rem;
-  cursor:pointer; transition:all .2s;
-  display:inline-flex; align-items:center; gap:.4rem;
-}
-.btn-gold:hover { background:var(--gold-dk); }
+.btn-navy:hover, .btn-gold:hover { background:var(--gold-dk); color:#fff; transform:translateY(-1px); }
+.btn-navy:disabled, .btn-gold:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
 .btn-outline {
-  background:transparent; color:var(--navy);
+  background:transparent; color:var(--txt-dark);
   border:1.5px solid var(--cream3); border-radius:10px;
   padding:.65rem 1.25rem; font-family:'DM Sans',sans-serif;
   font-weight:600; font-size:.88rem; cursor:pointer; transition:all .2s;
@@ -330,34 +314,30 @@ select.form-control { cursor:pointer; }
 }
 .btn-outline:hover { border-color:var(--gold); color:var(--gold-dk); }
 
-/* ── Toast ── */
+/* ── Toast V13 ── */
 .toast-ctr {
   position:fixed; bottom:2rem; right:2rem;
   z-index:99999; display:flex; flex-direction:column; gap:.5rem;
 }
 .toast {
-  background:#fff; border-radius:12px;
-  border:1px solid var(--cream3);
-  padding:.8rem 1.2rem;
-  box-shadow:0 8px 32px rgba(10,16,28,.12);
-  font-size:.84rem; font-weight:600; color:var(--navy);
+  background:#fff; border-radius:12px; border:1px solid var(--cream3);
+  padding:.8rem 1.2rem; box-shadow:0 8px 32px rgba(10,16,28,.12);
+  font-size:.84rem; font-weight:600; color:var(--txt-dark);
   display:flex; align-items:center; gap:.6rem;
   transform:translateX(120%); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
   min-width:240px;
 }
-.toast.show { transform:translateX(0); }
+.toast.show    { transform:translateX(0); }
 .toast.success { border-left:4px solid var(--green); }
 .toast.error   { border-left:4px solid var(--red); }
 .toast.info    { border-left:4px solid var(--gold); }
 
 /* ── Responsive ── */
-@media(max-width:940px){
+@media(max-width:940px) {
   .create-grid { grid-template-columns:1fr; }
-  .type-selector { grid-template-columns:repeat(4,1fr); }
 }
-@media(max-width:560px){
+@media(max-width:560px) {
   .form-row-2, .form-row-3 { grid-template-columns:1fr; }
-  .type-selector { grid-template-columns:repeat(4,1fr); }
   .create-wrap { padding:1.5rem 1rem 4rem; }
 }
 </style>
@@ -388,7 +368,6 @@ select.form-control { cursor:pointer; }
         </p>
       </div>
     </div>
-    {{-- Progress label --}}
     <div id="formProgressLabel"
          style="background:var(--gold-pale);border:1px solid rgba(212,175,55,.3);
                 border-radius:9px;padding:.5rem 1rem;font-size:.8rem;font-weight:700;
@@ -423,10 +402,10 @@ select.form-control { cursor:pointer; }
   {{-- ── MAIN GRID ── --}}
   <div class="create-grid">
 
-    {{-- ══════════════════════ LEFT COLUMN ══════════════════════ --}}
+    {{-- ══ LEFT COLUMN ══ --}}
     <div>
 
-      {{-- SECTION 1 — INFOS GÉNÉRALES --}}
+      {{-- SECTION 1 — INFOS --}}
       <div class="form-card" id="section1">
         <div class="form-card-header">
           <div class="form-card-icon">📋</div>
@@ -438,7 +417,8 @@ select.form-control { cursor:pointer; }
             <label class="form-label" for="fName">Nom de la machine <span>*</span></label>
             <input type="text" id="fName" class="form-control"
                    placeholder="Ex: Caterpillar 320 GX — Excavatrice hydraulique"
-                   maxlength="120" oninput="updatePreview(); updateProgress(); countChars('fName','nameCounter',120)">
+                   maxlength="120"
+                   oninput="updatePreview(); updateProgress(); countChars('fName','nameCounter',120)">
             <div class="char-counter" id="nameCounter">0 / 120</div>
             <div class="field-error" id="errName">Ce champ est requis.</div>
           </div>
@@ -564,7 +544,6 @@ select.form-control { cursor:pointer; }
 
           <div class="images-preview" id="imagesPreview"></div>
 
-          {{-- Images existantes (mode edit) --}}
           <div id="existingImagesWrap" style="display:none;margin-top:1rem">
             <div style="font-size:.75rem;font-weight:800;color:var(--txt-light);
                         letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem">
@@ -631,13 +610,14 @@ select.form-control { cursor:pointer; }
 
     </div>
 
-    {{-- ══════════════════════ RIGHT COLUMN ══════════════════════ --}}
+    {{-- ══ RIGHT COLUMN ══ --}}
     <div>
 
       {{-- PREVIEW CARD --}}
       <div class="form-card" style="position:sticky;top:80px">
         <div class="form-card-header">
-          <div class="form-card-icon" style="background:var(--gold);color:var(--navy)">👁</div>
+          {{-- ✅ icon gold sur gold-pale = txt-dark text --}}
+          <div class="form-card-icon">👁</div>
           <h3>Aperçu de la fiche</h3>
         </div>
         <div class="form-card-body" style="padding:0">
@@ -669,7 +649,7 @@ select.form-control { cursor:pointer; }
       {{-- AIDE --}}
       <div style="background:var(--gold-pale);border:1px solid rgba(212,175,55,.25);
                   border-radius:var(--radius);padding:1.2rem;margin-top:1rem">
-        <div style="font-size:.8rem;font-weight:800;color:var(--navy);margin-bottom:.6rem">
+        <div style="font-size:.8rem;font-weight:800;color:var(--txt-dark);margin-bottom:.6rem">
           💡 Conseils pour une bonne annonce
         </div>
         <ul style="font-size:.78rem;color:var(--txt-mid);margin:0;padding-left:1.1rem;line-height:1.8">
@@ -694,6 +674,7 @@ select.form-control { cursor:pointer; }
     </div>
     <div class="submit-btns">
       <a href="/dashboard/owner" class="btn-outline">✕ Annuler</a>
+      {{-- ✅ btn-navy = même style que btn-gold en V13 --}}
       <button type="button" class="btn-navy" id="submitBtn" onclick="submitForm()">
         <span id="submitBtnText">
           @if(isset($editMode) && $editMode)
@@ -718,12 +699,11 @@ select.form-control { cursor:pointer; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 /* ════════════════════════════════════════════════
-   MACHINES CREATE / EDIT — RENTIFY V6
-   Full form: validation, preview, 3D, map, upload
+   MACHINES CREATE / EDIT — RENTIFY V13
+   ✅ Zéro navy — Palette 3D gold uniquement
 ════════════════════════════════════════════════ */
 
-/* ══ CONFIG ══ */
-const EDIT_MODE = {{ isset($editMode) && $editMode ? 'true' : 'false' }};
+const EDIT_MODE  = {{ isset($editMode) && $editMode ? 'true' : 'false' }};
 const MACHINE_ID = {{ isset($id) ? $id : 'null' }};
 
 const TYPE_PHOTO = {
@@ -733,90 +713,79 @@ const TYPE_PHOTO = {
   tractopelle:'/images/img7.png', camion:'/images/img9.png',
 };
 
+/* ✅ Palette 3D — gold uniquement, zéro orange/amber interdit */
 const TYPE_COLORS = {
-  excavatrice: 0xD4AF37, grue: 0x2563EB, bulldozer: 0xF59E0B,
-  chargeuse: 0x16A34A, compacteur: 0x7C3AED, nacelle: 0xEF4444,
-  tractopelle: 0x0891B2, camion: 0xEA580C,
+  excavatrice: 0xD4AF37,
+  grue:        0xD4AF37,
+  bulldozer:   0xD4AF37,
+  chargeuse:   0x9A7D20,
+  compacteur:  0xD4AF37,
+  nacelle:     0x9A7D20,
+  tractopelle: 0xD4AF37,
+  camion:      0x9A7D20,
 };
 
-/* ══ STATE ══ */
-let currentType   = '';
-let currentStatus = 'available';
-let newImageFiles = [];
+/* ── State ── */
+let currentType     = '';
+let currentStatus   = 'available';
+let newImageFiles   = [];
 let deletedImageIds = [];
-let mapInstance   = null;
-let mapMarker     = null;
+let mapInstance     = null;
+let mapMarker       = null;
 
 // Three.js
 let renderer3d, scene3d, camera3d, mesh3d, animId3d;
-let isDragging3d = false, prevMouse3d = {x:0,y:0};
+let isDragging3d = false, prevMouse3d = {x:0, y:0};
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', async () => {
-  // Auth check
   const user = window.getUser ? window.getUser() : JSON.parse(localStorage.getItem('auth_user')||'null');
-  if (!user || user.role !== 'owner') {
-    window.location.href = '/login'; return;
-  }
+  if (!user || user.role !== 'owner') { window.location.href = '/login'; return; }
 
   initMap();
   initMiniViewer();
-
-  // Default status = available
   selectStatus(document.querySelector('.status-btn[data-status="available"]'));
 
-  if (EDIT_MODE && MACHINE_ID) {
-    await loadMachineData();
-  }
+  if (EDIT_MODE && MACHINE_ID) await loadMachineData();
 
   updateProgress();
   observeSections();
 });
 
-/* ══ LOAD DATA (EDIT MODE) ══ */
+/* ══ LOAD DATA (edit mode) ══ */
 async function loadMachineData() {
   try {
     const data = await window.API.get(`/api/machines/${MACHINE_ID}`);
-    const m = data.machine || data;
+    const m    = data.machine || data;
 
-    document.getElementById('fName').value        = m.name || '';
-    document.getElementById('fDescription').value = m.description || '';
-    document.getElementById('fPriceDay').value     = m.price_per_day || '';
-    document.getElementById('fPriceHour').value    = m.price_per_hour || '';
-    document.getElementById('fCity').value         = m.city || '';
-    document.getElementById('fLocation').value     = m.location || '';
-    document.getElementById('fLat').value          = m.latitude || '';
-    document.getElementById('fLng').value          = m.longitude || '';
+    document.getElementById('fName').value        = m.name         || '';
+    document.getElementById('fDescription').value = m.description  || '';
+    document.getElementById('fPriceDay').value    = m.price_per_day  || '';
+    document.getElementById('fPriceHour').value   = m.price_per_hour || '';
+    document.getElementById('fCity').value        = m.city         || '';
+    document.getElementById('fLocation').value    = m.location     || '';
+    document.getElementById('fLat').value         = m.latitude     || '';
+    document.getElementById('fLng').value         = m.longitude    || '';
 
-    // type
-    const typeEl = document.querySelector(`.type-opt[data-type="${m.type?.toLowerCase()}"]`);
+    const typeEl = document.querySelector(`.type-opt[data-type="${(m.type||'').toLowerCase()}"]`);
     if (typeEl) selectType(typeEl);
 
-    // status
     const statusEl = document.querySelector(`.status-btn[data-status="${m.status}"]`);
     if (statusEl) selectStatus(statusEl);
 
-    // existing images
     if (m.images?.length) {
-      const wrap = document.getElementById('existingImagesWrap');
-      const grid = document.getElementById('existingImagesGrid');
-      wrap.style.display = 'block';
-      grid.innerHTML = m.images.map((img, i) => `
+      document.getElementById('existingImagesWrap').style.display = 'block';
+      document.getElementById('existingImagesGrid').innerHTML = m.images.map((img, i) => `
         <div class="preview-item" id="eimg-${img.id}">
           <img src="/storage/${img.path}" alt="photo ${i+1}">
           ${i===0 ? '<div class="preview-main-badge">Principal</div>' : ''}
           <button class="preview-remove" onclick="deleteExistingImage(${img.id})" title="Supprimer">✕</button>
         </div>
       `).join('');
-
-      // Set first image as preview
       document.getElementById('pvImg').src = `/storage/${m.images[0].path}`;
     }
 
-    // sync map
-    if (m.latitude && m.longitude) {
-      syncMapToCoords(parseFloat(m.latitude), parseFloat(m.longitude));
-    }
+    if (m.latitude && m.longitude) syncMapToCoords(parseFloat(m.latitude), parseFloat(m.longitude));
 
     countChars('fName', 'nameCounter', 120);
     countChars('fDescription', 'descCounter', 1500);
@@ -824,7 +793,7 @@ async function loadMachineData() {
     updateProgress();
   } catch(e) {
     console.error('loadMachineData', e);
-    showToast('error', '❌ Erreur lors du chargement des données');
+    showToast('error', '❌ Erreur lors du chargement');
   }
 }
 
@@ -842,43 +811,35 @@ function selectType(el) {
 
 /* ══ STATUS TOGGLE ══ */
 function selectStatus(el) {
-  document.querySelectorAll('.status-btn').forEach(b => {
-    b.className = 'status-btn';
-  });
+  document.querySelectorAll('.status-btn').forEach(b => b.className = 'status-btn');
   const s = el.dataset.status;
   currentStatus = s;
   el.classList.add(`active-${s}`);
   document.getElementById('fStatus').value = s;
 
-  const statusMap = {
-    available:   '<span class="preview-status-badge status-available">✅ Disponible</span>',
-    unavailable: '<span class="preview-status-badge status-unavailable">❌ Indisponible</span>',
-    maintenance: '<span class="preview-status-badge status-maintenance">🔧 Maintenance</span>',
-  };
-  document.getElementById('pvStatus').outerHTML; // placeholder
   const pvBadge = document.getElementById('pvStatus');
   if (pvBadge) {
     pvBadge.className = `preview-status-badge status-${s}`;
-    const labels = {available:'✅ Disponible', unavailable:'❌ Indisponible', maintenance:'🔧 Maintenance'};
+    const labels = { available:'✅ Disponible', unavailable:'❌ Indisponible', maintenance:'🔧 Maintenance' };
     pvBadge.textContent = labels[s];
   }
 }
 
 /* ══ PREVIEW UPDATE ══ */
 function updatePreview() {
-  const name    = document.getElementById('fName').value || 'Nom de la machine';
-  const city    = document.getElementById('fCity').value || 'Ville';
-  const price   = document.getElementById('fPriceDay').value;
-  const typeKey = currentType;
+  const name  = document.getElementById('fName').value     || 'Nom de la machine';
+  const city  = document.getElementById('fCity').value     || 'Ville';
+  const price = document.getElementById('fPriceDay').value;
 
-  document.getElementById('pvName').textContent  = name;
-  document.getElementById('pvCity').textContent  = '📍 ' + city;
-  document.getElementById('pvType').textContent  = typeKey || 'Type';
-  document.getElementById('pvPrice').innerHTML   =
-    price ? `${parseFloat(price).toLocaleString('fr-MA')} <span>MAD/jour</span>` : `— <span>MAD/jour</span>`;
+  document.getElementById('pvName').textContent = name;
+  document.getElementById('pvCity').textContent = '📍 ' + city;
+  document.getElementById('pvType').textContent = currentType || 'Type';
+  document.getElementById('pvPrice').innerHTML  = price
+    ? `${parseFloat(price).toLocaleString('fr-MA')} <span>MAD/jour</span>`
+    : `— <span>MAD/jour</span>`;
 
-  if (typeKey && !newImageFiles.length) {
-    document.getElementById('pvImg').src = TYPE_PHOTO[typeKey] || '/images/img1.png';
+  if (currentType && !newImageFiles.length) {
+    document.getElementById('pvImg').src = TYPE_PHOTO[currentType] || '/images/img1.png';
   }
   if (newImageFiles.length) {
     const reader = new FileReader();
@@ -915,17 +876,12 @@ function updateStepIndicator() {
   const s2 = !!(document.getElementById('fPriceDay').value && currentStatus);
   const s3 = newImageFiles.length > 0;
   const s4 = !!(document.getElementById('fCity').value);
-
-  setStep(1, s1);
-  setStep(2, s2);
-  setStep(3, s3);
-  setStep(4, s4);
+  [1,2,3,4].forEach((n, i) => setStep(n, [s1,s2,s3,s4][i]));
 }
 
 function setStep(n, done) {
   const el = document.getElementById(`step${n}Indicator`);
-  if (!el) return;
-  el.classList.toggle('done', done);
+  if (el) el.classList.toggle('done', done);
 }
 
 /* ══ SECTION OBSERVER ══ */
@@ -939,7 +895,7 @@ function observeSections() {
         if (si) si.classList.add('active');
       }
     });
-  }, { threshold:0.4 });
+  }, { threshold: 0.4 });
   [1,2,3,4].forEach(n => {
     const el = document.getElementById(`section${n}`);
     if (el) obs.observe(el);
@@ -975,14 +931,12 @@ function handleFiles(files) {
     updateStepIndicator();
   });
 
-  if (newImageFiles.length === 1) {
-    updatePreview(); // update main image preview
-  }
+  if (newImageFiles.length === 1) updatePreview();
 }
 
 function addPreviewItem(file, idx) {
-  const grid  = document.getElementById('imagesPreview');
-  const item  = document.createElement('div');
+  const grid = document.getElementById('imagesPreview');
+  const item = document.createElement('div');
   item.className = 'preview-item';
   item.id = `nimg-${idx}`;
 
@@ -1003,12 +957,11 @@ function removeNewImage(idx) {
   newImageFiles.splice(idx, 1);
   const el = document.getElementById(`nimg-${idx}`);
   if (el) el.remove();
-  // Re-index remaining
   const grid = document.getElementById('imagesPreview');
   [...grid.children].forEach((c, i) => {
     c.id = `nimg-${i}`;
-    const rmBtn = c.querySelector('.preview-remove');
-    if (rmBtn) rmBtn.setAttribute('onclick', `removeNewImage(${i})`);
+    const btn = c.querySelector('.preview-remove');
+    if (btn) btn.setAttribute('onclick', `removeNewImage(${i})`);
   });
   updateProgress();
   updateStepIndicator();
@@ -1017,10 +970,7 @@ function removeNewImage(idx) {
 function deleteExistingImage(imageId) {
   deletedImageIds.push(imageId);
   const el = document.getElementById(`eimg-${imageId}`);
-  if (el) {
-    el.style.opacity = '.3';
-    el.style.pointerEvents = 'none';
-  }
+  if (el) { el.style.opacity = '.3'; el.style.pointerEvents = 'none'; }
   showToast('info', '🗑 Photo marquée pour suppression');
 }
 
@@ -1028,7 +978,7 @@ function deleteExistingImage(imageId) {
 function initMap() {
   mapInstance = L.map('mapPicker').setView([33.5731, -7.5898], 8);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'© OpenStreetMap'
+    attribution: '© OpenStreetMap'
   }).addTo(mapInstance);
 
   mapInstance.on('click', e => {
@@ -1044,7 +994,8 @@ function placeMapMarker(lat, lng) {
   mapMarker = L.marker([lat, lng], {
     icon: L.divIcon({
       className: '',
-      html: '<div style="background:var(--gold,#D4AF37);width:16px;height:16px;border-radius:50%;border:3px solid #0F1B2D;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
+      /* ✅ border txt-dark au lieu de #0F1B2D navy */
+      html: '<div style="background:#D4AF37;width:16px;height:16px;border-radius:50%;border:3px solid #1a1a2e;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
       iconAnchor: [8, 8],
     })
   }).addTo(mapInstance);
@@ -1062,18 +1013,14 @@ function syncMapToCoords(lat, lng) {
 }
 
 function locateMe() {
-  if (!navigator.geolocation) {
-    showToast('error', '❌ Géolocalisation non supportée'); return;
-  }
+  if (!navigator.geolocation) { showToast('error', '❌ Géolocalisation non supportée'); return; }
   navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude, longitude } = pos.coords;
-    document.getElementById('fLat').value = latitude.toFixed(6);
-    document.getElementById('fLng').value = longitude.toFixed(6);
-    syncMapToCoords(latitude, longitude);
+    const { latitude: lat, longitude: lng } = pos.coords;
+    document.getElementById('fLat').value = lat.toFixed(6);
+    document.getElementById('fLng').value = lng.toFixed(6);
+    syncMapToCoords(lat, lng);
     showToast('success', '📡 Position détectée !');
-  }, () => {
-    showToast('error', '❌ Impossible d'accéder à votre position');
-  });
+  }, () => { showToast('error', '❌ Impossible d\'accéder à votre position'); });
 }
 
 /* ══ MINI 3D VIEWER ══ */
@@ -1084,7 +1031,8 @@ function initMiniViewer() {
   renderer3d = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer3d.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer3d.setSize(wrap.clientWidth || 320, 200);
-  renderer3d.setClearColor(0x0F1B2D, 1);
+  /* ✅ txt-dark (#1a1a2e) au lieu de navy (#0F1B2D) */
+  renderer3d.setClearColor(0x1a1a2e, 1);
 
   scene3d  = new THREE.Scene();
   camera3d = new THREE.PerspectiveCamera(55, (wrap.clientWidth||320)/200, 0.1, 100);
@@ -1095,65 +1043,55 @@ function initMiniViewer() {
   dirLight.position.set(3, 4, 3);
   scene3d.add(ambLight, dirLight);
 
-  // Default mesh
   buildMesh3d('bulldozer');
 
-  // Orbit manuel
   canvas.addEventListener('mousedown', e => {
     isDragging3d = true; prevMouse3d = {x:e.clientX, y:e.clientY};
   });
-  window.addEventListener('mouseup', () => isDragging3d = false);
+  window.addEventListener('mouseup',   () => isDragging3d = false);
   window.addEventListener('mousemove', e => {
     if (!isDragging3d || !mesh3d) return;
-    const dx = e.clientX - prevMouse3d.x;
-    const dy = e.clientY - prevMouse3d.y;
-    mesh3d.rotation.y += dx * 0.012;
-    mesh3d.rotation.x += dy * 0.008;
+    mesh3d.rotation.y += (e.clientX - prevMouse3d.x) * 0.012;
+    mesh3d.rotation.x += (e.clientY - prevMouse3d.y) * 0.008;
     prevMouse3d = {x:e.clientX, y:e.clientY};
   });
 
-  function animate3d() {
+  (function animate3d() {
     animId3d = requestAnimationFrame(animate3d);
     if (mesh3d && !isDragging3d) mesh3d.rotation.y += 0.008;
     renderer3d.render(scene3d, camera3d);
-  }
-  animate3d();
+  })();
 }
 
 function buildMesh3d(type) {
-  if (mesh3d) { scene3d.remove(mesh3d); mesh3d.geometry?.dispose(); mesh3d.material?.dispose(); }
+  if (mesh3d) {
+    scene3d.remove(mesh3d);
+    mesh3d.geometry?.dispose();
+    mesh3d.material?.dispose();
+  }
 
+  /* ✅ Palette gold uniquement */
   const color = TYPE_COLORS[type] || 0xD4AF37;
-  const mat   = new THREE.MeshStandardMaterial({ color, roughness:.4, metalness:.6 });
+  const mat   = new THREE.MeshStandardMaterial({ color, roughness:.4, metalness:.7 });
   let geo;
 
   switch(type) {
     case 'excavatrice':
-    case 'tractopelle':
-      geo = new THREE.BoxGeometry(1.8, 0.8, 1.1); break;
-    case 'grue':
-      geo = new THREE.CylinderGeometry(0.2, 0.2, 3, 8); break;
+    case 'tractopelle': geo = new THREE.BoxGeometry(1.8, 0.8, 1.1); break;
+    case 'grue':        geo = new THREE.CylinderGeometry(0.2, 0.2, 3, 8); break;
     case 'bulldozer':
-    case 'chargeuse':
-      geo = new THREE.BoxGeometry(2, 1, 1.3); break;
-    case 'compacteur':
-      geo = new THREE.CylinderGeometry(0.7, 0.7, 1.4, 12); break;
-    case 'nacelle':
-      geo = new THREE.BoxGeometry(0.9, 2.5, 0.9); break;
-    case 'camion':
-      geo = new THREE.BoxGeometry(2.4, 1, 1.2); break;
-    default:
-      geo = new THREE.BoxGeometry(1.5, 1, 1);
+    case 'chargeuse':   geo = new THREE.BoxGeometry(2, 1, 1.3); break;
+    case 'compacteur':  geo = new THREE.CylinderGeometry(0.7, 0.7, 1.4, 12); break;
+    case 'nacelle':     geo = new THREE.BoxGeometry(0.9, 2.5, 0.9); break;
+    case 'camion':      geo = new THREE.BoxGeometry(2.4, 1, 1.2); break;
+    default:            geo = new THREE.BoxGeometry(1.5, 1, 1);
   }
 
   mesh3d = new THREE.Mesh(geo, mat);
-  mesh3d.castShadow = true;
   scene3d.add(mesh3d);
 
-  // Grid floor
-  const grid = new THREE.GridHelper(6, 10, 0x1a2a3a, 0x1a2a3a);
-  grid.position.y = -0.9;
-  grid.name = 'grid';
+  const grid = new THREE.GridHelper(6, 10, 0x2a2a3a, 0x2a2a3a);
+  grid.position.y = -0.9; grid.name = 'grid';
   scene3d.children.filter(c => c.name==='grid').forEach(c => scene3d.remove(c));
   scene3d.add(grid);
 }
@@ -1162,23 +1100,21 @@ function update3dMesh() {
   if (!scene3d) return;
   buildMesh3d(currentType || 'bulldozer');
   document.getElementById('viewerTypeName').textContent =
-    currentType.charAt(0).toUpperCase() + currentType.slice(1) || '—';
+    currentType ? currentType.charAt(0).toUpperCase() + currentType.slice(1) : '—';
 }
 
 /* ══ VALIDATION ══ */
 function validateForm() {
   let ok = true;
-
   const checks = [
-    { id:'fName',        errId:'errName',        test: v => v.trim().length >= 3, msg:'Nom requis (min 3 caractères).' },
-    { id:'fType',        errId:'errType',         test: v => !!v,                  msg:'Choisissez un type.' },
-    { id:'fDescription', errId:'errDescription',  test: v => v.trim().length >= 20, msg:'Description trop courte (min 20 caractères).' },
-    { id:'fPriceDay',    errId:'errPriceDay',      test: v => parseFloat(v) > 0,    msg:'Prix journalier requis.' },
-    { id:'fCity',        errId:'errCity',          test: v => v.trim().length >= 2, msg:'Ville requise.' },
+    { id:'fName',        errId:'errName',       test: v => v.trim().length >= 3,  msg:'Nom requis (min 3 caractères).' },
+    { id:'fType',        errId:'errType',        test: v => !!v,                   msg:'Choisissez un type.' },
+    { id:'fDescription', errId:'errDescription', test: v => v.trim().length >= 20, msg:'Description trop courte (min 20 caractères).' },
+    { id:'fPriceDay',    errId:'errPriceDay',    test: v => parseFloat(v) > 0,     msg:'Prix journalier requis.' },
+    { id:'fCity',        errId:'errCity',        test: v => v.trim().length >= 2,  msg:'Ville requise.' },
   ];
-
   checks.forEach(c => {
-    const val = document.getElementById(c.id)?.value || '';
+    const val   = document.getElementById(c.id)?.value || '';
     const errEl = document.getElementById(c.errId);
     const ctrl  = document.getElementById(c.id);
     if (!c.test(val)) {
@@ -1190,7 +1126,6 @@ function validateForm() {
       if (ctrl)  ctrl.classList.remove('error');
     }
   });
-
   return ok;
 }
 
@@ -1198,30 +1133,29 @@ function validateForm() {
 async function submitForm() {
   if (!validateForm()) {
     showToast('error', '⚠️ Veuillez corriger les erreurs');
-    // scroll to first error
     const first = document.querySelector('.form-control.error');
     if (first) first.scrollIntoView({ behavior:'smooth', block:'center' });
     return;
   }
 
-  const btn      = document.getElementById('submitBtn');
-  const btnTxt   = document.getElementById('submitBtnText');
-  btn.disabled   = true;
+  const btn    = document.getElementById('submitBtn');
+  const btnTxt = document.getElementById('submitBtnText');
+  btn.disabled = true;
   btnTxt.textContent = '⏳ Envoi en cours…';
 
   try {
-    // 1. Create or update machine (JSON)
     const payload = {
       name:          document.getElementById('fName').value.trim(),
       type:          document.getElementById('fType').value,
       description:   document.getElementById('fDescription').value.trim(),
       price_per_day: parseFloat(document.getElementById('fPriceDay').value),
-      price_per_hour: document.getElementById('fPriceHour').value ? parseFloat(document.getElementById('fPriceHour').value) : null,
-      status:        document.getElementById('fStatus').value,
-      city:          document.getElementById('fCity').value.trim(),
-      location:      document.getElementById('fLocation').value.trim(),
-      latitude:      document.getElementById('fLat').value  || null,
-      longitude:     document.getElementById('fLng').value  || null,
+      price_per_hour: document.getElementById('fPriceHour').value
+                     ? parseFloat(document.getElementById('fPriceHour').value) : null,
+      status:    document.getElementById('fStatus').value,
+      city:      document.getElementById('fCity').value.trim(),
+      location:  document.getElementById('fLocation').value.trim(),
+      latitude:  document.getElementById('fLat').value  || null,
+      longitude: document.getElementById('fLng').value  || null,
     };
 
     let machineId = MACHINE_ID;
@@ -1231,9 +1165,7 @@ async function submitForm() {
       res = await window.API.put(`/api/machines/${machineId}`, payload);
     } else {
       res = await window.API.post('/api/machines', payload);
-      if (res.ok) {
-        machineId = res.data?.machine?.id || res.data?.id;
-      }
+      if (res.ok) machineId = res.data?.machine?.id || res.data?.id;
     }
 
     if (!res.ok) {
@@ -1244,11 +1176,9 @@ async function submitForm() {
       return;
     }
 
-    // 2. Upload new images
     if (newImageFiles.length && machineId) {
       const fd = new FormData();
       newImageFiles.forEach((f, i) => fd.append(`images[${i}]`, f));
-
       await fetch(`/api/machines/${machineId}/images`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${window.getToken()}` },
@@ -1256,7 +1186,6 @@ async function submitForm() {
       });
     }
 
-    // 3. Delete removed images (edit mode)
     if (deletedImageIds.length && EDIT_MODE) {
       await Promise.all(deletedImageIds.map(imgId =>
         window.API.delete(`/api/machines/${machineId}/images/${imgId}`)
@@ -1274,18 +1203,17 @@ async function submitForm() {
   }
 }
 
-/* ══ UTILS ══ */
+/* ══ TOAST ══ */
 function showToast(type, msg) {
   const ctr = document.getElementById('toastCtr');
   const el  = document.createElement('div');
   el.className = `toast ${type}`;
-  el.innerHTML = msg;
+  el.textContent = msg;
   ctr.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
-  setTimeout(() => { el.classList.remove('show'); setTimeout(()=>el.remove(), 400); }, 3800);
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 3800);
 }
 
-// Cleanup 3D on page unload
 window.addEventListener('beforeunload', () => {
   if (animId3d) cancelAnimationFrame(animId3d);
   renderer3d?.dispose();

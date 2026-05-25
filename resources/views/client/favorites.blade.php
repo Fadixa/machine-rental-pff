@@ -4,10 +4,11 @@
 @push('styles')
 <style>
 :root {
-    --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
+    --gold:#D4AF37; --gold-dk:#9A7D20; --gold-lt:#F5E88A;
+    --gold-pale:#FEF9E7; --gold-glow:rgba(212,175,55,.25);
     --navy:#0F1B2D; --navy2:#162540;
     --cream:#FAF7F0; --cream2:#F0EBE0; --cream3:#E8DDD0;
-    --txt:#5a5660; --txt-light:#9992a4;
+    --txt-dark:#1a1a2e; --txt:#5a5660; --txt-light:#9992a4;
     --red:#ef4444; --green:#10b981;
 }
 body { background: var(--cream); }
@@ -21,7 +22,7 @@ body { background: var(--cream); }
 }
 .favs-page-title {
     font-family:'Playfair Display',Georgia,serif;
-    font-size:1.8rem; font-weight:700; color:var(--navy);
+    font-size:1.8rem; font-weight:700; color:var(--txt-dark);
     display:flex; align-items:center; gap:12px;
 }
 .favs-page-title i { color:var(--gold); font-size:1.5rem; }
@@ -44,7 +45,7 @@ body { background: var(--cream); }
 .favs-filter-bar select,
 .favs-filter-bar input {
     border:1px solid rgba(212,175,55,.2); border-radius:8px;
-    padding:8px 12px; font-size:.82rem; color:var(--navy);
+    padding:8px 12px; font-size:.82rem; color:var(--txt-dark);
     background:var(--cream); outline:none; transition:border-color .2s;
     font-family:inherit;
 }
@@ -79,10 +80,10 @@ body { background: var(--cream); }
     border-color:rgba(212,175,55,.35);
 }
 
-/* Photo */
+/* Photo — ✅ FIX: navy → cream2 */
 .fav-photo {
     height:160px; overflow:hidden; position:relative;
-    background:var(--navy);
+    background:var(--cream2);
 }
 .fav-photo img {
     width:100%; height:100%; object-fit:cover;
@@ -110,17 +111,19 @@ body { background: var(--cream); }
     padding:3px 10px; border-radius:100px;
     text-transform:uppercase;
 }
-.fav-status.available { background:rgba(16,185,129,.15); color:#065f46; border:1px solid rgba(16,185,129,.3); }
-.fav-status.unavailable { background:rgba(212,175,55,.15); color:var(--gold-dk); border:1px solid rgba(212,175,55,.3); }
+.fav-status.available   { background:rgba(16,185,129,.15); color:#065f46; border:1px solid rgba(16,185,129,.3); }
+/* ✅ FIX: unavailable → gold-pale (jamais orange) */
+.fav-status.unavailable { background:#FEF9E7; color:var(--gold-dk); border:1px solid rgba(212,175,55,.3); }
 
 /* Body */
 .fav-body { padding:14px 16px 16px; }
 .fav-type {
-    font-size:.65rem; font-weight:800; color:var(--gold);
+    font-size:.65rem; font-weight:800; color:var(--gold-dk);
     letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px;
 }
+/* ✅ FIX: navy → txt-dark */
 .fav-name {
-    font-size:.95rem; font-weight:700; color:var(--navy);
+    font-size:.95rem; font-weight:700; color:var(--txt-dark);
     margin-bottom:5px; font-family:'Playfair Display',Georgia,serif;
 }
 .fav-city {
@@ -135,7 +138,8 @@ body { background: var(--cream); }
     padding-top:10px; border-top:1px solid rgba(212,175,55,.1);
     margin-bottom:12px;
 }
-.fav-price { font-size:1.05rem; font-weight:800; color:var(--navy); }
+/* ✅ FIX: navy → gold-dk */
+.fav-price { font-size:1.05rem; font-weight:800; color:var(--gold-dk); }
 .fav-price small { font-size:.7rem; font-weight:400; color:var(--txt-light); }
 .fav-price-hour { font-size:.75rem; color:var(--txt-light); }
 
@@ -148,10 +152,11 @@ body { background: var(--cream); }
     display:flex; align-items:center; justify-content:center; gap:5px;
     text-decoration:none;
 }
-.fav-btn-detail { background:var(--cream); color:var(--navy); border:1px solid var(--cream3); }
-.fav-btn-detail:hover { background:var(--cream2); color:var(--navy); }
-.fav-btn-reserve { background:var(--navy); color:var(--gold); }
-.fav-btn-reserve:hover { background:var(--navy2); color:var(--gold); }
+.fav-btn-detail  { background:var(--cream); color:var(--txt-dark); border:1px solid var(--cream3); }
+.fav-btn-detail:hover { background:var(--cream2); color:var(--txt-dark); }
+/* ✅ FIX: navy bg → gold bg */
+.fav-btn-reserve { background:var(--gold); color:var(--txt-dark); }
+.fav-btn-reserve:hover { background:var(--gold-dk); color:#fff; }
 .fav-btn-wa { background:#25D366; color:#fff; flex:0 0 36px; border-radius:8px; }
 .fav-btn-wa:hover { background:#1ebe5d; color:#fff; }
 
@@ -164,7 +169,8 @@ body { background: var(--cream); }
     display:flex; align-items:center; justify-content:center;
     font-size:.85rem; transition:all .15s;
 }
-.view-btn.active { background:var(--navy); color:var(--gold); border-color:var(--navy); }
+/* ✅ FIX: navy → gold bg */
+.view-btn.active { background:var(--gold); color:var(--txt-dark); border-color:var(--gold); }
 
 /* ── List view ── */
 .favs-list { display:flex; flex-direction:column; gap:12px; }
@@ -182,7 +188,8 @@ body { background: var(--cream); }
 }
 .fav-list-photo img { width:100%; height:100%; object-fit:cover; }
 .fav-list-info { flex:1; min-width:0; }
-.fav-list-name { font-size:.92rem; font-weight:700; color:var(--navy); margin-bottom:3px; }
+/* ✅ FIX: navy → txt-dark */
+.fav-list-name { font-size:.92rem; font-weight:700; color:var(--txt-dark); margin-bottom:3px; }
 .fav-list-meta { font-size:.75rem; color:var(--txt-light); margin-bottom:6px; }
 .fav-list-meta i { color:var(--gold); margin-right:3px; }
 .fav-list-price { font-size:.9rem; font-weight:800; color:var(--gold-dk); }
@@ -199,23 +206,25 @@ body { background: var(--cream); }
     display:flex; align-items:center; justify-content:center;
     font-size:2rem; margin:0 auto 20px;
 }
-.favs-empty-title { font-size:1.1rem; font-weight:700; color:var(--navy); margin-bottom:8px; }
-.favs-empty-sub { font-size:.88rem; color:var(--txt-light); margin-bottom:24px; }
+/* ✅ FIX: navy → txt-dark */
+.favs-empty-title { font-size:1.1rem; font-weight:700; color:var(--txt-dark); margin-bottom:8px; }
+.favs-empty-sub   { font-size:.88rem; color:var(--txt-light); margin-bottom:24px; }
+/* ✅ FIX: navy bg → gold bg */
 .btn-browse {
     display:inline-flex; align-items:center; gap:8px;
-    background:var(--navy); color:var(--gold)!important;
+    background:var(--gold); color:var(--txt-dark)!important;
     font-size:.88rem; font-weight:700; border:none;
     border-radius:9px; padding:11px 26px; cursor:pointer;
-    text-decoration:none; transition:background .15s, transform .15s;
+    text-decoration:none; transition:all .15s;
 }
-.btn-browse:hover { background:var(--navy2); transform:translateY(-1px); }
+.btn-browse:hover { background:var(--gold-dk); color:#fff!important; transform:translateY(-1px); }
 
-/* ── Toast ── */
+/* ✅ FIX: Toast — blanc + txt-dark */
 #fav-toast {
     position:fixed; bottom:24px; right:24px; z-index:9999;
-    background:var(--navy); color:#fff;
+    background:#fff; color:var(--txt-dark);
     padding:12px 20px; border-radius:10px; font-size:.88rem; font-weight:600;
-    box-shadow:0 4px 20px rgba(15,27,45,.25);
+    box-shadow:0 4px 20px rgba(15,27,45,.15);
     display:none; align-items:center; gap:10px;
     border-left:3px solid var(--gold);
     animation:slideUp .3s ease;
@@ -334,9 +343,6 @@ body { background: var(--cream); }
 
 @push('scripts')
 <script>
-/* ── Guard ── */
-// Pas de guard strict — les favoris sont en localStorage, accessible même non connecté
-
 /* ── State ── */
 const TYPE_PHOTO = {
     excavatrice:'/images/img3.png', grue:'/images/img4.png',
@@ -376,10 +382,8 @@ async function loadFavorites() {
         return;
     }
 
-    // Show filter bar
     document.getElementById('filter-bar').style.display = 'flex';
 
-    // Fetch each machine
     const promises = favIds.map(id =>
         API.get(`/api/machines/${id}`).then(d => d?.data || d).catch(() => null)
     );
@@ -443,11 +447,11 @@ function renderMachines(list) {
 
 /* ── Grid Card ── */
 function buildGridCard(m, i) {
-    const photo = getPhoto(m);
-    const price = Number(m.price_per_day||0).toLocaleString('fr-MA');
+    const photo  = getPhoto(m);
+    const price  = Number(m.price_per_day||0).toLocaleString('fr-MA');
     const priceH = Number(m.price_per_hour||0).toLocaleString('fr-MA');
-    const dispo = m.status === 'available';
-    const waUrl = buildWa(m);
+    const dispo  = m.status === 'available';
+    const waUrl  = buildWa(m);
     return `
     <div class="fav-card" id="fav-${m.id}" style="animation-delay:${i*55}ms">
         <button class="fav-remove-btn" onclick="removeFav(${m.id})" title="Retirer des favoris">

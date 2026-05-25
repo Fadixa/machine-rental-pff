@@ -4,13 +4,14 @@
 @push('styles')
 <style>
 /* ══════════════════════════════════════
-   DASHBOARD CLIENT V6 — Gold / Crème
+   DASHBOARD CLIENT V9 — Gold / Crème (100% clair)
    ══════════════════════════════════════ */
 :root {
-    --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
-    --navy:#0F1B2D; --navy2:#162540;
+    --gold:#D4AF37; --gold-dk:#9A7D20; --gold-lt:#F5E88A;
+    --gold-pale:#FEF9E7; --gold-glow:rgba(212,175,55,.25);
+    --navy:#0F1B2D; --navy2:#162540; --navy3:#1E3356;
     --cream:#FAF7F0; --cream2:#F0EBE0; --cream3:#E8DDD0;
-    --txt:#5a5660; --txt-light:#9992a4;
+    --txt-dark:#1a1a2e; --txt:#5a5660; --txt-light:#9992a4;
     --green:#10b981; --red:#ef4444; --blue:#3b82f6;
 }
 body { background: var(--cream); }
@@ -22,23 +23,28 @@ body { background: var(--cream); }
 
 /* ── Sidebar ── */
 .dash-sidebar {
-    background:#fff; border:1px solid rgba(212,175,55,.15);
+    background:#fff; border:1px solid rgba(212,175,55,.18);
     border-radius:14px; overflow:hidden; position:sticky; top:90px;
     box-shadow:0 4px 20px rgba(15,27,45,.04);
 }
+/* ✅ FIX: navy → gold-pale */
 .dash-user-block {
-    background:var(--navy); padding:20px 18px;
+    background:var(--gold-pale);
+    border-bottom:1px solid rgba(212,175,55,.2);
+    padding:20px 18px;
     display:flex; align-items:center; gap:12px;
 }
 .dash-avatar {
     width:44px; height:44px; background:var(--gold);
     border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-size:18px; font-weight:800; color:var(--navy); flex-shrink:0;
+    font-size:18px; font-weight:800; color:var(--txt-dark); flex-shrink:0;
+    border:2px solid rgba(212,175,55,.35);
 }
-.dash-user-name { color:#fff; font-size:14px; font-weight:700; }
+/* ✅ FIX: #fff → txt-dark */
+.dash-user-name { color:var(--txt-dark); font-size:14px; font-weight:700; }
 .dash-user-role {
     display:inline-flex; align-items:center; gap:4px;
-    background:rgba(212,175,55,.15); color:var(--gold);
+    background:rgba(212,175,55,.15); color:var(--gold-dk);
     font-size:10px; font-weight:700; padding:2px 8px;
     border-radius:100px; margin-top:3px;
 }
@@ -51,7 +57,7 @@ body { background: var(--cream); }
     background:none; border-top:none; border-right:none; border-bottom:none;
     width:100%; font-family:inherit;
 }
-.dash-nav-item:hover { background:rgba(212,175,55,.05); color:var(--navy); }
+.dash-nav-item:hover { background:rgba(212,175,55,.05); color:var(--txt-dark); }
 .dash-nav-item.active {
     background:rgba(212,175,55,.08); color:var(--gold-dk);
     border-left-color:var(--gold); font-weight:700;
@@ -82,7 +88,7 @@ body { background: var(--cream); }
     display:flex; align-items:center; gap:6px;
 }
 .kpi-label i { color:var(--gold); }
-.kpi-value { font-size:28px; font-weight:900; color:var(--navy); letter-spacing:-1px; }
+.kpi-value { font-size:28px; font-weight:900; color:var(--txt-dark); letter-spacing:-1px; }
 .kpi-sub { font-size:11px; color:var(--txt-light); margin-top:2px; }
 
 /* ── Panel ── */
@@ -96,7 +102,7 @@ body { background: var(--cream); }
     padding:16px 20px; border-bottom:1px solid rgba(212,175,55,.1);
     flex-wrap:wrap; gap:10px;
 }
-.panel-title { font-size:15px; font-weight:800; color:var(--navy); display:flex; align-items:center; gap:8px; }
+.panel-title { font-size:15px; font-weight:800; color:var(--txt-dark); display:flex; align-items:center; gap:8px; }
 .panel-title i { color:var(--gold); }
 .panel-badge {
     font-size:11px; font-weight:700; padding:3px 10px;
@@ -113,7 +119,7 @@ body { background: var(--cream); }
 }
 .res-table td {
     padding:14px 20px; border-bottom:1px solid rgba(212,175,55,.06);
-    font-size:13px; color:var(--navy); vertical-align:middle;
+    font-size:13px; color:var(--txt-dark); vertical-align:middle;
 }
 .res-table tr:last-child td { border-bottom:none; }
 .res-table tr:hover td { background:rgba(212,175,55,.02); }
@@ -123,7 +129,8 @@ body { background: var(--cream); }
     display:inline-flex; align-items:center; gap:5px;
     font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
 }
-.sb-pending   { background:rgba(212,175,55,.12); color:var(--gold-dk); }
+/* ✅ V9 badge colors — gold-pale pour pending (jamais orange) */
+.sb-pending   { background:#FEF9E7; color:var(--gold-dk); }
 .sb-accepted  { background:rgba(16,185,129,.1);  color:#065f46; }
 .sb-rejected  { background:rgba(239,68,68,.1);   color:#991b1b; }
 .sb-completed { background:rgba(99,102,241,.1);  color:#3730a3; }
@@ -139,8 +146,8 @@ body { background: var(--cream); }
 }
 .btn-contrat  { background:rgba(212,175,55,.12); color:var(--gold-dk); }
 .btn-contrat:hover { background:rgba(212,175,55,.22); }
-.btn-voir     { background:var(--cream); color:var(--navy); border:1px solid var(--cream3); }
-.btn-voir:hover { background:var(--cream2); color:var(--navy); }
+.btn-voir     { background:var(--cream); color:var(--txt-dark); border:1px solid var(--cream3); }
+.btn-voir:hover { background:var(--cream2); color:var(--txt-dark); }
 .btn-wa       { background:#25D366; color:#fff; }
 .btn-wa:hover { background:#1ebe5d; color:#fff; }
 .btn-cancel   { background:rgba(239,68,68,.08); color:var(--red); }
@@ -154,7 +161,8 @@ body { background: var(--cream); }
     transition:transform .2s, box-shadow .2s, border-color .2s;
 }
 .fav-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(15,27,45,.08); border-color:rgba(212,175,55,.3); }
-.fav-photo { height:120px; overflow:hidden; background:var(--navy); position:relative; }
+/* ✅ FIX: navy → cream2 */
+.fav-photo { height:120px; overflow:hidden; background:var(--cream2); position:relative; }
 .fav-photo img { width:100%; height:100%; object-fit:cover; }
 .fav-remove {
     position:absolute; top:8px; right:8px; width:28px; height:28px;
@@ -164,11 +172,11 @@ body { background: var(--cream); }
 }
 .fav-remove:hover { background:#ef4444; }
 .fav-body { padding:12px 14px; }
-.fav-type { font-size:.65rem; font-weight:800; color:var(--gold); letter-spacing:.08em; text-transform:uppercase; margin-bottom:3px; }
-.fav-name { font-size:.88rem; font-weight:700; color:var(--navy); margin-bottom:4px; }
+.fav-type { font-size:.65rem; font-weight:800; color:var(--gold-dk); letter-spacing:.08em; text-transform:uppercase; margin-bottom:3px; }
+.fav-name { font-size:.88rem; font-weight:700; color:var(--txt-dark); margin-bottom:4px; }
 .fav-city { font-size:.75rem; color:var(--txt-light); margin-bottom:8px; }
 .fav-city i { color:var(--gold); margin-right:3px; }
-.fav-price { font-size:.95rem; font-weight:800; color:var(--gold); }
+.fav-price { font-size:.95rem; font-weight:800; color:var(--gold-dk); }
 .fav-price small { font-size:.7rem; font-weight:400; color:var(--txt-light); }
 .fav-actions { display:flex; gap:6px; margin-top:10px; }
 
@@ -179,7 +187,7 @@ body { background: var(--cream); }
 }
 .filter-bar select, .filter-bar input {
     border:1px solid rgba(212,175,55,.2); border-radius:8px;
-    padding:7px 12px; font-size:.82rem; color:var(--navy);
+    padding:7px 12px; font-size:.82rem; color:var(--txt-dark);
     background:#fff; outline:none; transition:border-color .2s; font-family:inherit;
 }
 .filter-bar select:focus, .filter-bar input:focus { border-color:var(--gold); }
@@ -199,7 +207,7 @@ body { background: var(--cream); }
 .profile-avatar-big {
     width:72px; height:72px; background:var(--gold);
     border-radius:50%; display:flex; align-items:center; justify-content:center;
-    font-size:28px; font-weight:800; color:var(--navy);
+    font-size:28px; font-weight:800; color:var(--txt-dark);
     border:3px solid rgba(212,175,55,.3);
 }
 .form-group { margin-bottom:18px; }
@@ -210,47 +218,52 @@ body { background: var(--cream); }
 .form-input {
     width:100%; padding:10px 14px; border-radius:9px;
     border:1.5px solid rgba(212,175,55,.2); font-size:.88rem;
-    color:var(--navy); background:#fff; outline:none; transition:border-color .2s;
+    color:var(--txt-dark); background:#fff; outline:none; transition:border-color .2s;
     font-family:inherit;
 }
 .form-input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.1); }
 .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+/* ✅ FIX: navy bg → gold bg */
 .btn-save {
-    background:var(--navy); color:var(--gold); border:none;
+    background:var(--gold); color:var(--txt-dark); border:none;
     border-radius:9px; padding:11px 28px; font-size:.88rem; font-weight:700;
-    cursor:pointer; transition:background .15s, transform .15s; font-family:inherit;
+    cursor:pointer; transition:all .15s; font-family:inherit;
     display:inline-flex; align-items:center; gap:8px;
 }
-.btn-save:hover { background:var(--navy2); transform:translateY(-1px); }
+.btn-save:hover { background:var(--gold-dk); color:#fff; transform:translateY(-1px); }
 
 /* ── Empty state ── */
 .empty-state { padding:48px 20px; text-align:center; color:var(--txt-light); }
 .empty-ico { font-size:40px; margin-bottom:10px; opacity:.4; display:block; }
-.empty-title { font-size:15px; font-weight:700; color:var(--navy); margin-bottom:5px; }
+.empty-title { font-size:15px; font-weight:700; color:var(--txt-dark); margin-bottom:5px; }
 .empty-sub { font-size:13px; }
 
-/* ── CTA banner ── */
+/* ✅ FIX: CTA banner navy → gold-pale + border gold */
 .cta-banner {
-    background:var(--navy); border-radius:14px; padding:22px 26px;
+    background:var(--gold-pale);
+    border:1.5px solid var(--gold);
+    border-radius:14px; padding:22px 26px;
     display:flex; align-items:center; justify-content:space-between;
     flex-wrap:wrap; gap:16px; margin-bottom:20px;
 }
-.cta-banner-title { font-size:15px; font-weight:800; color:#fff; margin-bottom:4px; }
-.cta-banner-sub   { font-size:12px; color:rgba(255,255,255,.4); }
+/* ✅ FIX: #fff → txt-dark */
+.cta-banner-title { font-size:15px; font-weight:800; color:var(--txt-dark); margin-bottom:4px; }
+/* ✅ FIX: rgba blanc → txt-mid */
+.cta-banner-sub   { font-size:12px; color:var(--txt); }
 .btn-cta {
-    background:var(--gold); color:var(--navy)!important;
+    background:var(--gold); color:var(--txt-dark)!important;
     font-size:.82rem; font-weight:700; border:none; border-radius:8px;
     padding:9px 20px; cursor:pointer; transition:all .15s;
     text-decoration:none; display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
 }
-.btn-cta:hover { background:#c9a430; transform:translateY(-1px); }
+.btn-cta:hover { background:var(--gold-dk); color:#fff!important; transform:translateY(-1px); }
 
-/* ── Toast ── */
+/* ✅ FIX: Toast — blanc + texte dark + bordure gold */
 #dash-toast {
     position:fixed; bottom:24px; right:24px; z-index:9999;
-    background:var(--navy); color:#fff;
+    background:#fff; color:var(--txt-dark);
     padding:12px 20px; border-radius:10px; font-size:.88rem; font-weight:600;
-    box-shadow:0 4px 20px rgba(15,27,45,.25);
+    box-shadow:0 4px 20px rgba(15,27,45,.15);
     display:none; align-items:center; gap:10px;
     border-left:3px solid var(--gold);
 }
@@ -415,7 +428,7 @@ async function renderReservationsTab() {
 
     return `
     <div class="dash-header">
-        <div style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:-.4px">Bonjour, ${firstName} 👋</div>
+        <div style="font-size:22px;font-weight:900;color:var(--txt-dark);letter-spacing:-.4px">Bonjour, ${firstName} 👋</div>
         <div style="font-size:13px;color:var(--txt);margin-top:3px">Voici un résumé de votre activité sur Rentify</div>
     </div>
 
@@ -509,7 +522,7 @@ function renderReservationsTable(list) {
             const waUrl = phone ? `https://wa.me/${phone.replace(/\D/g,'').replace(/^0/,'212')}?text=${encodeURIComponent('Bonjour, ma réservation "'+( r.machine?.name||'')+'" sur Rentify a été acceptée. Comment procéder ?')}` : null;
             return `<tr>
                 <td>
-                    <div style="font-weight:700;color:var(--navy)">${r.machine?.name||'—'}</div>
+                    <div style="font-weight:700;color:var(--txt-dark)">${r.machine?.name||'—'}</div>
                     <div style="font-size:11px;color:var(--txt-light)">${r.machine?.type||''} · ${r.machine?.city||''}</div>
                 </td>
                 <td>
@@ -549,7 +562,7 @@ function renderFavoritesTab() {
 
     return `
     <div class="dash-header">
-        <div style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:-.4px">
+        <div style="font-size:22px;font-weight:900;color:var(--txt-dark);letter-spacing:-.4px">
             ❤️ Mes favoris
         </div>
         <div style="font-size:13px;color:var(--txt);margin-top:3px">
@@ -625,7 +638,6 @@ window.removeFav = function(id) {
     if (card) { card.style.opacity='0'; card.style.transform='scale(.9)'; setTimeout(()=>card.remove(), 300); }
     toast('Retiré des favoris');
     window.refreshFavsBadge?.();
-    // update count
     const badge = document.querySelector('.panel-badge');
     const count = document.querySelector('.dash-header div:last-child');
     const n = getFavorites().length;
@@ -639,7 +651,7 @@ window.removeFav = function(id) {
 function renderProfileTab() {
     return `
     <div class="dash-header">
-        <div style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:-.4px">👤 Mon profil</div>
+        <div style="font-size:22px;font-weight:900;color:var(--txt-dark);letter-spacing:-.4px">👤 Mon profil</div>
         <div style="font-size:13px;color:var(--txt);margin-top:3px">Gérez vos informations personnelles</div>
     </div>
     <div class="dash-panel">
@@ -650,10 +662,10 @@ function renderProfileTab() {
             <div class="profile-avatar-section">
                 <div class="profile-avatar-big">${initial}</div>
                 <div>
-                    <div style="font-size:1.1rem;font-weight:800;color:var(--navy)">${user.name||'—'}</div>
+                    <div style="font-size:1.1rem;font-weight:800;color:var(--txt-dark)">${user.name||'—'}</div>
                     <div style="font-size:.85rem;color:var(--txt-light);margin-top:3px">${user.email||'—'}</div>
                     <div style="margin-top:8px">
-                        <span style="background:rgba(212,175,55,.1);color:var(--gold-dk);font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:100px;">Client Rentify</span>
+                        <span style="background:#FEF9E7;color:var(--gold-dk);font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:100px;">Client Rentify</span>
                     </div>
                 </div>
             </div>

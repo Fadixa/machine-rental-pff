@@ -144,7 +144,7 @@
 .badge-pill {
     display: inline-block;
     background: rgba(245,158,11,0.15);
-    color: #F59E0B;
+    color: gold;
     border: 1px solid rgba(245,158,11,0.3);
     padding: 6px 18px;
     border-radius: 99px;
@@ -177,7 +177,7 @@
 
 /* Colonne infos (navy) */
 .contact-info {
-    background: #0F1B2D;
+    background: #9A7D20;
     color: #fff;
     padding: 50px 40px;
 }
@@ -219,7 +219,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #F59E0B;
+    color: gold;
     font-size: 0.85rem;
     flex-shrink: 0;
 }
@@ -252,7 +252,7 @@
     color: #374151;
     margin-bottom: 6px;
 }
-.required { color: #F59E0B; }
+.required { color: #D4AF37; }
 .optional  { color: #9ca3af; font-weight: 400; font-size: 0.8rem; }
 
 /* Inputs / Select / Textarea */
@@ -269,7 +269,7 @@
     font-family: inherit;
 }
 .input-custom:focus {
-    border-color: #F59E0B;
+    border-color: #D4AF37;
     box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
     background: #fff;
 }
@@ -289,8 +289,8 @@ select.input-custom    { cursor: pointer; }
 .btn-envoyer {
     width: 100%;
     padding: 13px;
-    background: linear-gradient(135deg, #F59E0B, #fbbf24);
-    color: #0F1B2D;
+    background: #9A7D20;
+    color: white;
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
@@ -350,8 +350,8 @@ select.input-custom    { cursor: pointer; }
     margin-top: 10px;
     padding: 10px 24px;
     background: transparent;
-    border: 2px solid #F59E0B;
-    color: #F59E0B;
+    border: 2px solid #9A7D20;
+    color: #9A7D20;
     border-radius: 10px;
     font-weight: 600;
     font-size: 0.88rem;
@@ -359,7 +359,7 @@ select.input-custom    { cursor: pointer; }
     transition: all 0.2s;
 }
 .btn-retry:hover {
-    background: #F59E0B;
+    background: #9A7D20;
     color: #0F1B2D;
 }
 
