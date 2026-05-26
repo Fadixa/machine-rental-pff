@@ -732,23 +732,49 @@ window.doNavLogout = function() {
    ✅ FIX — Refresh avatar navbar sans reload
    Appelé depuis profile/index.blade.php après upload
 ════════════════════════════════════════════ */
-window.refreshNavAvatar = function() {
-    const u = window.getUser();
-    if (!u) return;
-    const el = document.getElementById('nav-avatar-el');
-    if (!el) return;
-    const photo = u.profile_photo_path || u.avatar || null;
-    const init  = (u.name || 'U')[0].toUpperCase();
-    if (photo) {
-        el.innerHTML = `<img
-            src="/storage/${photo}?t=${Date.now()}"
-            alt="${init}"
-            style="width:28px;height:28px;border-radius:50%;object-fit:cover;display:block;"
-            onerror="this.outerHTML='<span style=font-size:12px;font-weight:700>${init}</span>'">`;
+// ✅ Fonction globale pour rafraîchir l'avatar partout dans la navbar
+window.refreshNavAvatar = function(user) {
+    if (!user) return;
+    
+    const avatarContainer = document.querySelector('.nav-user-avatar');
+    if (!avatarContainer) return;
+    
+    // On prend la première lettre du nom pour le fallback
+    const initiale = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+    
+    if (user.profile_photo_path) {
+        // Si l'utilisateur a une photo de profil, on injecte la balise img
+        // Storage::url correspond généralement à /storage/
+        const fullUrl = user.profile_photo_path.startsWith('http') 
+            ? user.profile_photo_path 
+            : '/storage/' + user.profile_photo_path;
+            
+        avatarContainer.innerHTML = `<img src="${fullUrl}" alt="${user.name}" onerror="this.parentElement.innerHTML='${initiale}'">`;
     } else {
-        el.innerHTML = init;
+        // Fallback à l'initiale si pas de photo
+        avatarContainer.innerHTML = initiale;
     }
+    
+    // Mettre à jour aussi le nom à côté si besoin
+    const nameElem = document.querySelector('.nav-user-name');
+    if (nameElem && user.name) {
+        nameElem.textContent = user.name;
+    }
+    
+    const dropName = document.querySelector('.nav-drop-name');
+    if (dropName && user.name) dropName.textContent = user.name;
 };
+
+// Appeler automatiquement au chargement de la page si l'user existe dans localStorage
+document.addEventListener('DOMContentLoaded', function() {
+    const storedUser = localStorage.getItem('auth_user');
+    if (storedUser) {
+        try {
+            const user = JSON.parse(storedUser);
+            window.refreshNavAvatar(user);
+        } catch(e) { console.error(e); }
+    }
+});
 
 /* ── Favoris badge ── */
 window.updateFavBadge  = function(count) {

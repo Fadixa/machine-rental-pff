@@ -99,17 +99,20 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        // Supprimer l'ancien avatar
-        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-            Storage::disk('public')->delete($user->avatar);
+        // ✅ FIX : Supprimer l'ancien avatar avec la bonne colonne profile_photo_path
+        if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+            Storage::disk('public')->delete($user->profile_photo_path);
         }
 
         $path = $request->file('avatar')->store('avatars', 'public');
-        $user->update(['avatar' => $path]);
+        
+        // ✅ FIX : Update profile_photo_path au lieu de avatar
+        $user->update(['profile_photo_path' => $path]);
 
         return response()->json([
             'message'    => 'Photo de profil mise à jour.',
             'avatar_url' => Storage::url($path),
+            'user'       => $user->fresh() // On retourne le user frais
         ]);
     }
 }

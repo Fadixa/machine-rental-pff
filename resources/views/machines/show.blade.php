@@ -35,7 +35,6 @@
   overflow: hidden;
 }
 
-/* Image principale */
 .gallery-main {
   position: relative;
   height: 420px;
@@ -53,7 +52,6 @@
   transform: scale(1.03);
 }
 
-/* Badge statut sur l'image */
 .gallery-status-badge {
   position: absolute; top: 16px; left: 16px;
   padding: 5px 14px; border-radius: 100px;
@@ -66,7 +64,6 @@
 .status-maintenance { background: rgba(239,68,68,.18);   color: #ef4444; border: 1px solid rgba(239,68,68,.4); }
 .status-unavailable { background: rgba(107,114,128,.18); color: #6b7280; border: 1px solid rgba(107,114,128,.4); }
 
-/* Boutons nav galerie */
 .gallery-nav {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 38px; height: 38px; border-radius: 50%;
@@ -79,7 +76,6 @@
 .gallery-nav.prev { left: 14px; }
 .gallery-nav.next { right: 14px; }
 
-/* Compteur images */
 .gallery-counter {
   position: absolute; bottom: 14px; right: 14px;
   background: rgba(15,27,45,.72); backdrop-filter: blur(6px);
@@ -88,7 +84,6 @@
   font-weight: 600; z-index: 4;
 }
 
-/* Bouton 3D */
 .gallery-3d-btn {
   position: absolute; bottom: 14px; left: 14px;
   background: rgba(212,175,55,.15); backdrop-filter: blur(8px);
@@ -99,7 +94,6 @@
 }
 .gallery-3d-btn:hover { background: rgba(212,175,55,.3); }
 
-/* Thumbnails */
 .gallery-thumbs {
   display: flex; gap: 8px; padding: 12px;
   overflow-x: auto; background: var(--cream);
@@ -120,7 +114,6 @@
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
 
-/* Lightbox */
 .lightbox-overlay {
   display: none; position: fixed; inset: 0; z-index: 9998;
   background: rgba(7,16,24,.96); backdrop-filter: blur(4px);
@@ -151,7 +144,7 @@
 .lightbox-nav.next { right: 24px; }
 
 /* ═══════════════════════════════════════════════
-   MINI 3D VIEWER — SIDEBAR
+   MINI 3D VIEWER
 ═══════════════════════════════════════════════ */
 .mini3d-card {
   background: #071018; border-radius: var(--radius);
@@ -212,12 +205,12 @@
   border-radius: 100px; display: flex; align-items: center; gap: 4px;
 }
 .machine-title {
-  font-size: 26px; font-weight: 900; color: var(--navy);
+  font-size: 26px; font-weight: 900; color: var(--txt-dark);
   letter-spacing: -.5px; line-height: 1.2; margin-bottom: 8px;
 }
 .machine-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
 .stars { color: var(--gold); font-size: 14px; }
-.rating-val { font-weight: 800; color: var(--navy); font-size: 14px; }
+.rating-val { font-weight: 800; color: var(--txt-dark); font-size: 14px; }
 .rating-count { color: var(--gray); font-size: 13px; }
 .machine-desc {
   color: var(--gray); font-size: 14px; line-height: 1.7;
@@ -232,19 +225,22 @@
 }
 .spec-card { background: #f8fafc; border-radius: 12px; padding: 14px 12px; text-align: center; }
 .spec-icon { font-size: 20px; margin-bottom: 6px; }
-.spec-val  { font-size: 13px; font-weight: 800; color: var(--navy); }
+.spec-val  { font-size: 13px; font-weight: 800; color: var(--txt-dark); }
 .spec-label { font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
 
-/* Prix section */
+/* ✅ FIX: price-section = gold-pale (plus navy background) */
 .price-section {
   display: flex; align-items: center; gap: 20px;
-  padding: 16px; background: var(--navy); border-radius: 14px; margin-bottom: 20px;
+  padding: 16px;
+  background: var(--gold-pale);
+  border: 1.5px solid var(--gold);
+  border-radius: 14px; margin-bottom: 20px;
 }
 .price-item { text-align: center; flex: 1; }
-.price-label { font-size: 10px; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
-.price-val   { font-size: 22px; font-weight: 900; color: var(--gold); }
-.price-unit  { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 2px; }
-.price-sep   { width: 1px; height: 40px; background: rgba(255,255,255,.1); }
+.price-label { font-size: 10px; color: var(--txt-mid); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 4px; }
+.price-val   { font-size: 22px; font-weight: 900; color: var(--gold-dk); }
+.price-unit  { font-size: 11px; color: var(--txt-light); margin-top: 2px; }
+.price-sep   { width: 1px; height: 40px; background: rgba(212,175,55,.3); }
 
 /* ═══════════════════════════════════════════════
    BOOKING SIDEBAR
@@ -254,9 +250,14 @@
   box-shadow: var(--shadow); overflow: hidden;
   position: sticky; top: 90px;
 }
-.booking-header { background: linear-gradient(135deg, var(--navy), var(--navy2)); padding: 20px 22px; }
-.booking-price-main { font-size: 28px; font-weight: 900; color: var(--gold); }
-.booking-price-sub  { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 2px; }
+/* ✅ FIX: booking-header = gold-pale (plus navy gradient) */
+.booking-header {
+  background: var(--gold-pale);
+  border-bottom: 2px solid var(--gold);
+  padding: 20px 22px;
+}
+.booking-price-main { font-size: 28px; font-weight: 900; color: var(--txt-dark); }
+.booking-price-sub  { font-size: 12px; color: var(--txt-mid); margin-top: 2px; }
 .booking-body { padding: 20px 22px; }
 .form-group { margin-bottom: 16px; }
 .form-label-custom {
@@ -266,7 +267,7 @@
 .form-control-custom {
   width: 100%; padding: 10px 14px; border-radius: 10px;
   border: 1.5px solid var(--border); font-size: 14px;
-  color: var(--navy); background: #fff; outline: none; transition: border-color .2s;
+  color: var(--txt-dark); background: #fff; outline: none; transition: border-color .2s;
 }
 .form-control-custom:focus { border-color: var(--gold); }
 .mode-toggle {
@@ -278,20 +279,20 @@
   font-size: 12px; font-weight: 700; cursor: pointer;
   background: transparent; color: var(--gray); transition: all .2s;
 }
-.mode-btn.active { background: #fff; color: var(--navy); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+.mode-btn.active { background: #fff; color: var(--txt-dark); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
 .duration-ctrl {
   display: flex; align-items: center;
   border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden;
 }
 .duration-btn {
   width: 42px; height: 42px; border: none; background: #f8fafc;
-  font-size: 18px; cursor: pointer; color: var(--navy);
+  font-size: 18px; cursor: pointer; color: var(--txt-dark);
   transition: background .2s; flex-shrink: 0;
 }
 .duration-btn:hover { background: var(--gold); color: var(--navy); }
 .duration-input {
   flex: 1; text-align: center; border: none; outline: none;
-  font-size: 16px; font-weight: 800; color: var(--navy); background: white;
+  font-size: 16px; font-weight: 800; color: var(--txt-dark); background: white;
 }
 .price-recap { background: #f8fafc; border-radius: 12px; padding: 14px; margin-bottom: 16px; }
 .price-line {
@@ -299,13 +300,15 @@
   font-size: 13px; color: var(--gray); margin-bottom: 8px;
 }
 .price-line.total {
-  font-size: 15px; font-weight: 800; color: var(--navy);
+  font-size: 15px; font-weight: 800; color: var(--txt-dark);
   padding-top: 8px; border-top: 1px solid var(--border); margin-bottom: 0;
 }
-.price-line.total span:last-child { color: var(--gold); }
+.price-line.total span:last-child { color: var(--gold-dk); }
+
+/* ✅ FIX: btn-reserver = gold */
 .btn-reserver {
   width: 100%; padding: 14px; border-radius: 12px;
-  background: var(--gold); border: none; color: var(--navy);
+  background: var(--gold); border: none; color: var(--txt-dark);
   font-size: 15px; font-weight: 800; cursor: pointer;
   transition: all .2s; margin-bottom: 10px;
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -314,19 +317,19 @@
 .btn-devis {
   width: 100%; padding: 12px; border-radius: 12px;
   background: transparent; border: 1.5px solid var(--border);
-  color: var(--navy); font-size: 14px; font-weight: 700;
+  color: var(--txt-dark); font-size: 14px; font-weight: 700;
   cursor: pointer; transition: all .2s;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-devis:hover { border-color: var(--navy); background: #f8fafc; }
+.btn-devis:hover { border-color: var(--gold); background: var(--gold-pale); }
 .owner-section { border-top: 1px solid var(--border); padding: 16px 22px; }
 .owner-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .owner-avatar {
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--gold); display: flex; align-items: center;
-  justify-content: center; font-size: 16px; font-weight: 800; color: var(--navy); flex-shrink: 0;
+  justify-content: center; font-size: 16px; font-weight: 800; color: var(--txt-dark); flex-shrink: 0;
 }
-.owner-name  { font-size: 14px; font-weight: 800; color: var(--navy); }
+.owner-name  { font-size: 14px; font-weight: 800; color: var(--txt-dark); }
 .owner-badge { font-size: 11px; color: var(--green); font-weight: 600; }
 .owner-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .btn-whatsapp {
@@ -339,11 +342,11 @@
 .btn-appeler {
   padding: 10px; border-radius: 10px;
   border: 1.5px solid var(--border); background: white;
-  color: var(--navy); font-size: 13px; font-weight: 700;
+  color: var(--txt-dark); font-size: 13px; font-weight: 700;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: all .2s;
 }
-.btn-appeler:hover { border-color: var(--navy); }
+.btn-appeler:hover { border-color: var(--gold); }
 
 /* ═══════════════════════════════════════════════
    SECTION CARDS (calendrier, avis)
@@ -353,24 +356,29 @@
   box-shadow: var(--shadow); padding: 24px; margin-top: 20px;
 }
 .section-title {
-  font-size: 18px; font-weight: 900; color: var(--navy);
+  font-size: 18px; font-weight: 900; color: var(--txt-dark);
   margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
 }
 .section-title i { color: var(--gold); }
+
+/* ✅ FIX: rating-summary = gold-pale (plus navy background) */
 .rating-summary {
   display: flex; gap: 20px; align-items: center;
-  padding: 20px; background: var(--navy); border-radius: 14px; margin-bottom: 20px;
+  padding: 20px;
+  background: var(--gold-pale);
+  border: 1.5px solid var(--gold);
+  border-radius: 14px; margin-bottom: 20px;
 }
-.rating-big { font-size: 48px; font-weight: 900; color: var(--gold); line-height: 1; }
+.rating-big { font-size: 48px; font-weight: 900; color: var(--gold-dk); line-height: 1; }
 .rating-stars-big { color: var(--gold); font-size: 18px; letter-spacing: 2px; }
-.rating-total { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 4px; }
+.rating-total { font-size: 13px; color: var(--txt-mid); margin-top: 4px; }
 .review-card {
   padding: 16px; border: 1px solid var(--border); border-radius: 12px;
   margin-bottom: 12px; transition: box-shadow .2s;
 }
 .review-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
 .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.reviewer-name { font-weight: 700; color: var(--navy); font-size: 14px; }
+.reviewer-name { font-weight: 700; color: var(--txt-dark); font-size: 14px; }
 .reviewer-date { font-size: 11px; color: var(--gray); }
 .review-stars  { color: var(--gold); font-size: 12px; margin-bottom: 6px; }
 .review-text   { font-size: 13px; color: var(--gray); line-height: 1.6; }
@@ -410,7 +418,7 @@
     <span style="margin:0 8px">›</span>
     <a href="/machines" style="color:inherit;text-decoration:none">Catalogue</a>
     <span style="margin:0 8px">›</span>
-    <span id="breadcrumb-name" style="color:var(--navy);font-weight:600">Chargement...</span>
+    <span id="breadcrumb-name" style="color:var(--txt-dark);font-weight:600">Chargement...</span>
   </div>
 </div>
 
@@ -424,32 +432,26 @@
     {{-- ─── GALERIE IMAGES ─── --}}
     <div class="gallery-section">
 
-      {{-- Image principale --}}
       <div class="gallery-main" id="galleryMain" onclick="openLightbox(galleryIndex)">
 
         <img id="galleryMainImg" class="gallery-main-img" src="" alt="Machine"
              onerror="this.src=galleryFallback()">
 
-        {{-- Badge statut --}}
         <div id="gallery-status-badge" class="gallery-status-badge status-available">Disponible</div>
 
-        {{-- Nav gauche/droite --}}
         <button class="gallery-nav prev" id="galleryPrev"
                 onclick="event.stopPropagation();galleryNav(-1)" style="display:none">‹</button>
         <button class="gallery-nav next" id="galleryNext"
                 onclick="event.stopPropagation();galleryNav(1)" style="display:none">›</button>
 
-        {{-- Compteur --}}
         <div class="gallery-counter" id="galleryCounter" style="display:none">1 / 1</div>
 
-        {{-- Bouton ouvrir 3D --}}
         <button class="gallery-3d-btn" onclick="event.stopPropagation();toggle3DPanel()">
           <span>🔲</span> Vue 3D
         </button>
 
       </div>
 
-      {{-- Thumbnails --}}
       <div class="gallery-thumbs" id="galleryThumbs"></div>
 
     </div>{{-- fin gallery-section --}}
@@ -494,6 +496,7 @@
         </div>
       </div>
 
+      {{-- ✅ FIX: price-section gold-pale --}}
       <div class="price-section">
         <div class="price-item">
           <div class="price-label">Par jour</div>
@@ -541,7 +544,7 @@
         <div style="text-align:center;padding:20px;color:var(--txt-mid)">Aucun avis pour le moment</div>
       </div>
       <button class="btn-reserver mt-3"
-              style="background:transparent;border:1.5px solid var(--gold);color:var(--gold-dk)"
+              style="background:transparent;border:1.5px solid var(--gold);color:var(--gold-dk);width:auto;padding:10px 24px"
               onclick="showReviewForm()">
         <i class="fas fa-star"></i> Laisser un avis
       </button>
@@ -572,6 +575,7 @@
 
     {{-- Booking card --}}
     <div class="booking-card">
+      {{-- ✅ FIX: header gold-pale --}}
       <div class="booking-header">
         <div class="booking-price-main" id="bookingPrice">— DH</div>
         <div class="booking-price-sub">
@@ -623,13 +627,8 @@
           </div>
         </div>
 
-        <button onclick="reserver()"
-                style="width:100%;padding:14px;border-radius:12px;background:var(--navy);
-                       color:var(--gold);border:1.5px solid var(--gold);font-size:15px;font-weight:800;
-                       cursor:pointer;margin-bottom:10px;display:flex;align-items:center;
-                       justify-content:center;gap:8px;transition:all .2s;"
-                onmouseover="this.style.background='#D4AF37';this.style.color='#0F1B2D'"
-                onmouseout="this.style.background='#0F1B2D';this.style.color='#D4AF37'">
+        {{-- ✅ FIX: bouton "Envoyer une demande" = gold --}}
+        <button onclick="reserver()" class="btn-reserver">
           <i class="fas fa-paper-plane"></i> Envoyer une demande
         </button>
         <button class="btn-devis" onclick="devis()">
@@ -669,7 +668,6 @@
       <div class="mini3d-wrap" id="mini3d-wrap">
         <canvas id="mini3d-canvas"
                 style="display:block;width:100%;height:100%;cursor:grab;touch-action:none;"></canvas>
-        {{-- Loader --}}
         <div id="mini3d-loader"
              style="position:absolute;inset:0;display:flex;flex-direction:column;
                     align-items:center;justify-content:center;
@@ -719,10 +717,7 @@ var machine      = null;
 var currentMode  = 'jour';
 var selectedStar = 0;
 
-/* ═══════════════════════════════════════════════
-   GALERIE — STATE
-═══════════════════════════════════════════════ */
-var galleryImages = [];   // [{src, alt}]
+var galleryImages = [];
 var galleryIndex  = 0;
 var mini3dReady   = false;
 var mini3dAnimOn  = false;
@@ -732,7 +727,6 @@ var mini3dBoom = null, mini3dDipper = null, mini3dBktGrp = null, mini3dLoaderArm
 var mini3dAT  = 0;
 var MINI3D_BOOM0=-.45, MINI3D_DIP0=.55, MINI3D_BKT0=-.45;
 
-/* ── TYPE_PHOTO fallback ── */
 var TYPE_PHOTO = {
   excavatrice: '/images/img3.png',
   grue:        '/images/img4.png',
@@ -755,7 +749,6 @@ function galleryFallback() {
 document.addEventListener('DOMContentLoaded', function() {
   loadMachine();
   document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
-  // Fermer lightbox avec Escape
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowLeft')  { lightboxNav(-1); galleryNav(-1); }
@@ -793,7 +786,7 @@ async function loadMachine() {
 }
 
 /* ═══════════════════════════════════════════════
-   RENDER MACHINE (texte / badges / prix)
+   RENDER MACHINE
 ═══════════════════════════════════════════════ */
 function renderMachine() {
   var m = machine;
@@ -811,10 +804,10 @@ function renderMachine() {
   document.getElementById('priceHour').textContent = fmt(m.price_per_hour)+ ' DH';
 
   var statusLabels = { available:'Disponible', rented:'Loué', maintenance:'Maintenance', unavailable:'Indisponible' };
-  var statusColors = { available:'#10b981', rented:'#D4AF37', maintenance:'#ef4444', unavailable:'#6b7280' };
   var st = m.status || 'available';
+  var stColor = st==='available' ? '#15803d' : (st==='rented' ? '#9A7D20' : (st==='maintenance' ? '#b91c1c' : '#6b7280'));
   document.getElementById('priceStatus').textContent   = statusLabels[st] || st;
-  document.getElementById('priceStatus').style.color   = statusColors[st] || '#fff';
+  document.getElementById('priceStatus').style.color   = stColor;
 
   var badge = document.getElementById('gallery-status-badge');
   badge.textContent = (statusLabels[st] || st).toUpperCase();
@@ -837,7 +830,6 @@ function buildGallery() {
   var m = machine;
   galleryImages = [];
 
-  // 1. machine_images (relation Laravel)
   if (m.machine_images && m.machine_images.length) {
     m.machine_images.forEach(function(img) {
       var src = img.path
@@ -847,7 +839,6 @@ function buildGallery() {
     });
   }
 
-  // 2. images (autre format possible)
   if (!galleryImages.length && m.images && m.images.length) {
     m.images.forEach(function(img) {
       var src = typeof img === 'string'
@@ -857,7 +848,6 @@ function buildGallery() {
     });
   }
 
-  // 3. Fallback par type
   if (!galleryImages.length) {
     galleryImages.push({ src: galleryFallback(), alt: m.name || 'Machine' });
   }
@@ -872,7 +862,6 @@ function renderGalleryMain() {
   document.getElementById('galleryMainImg').src = img.src;
   document.getElementById('galleryMainImg').alt = img.alt;
 
-  // Nav visible si > 1 image
   var multi = galleryImages.length > 1;
   document.getElementById('galleryPrev').style.display    = multi ? 'flex' : 'none';
   document.getElementById('galleryNext').style.display    = multi ? 'flex' : 'none';
@@ -904,11 +893,9 @@ function renderGalleryThumbs() {
 function setGalleryIndex(i) {
   galleryIndex = (i + galleryImages.length) % galleryImages.length;
   renderGalleryMain();
-  // Update thumbs active state
   document.querySelectorAll('.gallery-thumb').forEach(function(el, idx) {
     el.classList.toggle('active', idx === galleryIndex);
   });
-  // Scroll thumb into view
   var thumbs = document.querySelectorAll('.gallery-thumb');
   if (thumbs[galleryIndex]) {
     thumbs[galleryIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -946,7 +933,6 @@ function toggle3DPanel() {
   var visible = card.style.display !== 'none';
   card.style.display = visible ? 'none' : 'block';
   if (!visible && !mini3dReady) {
-    // Init 3D au premier affichage
     setTimeout(function() { initMini3DViewer(); }, 50);
   }
 }
@@ -982,7 +968,6 @@ function initMini3DViewer() {
   mini3dScene.background = new THREE.Color(0x071018);
   mini3dCamera = new THREE.PerspectiveCamera(48, W / H, 0.1, 100);
 
-  // Lumières
   mini3dScene.add(new THREE.AmbientLight(0xffffff, 0.55));
   var sun = new THREE.DirectionalLight(0xfff5dd, 1.7);
   sun.position.set(8, 13, 9); sun.castShadow = true;
@@ -990,7 +975,6 @@ function initMini3DViewer() {
   var fill = new THREE.DirectionalLight(0x3355bb, 0.28);
   fill.position.set(-6, 4, -6); mini3dScene.add(fill);
 
-  // Sol
   var gnd = new THREE.Mesh(
     new THREE.PlaneGeometry(30, 30),
     new THREE.MeshLambertMaterial({ color: 0x0c1c2d })
@@ -998,7 +982,6 @@ function initMini3DViewer() {
   gnd.rotation.x = -Math.PI / 2; gnd.receiveShadow = true; mini3dScene.add(gnd);
   mini3dScene.add(new THREE.GridHelper(16, 16, 0x1b3246, 0x111f2d));
 
-  // Matériaux
   var M  = function(c) { return new THREE.MeshLambertMaterial({ color: c }); };
   var MT = function(c,o) { return new THREE.MeshLambertMaterial({ color:c, transparent:true, opacity:o }); };
   var Y=M(PAL.main), YD=M(PAL.dark), BK=M(0x0d0d0d), SL=M(0x7a8898), DK=M(0x060c12);
@@ -1016,7 +999,6 @@ function initMini3DViewer() {
     o.position.set(x,y,z); o.rotation.set(rx,ry,rz); o.castShadow = true; return o;
   };
 
-  // JCB Model (identique)
   var JCB = new THREE.Group();
   JCB.add(B(4.1,.21,1.9,YD,0,.51,0));
   JCB.add(B(3.75,.39,1.68,Y,0,.78,0));
@@ -1062,7 +1044,6 @@ function initMini3DViewer() {
   mini3dDipper.add(mini3dBktGrp); mini3dBoom.add(mini3dDipper); bh.add(mini3dBoom); JCB.add(bh);
   mini3dScene.add(JCB);
 
-  // Orbit manuel
   var dragging=false, autoRot=true, px=0, py=0;
   canvas.addEventListener('mousedown', function(e){ dragging=true; autoRot=false; px=e.clientX; py=e.clientY; canvas.style.cursor='grabbing'; });
   document.addEventListener('mouseup',  function(){ dragging=false; canvas.style.cursor='grab'; });
@@ -1077,13 +1058,11 @@ function initMini3DViewer() {
     e.preventDefault();
   }, { passive: false });
 
-  // Supprimer loader
   setTimeout(function(){
     var ld = document.getElementById('mini3d-loader');
     if(ld) ld.style.display='none';
   }, 500);
 
-  // Boucle
   function loop(){
     requestAnimationFrame(loop);
     if(autoRot && !dragging) mini3dTheta += .004;
@@ -1221,11 +1200,11 @@ function renderRatings(ratings) {
     var count = ratings.filter(function(r){ return Math.round(r.rating||r.note||0)===s; }).length;
     var pct   = Math.round(count/ratings.length*100);
     bars += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
-      '<span style="font-size:11px;color:rgba(255,255,255,.5);width:12px">'+s+'</span>'+
-      '<div style="flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden">'+
-        '<div style="width:'+pct+'%;height:100%;background:#D4AF37;border-radius:3px"></div>'+
+      '<span style="font-size:11px;color:var(--txt-mid);width:12px">'+s+'</span>'+
+      '<div style="flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden">'+
+        '<div style="width:'+pct+'%;height:100%;background:var(--gold);border-radius:3px"></div>'+
       '</div>'+
-      '<span style="font-size:11px;color:rgba(255,255,255,.4);width:28px">'+pct+'%</span>'+
+      '<span style="font-size:11px;color:var(--txt-mid);width:28px">'+pct+'%</span>'+
       '</div>';
   }
   document.getElementById('ratingBars').innerHTML = bars;
@@ -1296,22 +1275,22 @@ function renderCalendar(year, month, reserved) {
   var curM   = new Date().getMonth();
   var curY   = new Date().getFullYear();
   var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'+
-    '<button onclick="changeMonth(-1)" style="border:none;background:#f1f5f9;border-radius:8px;width:32px;height:32px;cursor:pointer">‹</button>'+
-    '<strong style="color:#0F1B2D">'+mnames[month]+' '+year+'</strong>'+
-    '<button onclick="changeMonth(1)"  style="border:none;background:#f1f5f9;border-radius:8px;width:32px;height:32px;cursor:pointer">›</button>'+
+    '<button onclick="changeMonth(-1)" style="border:none;background:var(--cream2);border-radius:8px;width:32px;height:32px;cursor:pointer">‹</button>'+
+    '<strong style="color:var(--txt-dark)">'+mnames[month]+' '+year+'</strong>'+
+    '<button onclick="changeMonth(1)"  style="border:none;background:var(--cream2);border-radius:8px;width:32px;height:32px;cursor:pointer">›</button>'+
     '</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">';
-  names.forEach(function(n){ html+='<div style="font-size:10px;font-weight:700;color:#6b7280;padding:6px 0">'+n+'</div>'; });
+  names.forEach(function(n){ html+='<div style="font-size:10px;font-weight:700;color:var(--txt-light);padding:6px 0">'+n+'</div>'; });
   for(var i=0;i<first;i++) html+='<div></div>';
   for(var d=1;d<=days;d++){
     var isToday   =(d===today && month===curM && year===curY);
     var isPast    =(new Date(year,month,d)<new Date(curY,curM,today));
     var isReserved=reserved.includes(year+'-'+pad(month+1)+'-'+pad(d));
     var bg =isReserved?'#FEE2E2':(isToday?'#D4AF37':(isPast?'#f9fafb':'#f0fdf4'));
-    var col=isReserved?'#991B1B':(isToday?'#0F1B2D':(isPast?'#d1d5db':'#0F1B2D'));
+    var col=isReserved?'#991B1B':(isToday?'#1a1a2e':(isPast?'#d1d5db':'#1a1a2e'));
     var fw =isToday?'900':'500';
     html+='<div style="background:'+bg+';color:'+col+';border-radius:8px;padding:8px 4px;font-size:12px;font-weight:'+fw+'">'+d+'</div>';
   }
-  html+='</div><div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:#6b7280">'+
+  html+='</div><div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--txt-mid)">'+
     '<span><span style="display:inline-block;width:12px;height:12px;background:#f0fdf4;border-radius:3px;margin-right:4px"></span>Disponible</span>'+
     '<span><span style="display:inline-block;width:12px;height:12px;background:#FEE2E2;border-radius:3px;margin-right:4px"></span>Réservé</span>'+
     '</div>';

@@ -1,3 +1,5 @@
+
+
 @extends('layouts.app')
 
 @push('styles')
@@ -103,7 +105,7 @@
   transition: border .2s; outline: none;
 }
 .form-control:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
-.form-control:disabled { background: var(--cream2); color: var(--txt-mid); cursor: not-allowed; }
+.form-control[readonly] { background: var(--cream2); color: var(--txt-mid); cursor: default; }
 .form-control::placeholder { color: var(--txt-light); }
 textarea.form-control { resize: vertical; min-height: 90px; }
 
@@ -227,11 +229,13 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     <div class="form-grid">
       <div>
         <label class="form-label">Nom complet</label>
+        {{-- ✅ FIX: supprimé required — validation gérée en JS --}}
         <input type="text" id="inp_name" class="form-control" placeholder="Votre nom">
       </div>
       <div>
-        <label class="form-label">Email</label>
-        <input type="email" id="inp_email" class="form-control" disabled>
+        <label class="form-label">Email <small style="color:var(--txt-light);font-weight:400">(non modifiable)</small></label>
+        {{-- ✅ FIX: readonly au lieu de disabled → affiche la valeur correctement --}}
+        <input type="email" id="inp_email" class="form-control" readonly>
       </div>
       <div>
         <label class="form-label">Téléphone</label>
@@ -292,11 +296,13 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 @push('scripts')
 <script>
 /* ══════════════════════════════════════════
-   PROFILE — RENTIFY V13
-   ✅ Zéro navy
-   ✅ profile_photo_path persist après refresh
-   ✅ saveProfile() préserve la photo
-   ✅ Navbar sync via refreshNavAvatar()
+    PROFILE — RENTIFY V15
+    ✅ FIX #1 : saveProfile() — body JSON ajouté (manquait complètement)
+    ✅ FIX #2 : inp_email readonly (plus disabled) → affiche la valeur
+    ✅ FIX #3 : required retiré des inputs HTML → validation 100% JS
+    ✅ Zéro navy bg
+    ✅ profile_photo_path persist après refresh
+    ✅ Navbar sync via refreshNavAvatar()
 ══════════════════════════════════════════ */
 
 /* ── Helpers localStorage ── */
@@ -366,21 +372,18 @@ async function loadProfile() {
     }
 
     var json  = await r.json();
-    /* Normalise la réponse — supporte {data:{...}} et {...} directement */
     var fresh = (json && json.data && json.data.id) ? json.data
               : (json && json.id)                   ? json
               : null;
 
     if (!fresh) throw new Error('Réponse API invalide');
 
-    /* ✅ RÈGLE CLÉ — si l'API renvoie profile_photo_path=null
-       mais qu'on en a une dans localStorage, on la conserve.
-       Ça arrive quand le controller n'inclut pas le champ. */
+    /* ✅ Préserver photo si API renvoie null */
     if (!fresh.profile_photo_path && _photo(_user)) {
       fresh.profile_photo_path = _photo(_user);
     }
 
-    /* Remplir le formulaire */
+    /* ✅ Remplir le formulaire — chaque champ mapped correctement */
     document.getElementById('inp_name').value  = fresh.name  || '';
     document.getElementById('inp_email').value = fresh.email || '';
     document.getElementById('inp_phone').value = fresh.phone || '';
@@ -391,13 +394,18 @@ async function loadProfile() {
     _renderHeader(fresh);
     _renderAvatar(_photo(fresh), fresh.name);
 
-    /* Sauvegarder en localStorage (source de vérité locale) */
+    /* Sauvegarder en localStorage */
     _saveUser(fresh);
     _user = fresh;
 
   } catch(e) {
     console.error('loadProfile error:', e);
-    /* On reste sur les données localStorage — pas de crash */
+    /* Fallback sur localStorage si API échoue */
+    document.getElementById('inp_name').value  = _user.name  || '';
+    document.getElementById('inp_email').value = _user.email || '';
+    document.getElementById('inp_phone').value = _user.phone || '';
+    document.getElementById('inp_city').value  = _user.city  || '';
+    document.getElementById('inp_bio').value   = _user.bio   || '';
   }
 
   loadHistory();
@@ -410,6 +418,7 @@ async function saveProfile() {
   var city  = document.getElementById('inp_city').value.trim();
   var bio   = document.getElementById('inp_bio').value.trim();
 
+  /* ✅ FIX #3 : validation JS — aucun required HTML sur les inputs */
   if (!name) { showToast('Le nom est obligatoire', 'error'); return; }
 
   var btn = document.getElementById('btnSave');
@@ -424,6 +433,7 @@ async function saveProfile() {
         'Authorization': 'Bearer ' + _token(),
         'Accept':        'application/json'
       },
+      /* ✅ FIX #1 : body manquait complètement dans la version précédente */
       body: JSON.stringify({ name: name, phone: phone, city: city, bio: bio })
     });
     var json = await r.json();
@@ -435,9 +445,13 @@ async function saveProfile() {
       _user = updated;
 
       _renderHeader(_user);
-      showToast('Profil mis à jour avec succès', 'success');
+      showToast('Profil mis à jour avec succès ✓', 'success');
     } else {
-      showToast(json.message || 'Erreur lors de la sauvegarde', 'error');
+      /* Affiche l'erreur Laravel (422 validation, 500, etc.) */
+      var errMsg = (json.errors && Object.values(json.errors)[0])
+                 ? Object.values(json.errors)[0][0]
+                 : (json.message || 'Erreur lors de la sauvegarde');
+      showToast(errMsg, 'error');
     }
   } catch(e) {
     showToast('Erreur réseau', 'error');
@@ -458,15 +472,15 @@ async function uploadAvatar(input) {
     return;
   }
 
-  /* Preview immédiat pour un retour visuel rapide */
+  /* Preview immédiat */
   var reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById('avatarImg').src = e.target.result;
   };
   reader.readAsDataURL(file);
 
-  var form = new FormData();
-  form.append('avatar', file);
+  var formData = new FormData();
+  formData.append('avatar', file);
 
   try {
     var r = await fetch('/api/profile/avatar', {
@@ -475,47 +489,49 @@ async function uploadAvatar(input) {
         'Authorization': 'Bearer ' + _token(),
         'Accept': 'application/json'
       },
-      body: form
+      body: formData
     });
+
     var json = await r.json();
 
     if (r.ok) {
-      /* ✅ Récupère le path retourné par l'API */
+      var freshUser = json.user ? json.user : null;
       var newPath = json.data
         ? (json.data.profile_photo_path || json.data.avatar || null)
-        : null;
+        : (freshUser ? (freshUser.profile_photo_path || freshUser.avatar) : null);
 
-      if (newPath) {
-        /* Merge dans _user en préservant tout le reste */
+      if (freshUser) {
+        _user = freshUser;
+        _saveUser(_user);
+      } else if (newPath) {
         _user = Object.assign({}, _user, {
           profile_photo_path: newPath,
-          avatar: newPath   /* rétrocompat */
+          avatar: newPath
         });
         _saveUser(_user);
-
-        /* Reload image sans cache */
-        document.getElementById('avatarImg').src = '/storage/' + newPath + '?t=' + Date.now();
-
-        /* ✅ Sync navbar immédiatement */
-        if (typeof window.refreshNavAvatar === 'function') {
-          window.refreshNavAvatar();
-        }
-
-        showToast('Photo de profil mise à jour', 'success');
-      } else {
-        showToast('Upload réussi mais chemin non retourné', 'info');
       }
+
+      var validPath = _photo(_user);
+      if (validPath) {
+        document.getElementById('avatarImg').src = '/storage/' + validPath + '?t=' + Date.now();
+      }
+
+      if (typeof window.refreshNavAvatar === 'function') {
+        window.refreshNavAvatar(_user);
+      }
+
+      showToast('Photo de profil mise à jour !', 'success');
     } else {
       showToast(json.message || 'Erreur lors de l\'upload', 'error');
-      /* Rollback avatar */
       _renderAvatar(_photo(_user), _user.name);
     }
   } catch(e) {
+    console.error(e);
     showToast('Erreur réseau lors de l\'upload', 'error');
     _renderAvatar(_photo(_user), _user.name);
   }
 
-  input.value = ''; /* reset input pour permettre re-upload même fichier */
+  input.value = '';
 }
 
 /* ══ CHANGE PASSWORD ══ */

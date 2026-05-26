@@ -1,4 +1,5 @@
 
+
 @extends('layouts.app')
 
 @section('title', 'Catalogue des machines — Rentify')
@@ -7,14 +8,14 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 /* ══════════════════════════════════════════════
-   MACHINES INDEX — RENTIFY V6
-   Gold / Crème — Catalogue complet
+   MACHINES INDEX — RENTIFY V7 (gold/crème strict)
 ══════════════════════════════════════════════ */
 :root {
   --gold:#D4AF37;--gold-dk:#9A7D20;--gold-pale:#FEF9E7;
+  --gold-glow:rgba(212,175,55,.25);
   --navy:#0F1B2D;--navy2:#162540;
   --cream:#FAF7F0;--cream2:#F0EBE0;--cream3:#E8DDD0;
-  --txt-mid:#5a5660;--txt-light:#9992a4;
+  --txt-dark:#1a1a2e;--txt-mid:#5a5660;--txt-light:#9992a4;
   --green:#22c55e;--red:#ef4444;
   --radius:14px;--shadow:0 4px 24px rgba(15,27,45,.08);
 }
@@ -51,7 +52,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   width:100%; padding:.6rem 1rem .6rem 2.6rem;
   border:1.5px solid var(--cream3); border-radius:50px;
   font-family:'DM Sans',sans-serif; font-size:.88rem;
-  color:var(--navy); outline:none; background:var(--cream);
+  color:var(--txt-dark); outline:none; background:var(--cream);
   transition:border .2s,box-shadow .2s;
 }
 .search-input-wrap input:focus {
@@ -72,15 +73,15 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   transition:all .2s; font-size:.9rem;
   display:flex; align-items:center; justify-content:center;
 }
-.view-btn.active { background:#fff; color:var(--navy); box-shadow:var(--shadow); }
+.view-btn.active { background:#fff; color:var(--txt-dark); box-shadow:var(--shadow); }
 .results-count {
   color:var(--txt-light); font-size:.82rem; white-space:nowrap;
 }
-.results-count strong { color:var(--navy); }
+.results-count strong { color:var(--txt-dark); }
 .sort-select {
   padding:.5rem .9rem; border:1.5px solid var(--cream3);
   border-radius:8px; font-family:'DM Sans',sans-serif;
-  font-size:.82rem; color:var(--navy); outline:none;
+  font-size:.82rem; color:var(--txt-dark); outline:none;
   background:#fff; cursor:pointer;
 }
 
@@ -89,7 +90,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 ══════════════════════════════════ */
 .filter-sidebar {
   background:#fff;
-  border:1px solid rgba(212,175,55,.12);
+  border:1px solid rgba(212,175,55,.2);
   border-radius:var(--radius);
   padding:1.5rem;
   box-shadow:var(--shadow);
@@ -97,7 +98,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 .filter-title {
   font-family:'Playfair Display',serif;
-  font-size:1rem; color:var(--navy);
+  font-size:1rem; color:var(--txt-dark);
   margin:0 0 1.25rem;
   display:flex; align-items:center; justify-content:space-between;
 }
@@ -125,10 +126,11 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   color:var(--txt-mid); transition:all .18s;
   display:inline-flex; align-items:center; gap:.3rem;
 }
-.type-chip:hover { border-color:var(--gold); color:var(--navy); }
+.type-chip:hover { border-color:var(--gold); color:var(--txt-dark); }
+/* ✅ FIX: active chip = gold (plus navy) */
 .type-chip.active {
-  background:var(--navy); border-color:var(--navy);
-  color:var(--gold);
+  background:var(--gold); border-color:var(--gold);
+  color:var(--txt-dark);
 }
 
 /* Price range */
@@ -138,7 +140,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   flex:1; padding:.45rem .6rem;
   border:1.5px solid var(--cream3); border-radius:8px;
   font-family:'DM Sans',sans-serif; font-size:.82rem;
-  color:var(--navy); outline:none; text-align:center;
+  color:var(--txt-dark); outline:none; text-align:center;
   transition:border .2s;
 }
 .price-inputs input:focus { border-color:var(--gold); }
@@ -149,7 +151,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   width:100%; padding:.45rem .75rem;
   border:1.5px solid var(--cream3); border-radius:8px;
   font-family:'DM Sans',sans-serif; font-size:.82rem;
-  color:var(--navy); outline:none;
+  color:var(--txt-dark); outline:none;
   transition:border .2s;
 }
 .city-input:focus { border-color:var(--gold); }
@@ -166,7 +168,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .status-opt label { font-size:.83rem; color:var(--txt-mid); cursor:pointer; }
 
 /* ══════════════════════════════════
-   MAP TOGGLE
+   MAP TOGGLE — ✅ FIX: gold au lieu de navy
 ══════════════════════════════════ */
 .map-toggle-bar {
   display:flex; align-items:center; justify-content:flex-end;
@@ -175,12 +177,12 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .btn-map-toggle {
   display:inline-flex; align-items:center; gap:.4rem;
   padding:.45rem 1rem; border-radius:8px;
-  background:var(--navy); color:var(--gold);
+  background:var(--gold); color:var(--txt-dark);
   border:none; font-family:'DM Sans',sans-serif;
   font-size:.82rem; font-weight:700; cursor:pointer;
   transition:all .2s;
 }
-.btn-map-toggle:hover { background:var(--navy2); }
+.btn-map-toggle:hover { background:var(--gold-dk); color:#fff; }
 #leafletMap {
   height:320px; border-radius:var(--radius);
   border:1px solid rgba(212,175,55,.15);
@@ -245,8 +247,8 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 /* Badges sur l'image */
 .card-badge-num {
   position:absolute; top:.65rem; left:.65rem;
-  background:rgba(15,27,45,.75); backdrop-filter:blur(4px);
-  color:var(--gold); font-size:.68rem; font-weight:800;
+  background:rgba(212,175,55,.85); backdrop-filter:blur(4px);
+  color:var(--txt-dark); font-size:.68rem; font-weight:800;
   padding:.2rem .55rem; border-radius:6px;
   letter-spacing:.04em;
 }
@@ -283,7 +285,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   margin-bottom:.5rem;
 }
 .card-machine-name {
-  font-weight:800; color:var(--navy); font-size:1rem;
+  font-weight:800; color:var(--txt-dark); font-size:1rem;
   margin-bottom:.25rem; line-height:1.3;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
@@ -300,16 +302,17 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--cream); border-radius:8px;
   margin-bottom:.75rem;
 }
+/* ✅ FIX: owner avatar gold bg */
 .owner-avatar {
   width:28px; height:28px; border-radius:50%;
-  background:var(--navy); color:var(--gold);
+  background:var(--gold); color:var(--txt-dark);
   font-size:.75rem; font-weight:800;
   display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; overflow:hidden; border:2px solid var(--gold);
+  flex-shrink:0; overflow:hidden; border:2px solid var(--gold-dk);
 }
 .owner-avatar img { width:100%; height:100%; object-fit:cover; }
 .owner-name {
-  font-size:.78rem; font-weight:600; color:var(--navy);
+  font-size:.78rem; font-weight:600; color:var(--txt-dark);
   flex:1;
 }
 .owner-rating {
@@ -323,7 +326,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   margin-bottom:.85rem;
 }
 .card-price-day {
-  font-size:1.25rem; font-weight:900; color:var(--navy);
+  font-size:1.25rem; font-weight:900; color:var(--txt-dark);
   font-family:'Playfair Display',serif;
 }
 .card-price-unit { font-size:.78rem; color:var(--txt-mid); }
@@ -336,18 +339,19 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .card-actions {
   display:flex; gap:.5rem; margin-top:auto;
 }
+/* ✅ FIX: btn-reserver = gold (plus navy) */
 .btn-reserver {
   flex:1; padding:.55rem 1rem;
-  background:var(--navy); color:var(--gold);
+  background:var(--gold); color:var(--txt-dark);
   border:none; border-radius:9px;
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:.83rem;
   cursor:pointer; transition:all .2s;
   display:flex; align-items:center; justify-content:center; gap:.4rem;
   text-decoration:none;
 }
-.btn-reserver:hover { background:var(--navy2); transform:translateY(-1px); }
-.btn-reserver.guest { background:var(--gold); color:var(--navy); }
-.btn-reserver.guest:hover { background:var(--gold-dk); }
+.btn-reserver:hover { background:var(--gold-dk); color:#fff; transform:translateY(-1px); }
+.btn-reserver.guest { background:var(--gold); color:var(--txt-dark); }
+.btn-reserver.guest:hover { background:var(--gold-dk); color:#fff; }
 .btn-wa {
   width:38px; height:38px; border-radius:9px;
   background:#25D366; border:none; color:#fff;
@@ -359,7 +363,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .btn-detail {
   width:38px; height:38px; border-radius:9px;
   background:var(--cream2); border:1.5px solid var(--cream3);
-  color:var(--navy); font-size:.9rem;
+  color:var(--txt-dark); font-size:.9rem;
   cursor:pointer; transition:all .2s;
   display:flex; align-items:center; justify-content:center;
   text-decoration:none;
@@ -391,7 +395,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 .modal-header h2 {
   font-family:'Playfair Display',serif;
-  font-size:1.15rem; color:var(--navy); margin:0;
+  font-size:1.15rem; color:var(--txt-dark); margin:0;
 }
 .modal-close {
   width:34px; height:34px; border-radius:8px;
@@ -412,16 +416,16 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   width:64px; height:64px; border-radius:8px;
   object-fit:cover; flex-shrink:0;
 }
-.modal-machine-name { font-weight:700; color:var(--navy); font-size:.92rem; }
+.modal-machine-name { font-weight:700; color:var(--txt-dark); font-size:.92rem; }
 .modal-machine-price { color:var(--gold-dk); font-size:.8rem; font-weight:600; margin-top:.2rem; }
 
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin-bottom:.9rem; }
 .form-group { display:flex; flex-direction:column; gap:.35rem; }
-.form-label { font-size:.78rem; font-weight:700; color:var(--navy); }
+.form-label { font-size:.78rem; font-weight:700; color:var(--txt-dark); }
 .form-control {
   padding:.55rem .8rem; border:1.5px solid var(--cream3);
   border-radius:9px; font-family:'DM Sans',sans-serif;
-  font-size:.85rem; color:var(--navy); outline:none;
+  font-size:.85rem; color:var(--txt-dark); outline:none;
   transition:border .2s;
 }
 .form-control:focus { border-color:var(--gold); }
@@ -434,7 +438,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .price-calc-label { font-size:.82rem; color:var(--txt-mid); }
 .price-calc-value {
   font-family:'Playfair Display',serif;
-  font-size:1.4rem; color:var(--navy); font-weight:700;
+  font-size:1.4rem; color:var(--txt-dark); font-weight:700;
 }
 
 .modal-footer {
@@ -442,17 +446,17 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   border-top:1px solid var(--cream3); background:var(--cream);
 }
 
-/* Boutons généraux */
+/* ✅ FIX: btn-navy = gold (rétrocompat) */
 .btn-navy {
-  background:var(--navy); color:var(--gold);
+  background:var(--gold); color:var(--txt-dark);
   border:none; border-radius:9px; padding:.6rem 1.25rem;
   font-family:'DM Sans',sans-serif; font-weight:700; font-size:.85rem;
   cursor:pointer; transition:all .2s; display:inline-flex;
   align-items:center; gap:.4rem; text-decoration:none;
 }
-.btn-navy:hover { background:var(--navy2); transform:translateY(-1px); }
+.btn-navy:hover { background:var(--gold-dk); color:#fff; transform:translateY(-1px); }
 .btn-outline-sm {
-  background:transparent; color:var(--navy);
+  background:transparent; color:var(--txt-dark);
   border:1.5px solid var(--cream3); border-radius:9px;
   padding:.6rem 1.1rem; font-family:'DM Sans',sans-serif;
   font-weight:600; font-size:.85rem; cursor:pointer; transition:all .2s;
@@ -471,7 +475,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   border:1px solid var(--cream3);
   padding:.8rem 1.2rem;
   box-shadow:0 8px 32px rgba(10,16,28,.12);
-  font-size:.84rem; font-weight:600; color:var(--navy);
+  font-size:.84rem; font-weight:600; color:var(--txt-dark);
   display:flex; align-items:center; gap:.6rem;
   transform:translateX(120%); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
   min-width:220px;
@@ -488,7 +492,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   grid-column:1/-1; text-align:center; padding:4rem 2rem;
 }
 .empty-state-icon { font-size:3.5rem; margin-bottom:1rem; opacity:.4; }
-.empty-state h3 { color:var(--navy); font-size:1.15rem; margin:0 0 .5rem; }
+.empty-state h3 { color:var(--txt-dark); font-size:1.15rem; margin:0 0 .5rem; }
 .empty-state p  { color:var(--txt-mid); font-size:.88rem; }
 
 .skeleton {
@@ -497,7 +501,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* Pagination */
+/* ✅ FIX: Pagination active = gold (plus navy) */
 .pagination-wrap {
   display:flex; justify-content:center; align-items:center;
   gap:.5rem; margin-top:2rem; grid-column:1/-1;
@@ -510,7 +514,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   transition:all .2s; font-family:'DM Sans',sans-serif; font-weight:600;
 }
 .page-btn:hover, .page-btn.active {
-  background:var(--navy); border-color:var(--navy); color:var(--gold);
+  background:var(--gold); border-color:var(--gold); color:var(--txt-dark);
 }
 .page-btn:disabled { opacity:.35; cursor:not-allowed; }
 
@@ -583,12 +587,12 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
       <div class="price-inputs">
         <input type="number" id="priceMin" placeholder="Min" class="price-inputs" oninput="applyFilters()"
                style="flex:1;padding:.45rem .6rem;border:1.5px solid var(--cream3);border-radius:8px;
-                      font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--navy);
+                      font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--txt-dark);
                       outline:none;text-align:center;">
         <span class="price-sep">—</span>
         <input type="number" id="priceMax" placeholder="Max" oninput="applyFilters()"
                style="flex:1;padding:.45rem .6rem;border:1.5px solid var(--cream3);border-radius:8px;
-                      font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--navy);
+                      font-family:'DM Sans',sans-serif;font-size:.82rem;color:var(--txt-dark);
                       outline:none;text-align:center;">
       </div>
     </div>
@@ -612,7 +616,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
       </div>
     </div>
 
-    {{-- Mini map toggle --}}
+    {{-- ✅ FIX: bouton carte = gold --}}
     <button class="btn-map-toggle" id="mapToggleBtn" onclick="toggleMap()" style="width:100%">
       🗺 Voir sur la carte
     </button>
@@ -697,7 +701,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* ════════════════════════════════════════════════
-   MACHINES INDEX — RENTIFY V6
+   MACHINES INDEX — RENTIFY V7
    Catalogue complet : filtres, rôles, WhatsApp, modal réservation
 ════════════════════════════════════════════════ */
 
@@ -731,7 +735,6 @@ const role  = user?.role || 'guest';
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', async () => {
   await loadMachines();
-  // Set min date to today
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('resStartDate').min = today;
   document.getElementById('resEndDate').min   = today;
@@ -742,7 +745,6 @@ async function loadMachines() {
   try {
     const data = await window.API.get('/api/machines');
     allMachines = Array.isArray(data) ? data : (data.data || data.machines || []);
-    
     applyFilters();
   } catch(e) {
     console.error('loadMachines', e);
@@ -786,7 +788,6 @@ function applyFilters() {
     return matchQ && matchType && matchCity && matchPrice && matchStatus;
   });
 
-  // Sort
   filteredList.sort((a,b) => {
     if (sort==='price_asc')  return parseFloat(a.price_per_day)-parseFloat(b.price_per_day);
     if (sort==='price_desc') return parseFloat(b.price_per_day)-parseFloat(a.price_per_day);
@@ -843,42 +844,39 @@ function buildCard(m, i) {
     ? `<img src="/storage/${m.owner.profile_photo_path}" alt="${escH(ownerName)}">`
     : ownerInit;
 
-  // Avg rating
   const ratings = m.ratings || [];
   const avgRating = ratings.length
     ? (ratings.reduce((s,r)=>s+parseFloat(r.rating||0),0)/ratings.length).toFixed(1)
     : null;
 
-  // Favoris
   const isFav = window.isFavorite ? window.isFavorite(m.id) : false;
 
-  // Status badge
   const statusMap = {
     available: '<span class="card-badge-status status-available">✅ Disponible</span>',
     unavailable: '<span class="card-badge-status status-unavailable">❌ Indisponible</span>',
     maintenance: '<span class="card-badge-status status-maintenance">🔧 Maintenance</span>',
   };
 
-  // WhatsApp message
   const waMsg = encodeURIComponent(
     `Bonjour ${ownerName} ! Je suis intéressé(e) par votre machine "${m.name}" sur Rentify.\n${window.location.origin}/machines/${m.id}`
   );
   const waPhone = m.owner?.phone ? m.owner.phone.replace(/\D/g,'') : '';
   const waHref  = waPhone ? `https://wa.me/212${waPhone.replace(/^0/,'')}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
 
-  // Bouton Réserver selon rôle
+  /* ✅ FIX: bouton indisponible = outline gold (plus navy) */
   let reserveBtn = '';
   if (role === 'client') {
     if (m.status === 'available') {
       reserveBtn = `<button class="btn-reserver" onclick="openReservationModal(${m.id})">📋 Réserver</button>`;
     } else {
-      reserveBtn = `<button class="btn-reserver" disabled style="opacity:.45;cursor:not-allowed">⛔ Indisponible</button>`;
+      reserveBtn = `<button class="btn-reserver" disabled
+        style="opacity:.5;cursor:not-allowed;background:var(--cream2);color:var(--txt-mid);border:1.5px solid var(--cream3)">
+        ⛔ Indisponible</button>`;
     }
   } else if (role === 'owner' || role === 'admin') {
-    reserveBtn = `<a href="/machines/${m.id}/edit" class="btn-reserver" style="background:var(--gold);color:var(--navy)">✏️ Modifier</a>`;
+    reserveBtn = `<a href="/machines/${m.id}/edit" class="btn-reserver">✏️ Modifier</a>`;
   } else {
-    // guest
-    reserveBtn = `<a href="/login" class="btn-reserver guest">🔐 Se connecter pour réserver</a>`;
+    reserveBtn = `<a href="/login" class="btn-reserver">🔐 Se connecter pour réserver</a>`;
   }
 
   return `
@@ -1098,7 +1096,6 @@ function showToast(type, msg) {
   setTimeout(() => { el.classList.remove('show'); setTimeout(()=>el.remove(), 400); }, 3500);
 }
 
-/* Close modal on overlay click / ESC */
 document.getElementById('reservationModal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeReservationModal();
 });
