@@ -54,11 +54,12 @@ class DemoDataSeeder extends Seeder
         }
 
         // ══════════════════════════════════════
-        //  MACHINES  ← كانت ناقصة الإدخال
+        //  MACHINES (originales — inchangées)
         // ══════════════════════════════════════
         $ownerId = DB::table('users')->where('email', 'karim@rentify.ma')->value('id');
 
         $machines = [
+            // ── Machines originales ──────────────────────────────────
             [
                 'name'           => 'JCB 3CX Backhoe Loader',
                 'type'           => 'Excavatrice',
@@ -70,6 +71,7 @@ class DemoDataSeeder extends Seeder
                 'location'       => 'Casablanca, Maroc',
                 'latitude'       => 33.5731,
                 'longitude'      => -7.5898,
+                'image'          => 'images/img12.png',
             ],
             [
                 'name'           => 'Manitou MT 1840',
@@ -82,6 +84,7 @@ class DemoDataSeeder extends Seeder
                 'location'       => 'Rabat, Maroc',
                 'latitude'       => 34.0209,
                 'longitude'      => -6.8416,
+                'image'          => null,
             ],
             [
                 'name'           => 'Caterpillar 320 GX',
@@ -94,6 +97,7 @@ class DemoDataSeeder extends Seeder
                 'location'       => 'Marrakech, Maroc',
                 'latitude'       => 31.6295,
                 'longitude'      => -7.9811,
+                'image'          => null,
             ],
             [
                 'name'           => 'Camion Benne Volvo FH16',
@@ -106,6 +110,7 @@ class DemoDataSeeder extends Seeder
                 'location'       => 'Fès, Maroc',
                 'latitude'       => 34.0181,
                 'longitude'      => -5.0078,
+                'image'          => null,
             ],
             [
                 'name'           => 'Compacteur Bomag BW 213',
@@ -118,12 +123,90 @@ class DemoDataSeeder extends Seeder
                 'location'       => 'Tanger, Maroc',
                 'latitude'       => 35.7595,
                 'longitude'      => -5.8340,
+                'image'          => 'images/img15.jpeg',
+            ],
+
+            // ── Nouvelles machines (images fournies) ─────────────────
+
+            // img11 — Scania convoi exceptionnel avec excavatrice
+            [
+                'name'           => 'Scania Convoi Plateau + Excavatrice',
+                'type'           => 'Transport',
+                'description'    => 'Camion Scania plateau surbaissé pour transport de machines lourdes — convoi exceptionnel.',
+                'price_per_day'  => 4500,
+                'price_per_hour' => 600,
+                'status'         => 'available',
+                'city'           => 'Casablanca',
+                'location'       => 'Casablanca, Maroc',
+                'latitude'       => 33.5731,
+                'longitude'      => -7.5898,
+                'image'          => 'images/img11.png',
+            ],
+
+            // img12 — JCB 3CX en chantier (statique, bon état)
+            [
+                'name'           => 'JCB 3CX Pro — Édition Chantier',
+                'type'           => 'Excavatrice',
+                'description'    => 'Chargeuse-pelleteuse JCB 3CX en parfait état, disponible pour terrassement et fouilles.',
+                'price_per_day'  => 2800,
+                'price_per_hour' => 380,
+                'status'         => 'available',
+                'city'           => 'Casablanca',
+                'location'       => 'Casablanca, Maroc',
+                'latitude'       => 33.5820,
+                'longitude'      => -7.6120,
+                'image'          => 'images/img12.png',
+            ],
+
+            // img13 — JCB en action sur grand chantier (Dubai style)
+            [
+                'name'           => 'JCB 4CX Super — Haute Performance',
+                'type'           => 'Excavatrice',
+                'description'    => 'Pelleteuse-chargeuse JCB 4CX puissance maximale, idéale pour grands chantiers et travaux publics.',
+                'price_per_day'  => 3500,
+                'price_per_hour' => 480,
+                'status'         => 'available',
+                'city'           => 'Agadir',
+                'location'       => 'Agadir, Maroc',
+                'latitude'       => 30.4278,
+                'longitude'      => -9.5981,
+                'image'          => 'images/img13.png',
+            ],
+
+            // img14 — Terex Grader / Niveleuse
+            [
+                'name'           => 'Terex TG110 Niveleuse',
+                'type'           => 'Niveleuse',
+                'description'    => 'Niveleuse Terex TG110 pour dressage et finition de plateformes, routes et pistes.',
+                'price_per_day'  => 2200,
+                'price_per_hour' => 310,
+                'status'         => 'available',
+                'city'           => 'Oujda',
+                'location'       => 'Oujda, Maroc',
+                'latitude'       => 34.6814,
+                'longitude'      => -1.9086,
+                'image'          => 'images/img14.png',
+            ],
+
+            // img15 — Compacteur rouleau (rouge/jaune)
+            [
+                'name'           => 'Compacteur Rouleau Vibrant RV-200',
+                'type'           => 'Compacteur',
+                'description'    => 'Rouleau vibrant monocylindre pour compactage de sols, remblais et sous-couches routières.',
+                'price_per_day'  => 1400,
+                'price_per_hour' => 190,
+                'status'         => 'available',
+                'city'           => 'Meknès',
+                'location'       => 'Meknès, Maroc',
+                'latitude'       => 33.8731,
+                'longitude'      => -5.5407,
+                'image'          => 'images/img15.jpeg',
             ],
         ];
 
         foreach ($machines as $m) {
             DB::table('machines')->updateOrInsert(
-                ['name' => $m['name']],   // ← clé unique : le nom
+                ['name' => $m['name']],
                 array_merge($m, [
                     'owner_id'   => $ownerId,
                     'created_at' => now(),
@@ -133,7 +216,7 @@ class DemoDataSeeder extends Seeder
         }
 
         // ══════════════════════════════════════
-        //  RESERVATIONS
+        //  RESERVATIONS (inchangées)
         // ══════════════════════════════════════
         $clientId = DB::table('users')->where('email', 'fadwa@rentify.ma')->value('id');
         $machine1 = DB::table('machines')->where('name', 'JCB 3CX Backhoe Loader')->value('id');
@@ -147,7 +230,7 @@ class DemoDataSeeder extends Seeder
                 'start_date'  => '2026-05-10',
                 'end_date'    => '2026-05-15',
                 'status'      => 'accepted',
-                'total_price' => 2500 * 5,   // 5 jours
+                'total_price' => 2500 * 5,
                 'motif'       => null,
             ],
             [
@@ -156,7 +239,7 @@ class DemoDataSeeder extends Seeder
                 'start_date'  => '2026-05-20',
                 'end_date'    => '2026-05-22',
                 'status'      => 'pending',
-                'total_price' => 1800 * 2,   // 2 jours
+                'total_price' => 1800 * 2,
                 'motif'       => null,
             ],
             [
@@ -165,7 +248,7 @@ class DemoDataSeeder extends Seeder
                 'start_date'  => '2026-04-01',
                 'end_date'    => '2026-04-07',
                 'status'      => 'completed',
-                'total_price' => 3200 * 6,   // 6 jours
+                'total_price' => 3200 * 6,
                 'motif'       => null,
             ],
         ];
@@ -200,7 +283,7 @@ class DemoDataSeeder extends Seeder
                 ['👤 Client', 'fadwa@rentify.ma', 'password'],
             ]
         );
-        $this->command->info('🏗  ' . DB::table('machines')->count() . ' machines en base');
-        $this->command->info('📋 ' . DB::table('reservations')->count() . ' réservations en base');
+        $this->command->info('🏗  ' . DB::table('machines')->count()     . ' machines en base');
+        $this->command->info('📋 ' . DB::table('reservations')->count()  . ' réservations en base');
     }
 }
