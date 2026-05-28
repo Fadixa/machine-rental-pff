@@ -6,8 +6,6 @@ use App\Http\Controllers\MachineController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ChatbotController; 
-use App\Http\Controllers\MissionController; 
-use App\Http\Controllers\DriverController; 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 
@@ -75,36 +73,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // FEATURE 6 : Chatbot
 Route::post('/chatbot', [ChatbotController::class, 'repondre']);
-
-
-
-Route::middleware('auth:sanctum')->group(function () {
- 
-    // ── Chauffeurs ──────────────────────────────────────────────────────────
-    Route::get   ('/drivers',                 [DriverController::class, 'index']);
-    Route::get   ('/drivers/map',             [DriverController::class, 'mapData']);
-    Route::post  ('/drivers',                 [DriverController::class, 'store']);
-    Route::get   ('/drivers/{driver}',        [DriverController::class, 'show']);
-    Route::put   ('/drivers/{driver}',        [DriverController::class, 'update']);
-    Route::patch ('/drivers/{driver}/position',[DriverController::class, 'updatePosition']);
-    Route::delete('/drivers/{driver}',        [DriverController::class, 'destroy']);
- 
-    // ── Missions ────────────────────────────────────────────────────────────
-    Route::get   ('/missions',                [MissionController::class, 'index']);
-    Route::get   ('/missions/planning',       [MissionController::class, 'planning']);
-    Route::post  ('/missions',                [MissionController::class, 'store']);
-    Route::get   ('/missions/{mission}',      [MissionController::class, 'show']);
-    Route::patch ('/missions/{mission}/statut',[MissionController::class, 'updateStatut']);
-    Route::patch ('/missions/{mission}/track',[MissionController::class, 'track']);
-    Route::post  ('/missions/{mission}/noter',[MissionController::class, 'noter']);
- 
-});
-
-
-Route::get('/drivers',      [DriverController::class, 'index']);
-Route::get('/drivers/map',  [DriverController::class, 'mapData']);
-Route::get('/missions',     [MissionController::class, 'index']);
-
 
 // ─── ADMIN ROUTES ────────────────────────────────────────────────
 Route::middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])

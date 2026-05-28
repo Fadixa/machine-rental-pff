@@ -1,15 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| WEB ROUTES — Rentify
-| Toutes les routes retournent des vues Blade.
-| L'authentification est gérée côté client via localStorage (Sanctum token).
-|--------------------------------------------------------------------------
-*/
-
 /* ── PAGE D'ACCUEIL ── */
 Route::get('/', fn() => view('welcome'));
 
@@ -46,15 +37,6 @@ Route::post('/contact', function (Illuminate\Http\Request $request) {
          return back()->with('success', 'Votre message a été envoyé avec succès !');
 });
 
-
-Route::get('/dashboard/driver', function () {
-    return view('dashboard.driver');
-})->name('dashboard.driver');
- 
-// Admin — gestion chauffeurs
-Route::get('/admin/drivers', function () {
-    return view('admin.drivers');
-})->name('admin.drivers');
 
 // Dashboard Admin
 Route::get('/dashboard/admin', function () {
