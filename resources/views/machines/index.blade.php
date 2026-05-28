@@ -1,5 +1,3 @@
-
-
 @extends('layouts.app')
 
 @section('title', 'Catalogue des machines — Rentify')
@@ -92,9 +90,10 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:#fff;
   border:1px solid rgba(212,175,55,.2);
   border-radius:var(--radius);
-  padding:1.5rem;
+  padding:1.5rem 1.5rem 1.75rem; /* ✅ FIX: padding-bottom tabn */
   box-shadow:var(--shadow);
   position:sticky; top:120px;
+  overflow:hidden;
 }
 .filter-title {
   font-family:'Playfair Display',serif;
@@ -127,7 +126,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   display:inline-flex; align-items:center; gap:.3rem;
 }
 .type-chip:hover { border-color:var(--gold); color:var(--txt-dark); }
-/* ✅ FIX: active chip = gold (plus navy) */
 .type-chip.active {
   background:var(--gold); border-color:var(--gold);
   color:var(--txt-dark);
@@ -135,24 +133,26 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 
 /* Price range */
 .price-range-wrap { position:relative; }
-.price-inputs { display:flex; gap:.5rem; align-items:center; }
+.price-inputs { display:flex; gap:.3rem; align-items:center; }
 .price-inputs input {
-  flex:1; padding:.45rem .6rem;
-  border:1.5px solid var(--cream3); border-radius:8px;
-  font-family:'DM Sans',sans-serif; font-size:.82rem;
-  color:var(--txt-dark); outline:none; text-align:center;
+  flex:1; min-width:0; width:0;
+  padding:.38rem .3rem; border:1.5px solid var(--cream3); border-radius:8px;
+  font-family:'DM Sans',sans-serif; font-size:.75rem;
+  color:var(--txt-dark); outline:none; text-align:center; box-sizing:border-box;
   transition:border .2s;
 }
 .price-inputs input:focus { border-color:var(--gold); }
-.price-sep { color:var(--txt-light); font-size:.8rem; }
+.price-sep { color:var(--txt-light); font-size:.8rem; flex-shrink:0; }
 
 /* City search */
 .city-input {
   width:100%; padding:.45rem .75rem;
   border:1.5px solid var(--cream3); border-radius:8px;
-  font-family:'DM Sans',sans-serif; font-size:.82rem;
+  padding:.38rem .3rem; border:1.5px solid var(--cream3); border-radius:8px;
+  font-family:'DM Sans',sans-serif; font-size:.75rem;
   color:var(--txt-dark); outline:none;
   transition:border .2s;
+  box-sizing:border-box; /* ✅ FIX: city input aussi */
 }
 .city-input:focus { border-color:var(--gold); }
 
@@ -168,19 +168,23 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .status-opt label { font-size:.83rem; color:var(--txt-mid); cursor:pointer; }
 
 /* ══════════════════════════════════
-   MAP TOGGLE — ✅ FIX: gold au lieu de navy
+   MAP TOGGLE — ✅ FIX: box-sizing + display:flex
 ══════════════════════════════════ */
 .map-toggle-bar {
   display:flex; align-items:center; justify-content:flex-end;
   margin-bottom:1rem; gap:.5rem;
 }
 .btn-map-toggle {
-  display:inline-flex; align-items:center; gap:.4rem;
-  padding:.45rem 1rem; border-radius:8px;
+  display:flex;
+  align-items:center; justify-content:center; gap:.4rem;
+  width:100%;
+  box-sizing:border-box;
+  padding:.55rem 1rem; border-radius:8px;
   background:var(--gold); color:var(--txt-dark);
   border:none; font-family:'DM Sans',sans-serif;
   font-size:.82rem; font-weight:700; cursor:pointer;
   transition:all .2s;
+  margin-top:.75rem; /* ✅ FIX: espace au-dessus du bouton */
 }
 .btn-map-toggle:hover { background:var(--gold-dk); color:#fff; }
 #leafletMap {
@@ -302,7 +306,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--cream); border-radius:8px;
   margin-bottom:.75rem;
 }
-/* ✅ FIX: owner avatar gold bg */
 .owner-avatar {
   width:28px; height:28px; border-radius:50%;
   background:var(--gold); color:var(--txt-dark);
@@ -339,7 +342,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .card-actions {
   display:flex; gap:.5rem; margin-top:auto;
 }
-/* ✅ FIX: btn-reserver = gold (plus navy) */
 .btn-reserver {
   flex:1; padding:.55rem 1rem;
   background:var(--gold); color:var(--txt-dark);
@@ -405,7 +407,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .modal-close:hover { background:var(--cream2); }
 .modal-body { padding:1.5rem; }
 
-/* Machine recap dans modal */
 .modal-machine-recap {
   display:flex; align-items:center; gap:.9rem;
   background:var(--cream); border-radius:10px;
@@ -446,7 +447,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   border-top:1px solid var(--cream3); background:var(--cream);
 }
 
-/* ✅ FIX: btn-navy = gold (rétrocompat) */
 .btn-navy {
   background:var(--gold); color:var(--txt-dark);
   border:none; border-radius:9px; padding:.6rem 1.25rem;
@@ -501,7 +501,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* ✅ FIX: Pagination active = gold (plus navy) */
 .pagination-wrap {
   display:flex; justify-content:center; align-items:center;
   gap:.5rem; margin-top:2rem; grid-column:1/-1;
@@ -616,8 +615,8 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
       </div>
     </div>
 
-    {{-- ✅ FIX: bouton carte = gold --}}
-    <button class="btn-map-toggle" id="mapToggleBtn" onclick="toggleMap()" style="width:100%">
+    {{-- ✅ FIX: bouton carte — plus de style inline width:100% (déjà dans CSS) --}}
+    <button class="btn-map-toggle" id="mapToggleBtn" onclick="toggleMap()">
       🗺 Voir sur la carte
     </button>
   </aside>
@@ -627,7 +626,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
     {{-- Map --}}
     <div id="leafletMap"></div>
 
-    {{-- Map toggle bar + grid --}}
+    {{-- Grid --}}
     <div class="machines-grid" id="machinesGrid">
       {{-- Skeletons --}}
       @for($i=0;$i<8;$i++)
@@ -863,7 +862,6 @@ function buildCard(m, i) {
   const waPhone = m.owner?.phone ? m.owner.phone.replace(/\D/g,'') : '';
   const waHref  = waPhone ? `https://wa.me/212${waPhone.replace(/^0/,'')}?text=${waMsg}` : `https://wa.me/?text=${waMsg}`;
 
-  /* ✅ FIX: bouton indisponible = outline gold (plus navy) */
   let reserveBtn = '';
   if (role === 'client') {
     if (m.status === 'available') {
