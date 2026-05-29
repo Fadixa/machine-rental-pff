@@ -54,18 +54,22 @@ class DemoDataSeeder extends Seeder
         }
 
         // ══════════════════════════════════════
-        //  MACHINES (originales — inchangées)
+        //  MACHINES — Prix marché marocain 2025
+        //  Source : prestataires BTP Casablanca,
+        //  Rabat, Marrakech (fourchette réelle)
         // ══════════════════════════════════════
         $ownerId = DB::table('users')->where('email', 'karim@rentify.ma')->value('id');
 
         $machines = [
-            // ── Machines originales ──────────────────────────────────
+
+            // ── Excavatrice / Pelle ──────────────────────────────────
+            // Marché : 2 800 – 4 500 MAD/j selon puissance
             [
                 'name'           => 'JCB 3CX Backhoe Loader',
                 'type'           => 'Excavatrice',
                 'description'    => 'Engin polyvalent idéal pour travaux de terrassement.',
-                'price_per_day'  => 2500,
-                'price_per_hour' => 350,
+                'price_per_day'  => 2800,
+                'price_per_hour' => 380,
                 'status'         => 'available',
                 'city'           => 'Casablanca',
                 'location'       => 'Casablanca, Maroc',
@@ -73,12 +77,15 @@ class DemoDataSeeder extends Seeder
                 'longitude'      => -7.5898,
                 'image'          => 'images/img12.png',
             ],
+
+            // ── Chargeuse télescopique ───────────────────────────────
+            // Marché : 2 200 – 3 500 MAD/j
             [
                 'name'           => 'Manitou MT 1840',
                 'type'           => 'Chargeuse',
                 'description'    => 'Chariot télescopique grande portée.',
-                'price_per_day'  => 1800,
-                'price_per_hour' => 250,
+                'price_per_day'  => 2400,
+                'price_per_hour' => 320,
                 'status'         => 'available',
                 'city'           => 'Rabat',
                 'location'       => 'Rabat, Maroc',
@@ -86,12 +93,15 @@ class DemoDataSeeder extends Seeder
                 'longitude'      => -6.8416,
                 'image'          => null,
             ],
+
+            // ── Pelle hydraulique grande puissance ──────────────────
+            // Marché : 3 500 – 5 500 MAD/j (CAT 320 = haut de gamme)
             [
                 'name'           => 'Caterpillar 320 GX',
                 'type'           => 'Excavatrice',
                 'description'    => 'Pelle hydraulique haute performance.',
-                'price_per_day'  => 3200,
-                'price_per_hour' => 450,
+                'price_per_day'  => 4200,
+                'price_per_hour' => 560,
                 'status'         => 'available',
                 'city'           => 'Marrakech',
                 'location'       => 'Marrakech, Maroc',
@@ -99,12 +109,15 @@ class DemoDataSeeder extends Seeder
                 'longitude'      => -7.9811,
                 'image'          => null,
             ],
+
+            // ── Camion benne ─────────────────────────────────────────
+            // Marché : 1 800 – 3 000 MAD/j (Volvo FH16 = premium)
             [
                 'name'           => 'Camion Benne Volvo FH16',
                 'type'           => 'Camion',
                 'description'    => 'Camion benne 8x4 pour transport de matériaux.',
-                'price_per_day'  => 1500,
-                'price_per_hour' => 200,
+                'price_per_day'  => 2200,
+                'price_per_hour' => 290,
                 'status'         => 'unavailable',
                 'city'           => 'Fès',
                 'location'       => 'Fès, Maroc',
@@ -112,12 +125,15 @@ class DemoDataSeeder extends Seeder
                 'longitude'      => -5.0078,
                 'image'          => null,
             ],
+
+            // ── Compacteur standard ──────────────────────────────────
+            // Marché : 1 400 – 2 200 MAD/j
             [
                 'name'           => 'Compacteur Bomag BW 213',
                 'type'           => 'Compacteur',
                 'description'    => 'Rouleau compacteur pour routes et plateformes.',
-                'price_per_day'  => 1200,
-                'price_per_hour' => 170,
+                'price_per_day'  => 1600,
+                'price_per_hour' => 220,
                 'status'         => 'available',
                 'city'           => 'Tanger',
                 'location'       => 'Tanger, Maroc',
@@ -126,15 +142,14 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img15.jpeg',
             ],
 
-            // ── Nouvelles machines (images fournies) ─────────────────
-
-            // img11 — Scania convoi exceptionnel avec excavatrice
+            // ── Convoi exceptionnel + transport machines ─────────────
+            // Marché : 4 500 – 7 000 MAD/j (convoi spécialisé)
             [
                 'name'           => 'Scania Convoi Plateau + Excavatrice',
                 'type'           => 'Transport',
                 'description'    => 'Camion Scania plateau surbaissé pour transport de machines lourdes — convoi exceptionnel.',
-                'price_per_day'  => 4500,
-                'price_per_hour' => 600,
+                'price_per_day'  => 5500,
+                'price_per_hour' => 720,
                 'status'         => 'available',
                 'city'           => 'Casablanca',
                 'location'       => 'Casablanca, Maroc',
@@ -143,13 +158,14 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img11.png',
             ],
 
-            // img12 — JCB 3CX en chantier (statique, bon état)
+            // ── JCB 3CX Pro ──────────────────────────────────────────
+            // Marché : 2 800 – 3 800 MAD/j
             [
                 'name'           => 'JCB 3CX Pro — Édition Chantier',
                 'type'           => 'Excavatrice',
                 'description'    => 'Chargeuse-pelleteuse JCB 3CX en parfait état, disponible pour terrassement et fouilles.',
-                'price_per_day'  => 2800,
-                'price_per_hour' => 380,
+                'price_per_day'  => 3200,
+                'price_per_hour' => 420,
                 'status'         => 'available',
                 'city'           => 'Casablanca',
                 'location'       => 'Casablanca, Maroc',
@@ -158,13 +174,14 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img12.png',
             ],
 
-            // img13 — JCB en action sur grand chantier (Dubai style)
+            // ── JCB 4CX grande puissance ─────────────────────────────
+            // Marché : 3 500 – 5 000 MAD/j
             [
                 'name'           => 'JCB 4CX Super — Haute Performance',
                 'type'           => 'Excavatrice',
                 'description'    => 'Pelleteuse-chargeuse JCB 4CX puissance maximale, idéale pour grands chantiers et travaux publics.',
-                'price_per_day'  => 3500,
-                'price_per_hour' => 480,
+                'price_per_day'  => 4500,
+                'price_per_hour' => 600,
                 'status'         => 'available',
                 'city'           => 'Agadir',
                 'location'       => 'Agadir, Maroc',
@@ -173,13 +190,14 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img13.png',
             ],
 
-            // img14 — Terex Grader / Niveleuse
+            // ── Niveleuse ────────────────────────────────────────────
+            // Marché : 3 000 – 4 500 MAD/j (machine spécialisée)
             [
                 'name'           => 'Terex TG110 Niveleuse',
                 'type'           => 'Niveleuse',
                 'description'    => 'Niveleuse Terex TG110 pour dressage et finition de plateformes, routes et pistes.',
-                'price_per_day'  => 2200,
-                'price_per_hour' => 310,
+                'price_per_day'  => 3500,
+                'price_per_hour' => 460,
                 'status'         => 'available',
                 'city'           => 'Oujda',
                 'location'       => 'Oujda, Maroc',
@@ -188,13 +206,14 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img14.png',
             ],
 
-            // img15 — Compacteur rouleau (rouge/jaune)
+            // ── Compacteur rouleau vibrant ───────────────────────────
+            // Marché : 1 600 – 2 500 MAD/j
             [
                 'name'           => 'Compacteur Rouleau Vibrant RV-200',
                 'type'           => 'Compacteur',
                 'description'    => 'Rouleau vibrant monocylindre pour compactage de sols, remblais et sous-couches routières.',
-                'price_per_day'  => 1400,
-                'price_per_hour' => 190,
+                'price_per_day'  => 1800,
+                'price_per_hour' => 240,
                 'status'         => 'available',
                 'city'           => 'Meknès',
                 'location'       => 'Meknès, Maroc',
@@ -216,7 +235,7 @@ class DemoDataSeeder extends Seeder
         }
 
         // ══════════════════════════════════════
-        //  RESERVATIONS (inchangées)
+        //  RESERVATIONS — total_price recalculé
         // ══════════════════════════════════════
         $clientId = DB::table('users')->where('email', 'fadwa@rentify.ma')->value('id');
         $machine1 = DB::table('machines')->where('name', 'JCB 3CX Backhoe Loader')->value('id');
@@ -230,7 +249,7 @@ class DemoDataSeeder extends Seeder
                 'start_date'  => '2026-05-10',
                 'end_date'    => '2026-05-15',
                 'status'      => 'accepted',
-                'total_price' => 2500 * 5,
+                'total_price' => 2800 * 5,   // 14 000 MAD
                 'motif'       => null,
             ],
             [
@@ -239,7 +258,7 @@ class DemoDataSeeder extends Seeder
                 'start_date'  => '2026-05-20',
                 'end_date'    => '2026-05-22',
                 'status'      => 'pending',
-                'total_price' => 1800 * 2,
+                'total_price' => 2400 * 2,   // 4 800 MAD
                 'motif'       => null,
             ],
             [
@@ -248,7 +267,7 @@ class DemoDataSeeder extends Seeder
                 'start_date'  => '2026-04-01',
                 'end_date'    => '2026-04-07',
                 'status'      => 'completed',
-                'total_price' => 3200 * 6,
+                'total_price' => 4200 * 6,   // 25 200 MAD
                 'motif'       => null,
             ],
         ];
@@ -283,7 +302,7 @@ class DemoDataSeeder extends Seeder
                 ['👤 Client', 'fadwa@rentify.ma', 'password'],
             ]
         );
-        $this->command->info('🏗  ' . DB::table('machines')->count()     . ' machines en base');
-        $this->command->info('📋 ' . DB::table('reservations')->count()  . ' réservations en base');
+        $this->command->info('🏗  ' . DB::table('machines')->count()    . ' machines en base');
+        $this->command->info('📋 ' . DB::table('reservations')->count() . ' réservations en base');
     }
 }
