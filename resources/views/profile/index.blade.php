@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @push('styles')
+{{-- Cropper.js CSS --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 <style>
 :root {
   --gold:#D4AF37; --gold-dk:#9A7D20; --gold-pale:#FEF9E7;
@@ -121,6 +123,14 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   transition: all .2s; display: inline-flex; align-items: center; gap: .5rem;
 }
 .btn-gold:hover { background: var(--gold-dk); border-color: var(--gold-dk); color: #fff; }
+.btn-outline {
+  background: #fff; color: var(--gold-dk);
+  border: 2px solid var(--gold); border-radius: 10px;
+  padding: .55rem 1.4rem; font-family: 'DM Sans', sans-serif;
+  font-weight: 700; font-size: .88rem; cursor: pointer;
+  transition: all .2s; display: inline-flex; align-items: center; gap: .5rem;
+}
+.btn-outline:hover { background: var(--gold-pale); }
 .btn-danger-outline {
   background: #fff; color: var(--red);
   border: 2px solid var(--red); border-radius: 10px;
@@ -183,6 +193,71 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 .toast-v13.success { border-left: 4px solid var(--green); }
 .toast-v13.error   { border-left: 4px solid var(--red); }
 .toast-v13.info    { border-left: 4px solid var(--gold); }
+
+/* ════════════════════════════════════
+   CROP MODAL
+════════════════════════════════════ */
+#cropModal {
+  display: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(15,27,45,.65);
+  backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
+}
+#cropModal.open { display: flex; }
+
+.crop-dialog {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(15,27,45,.25);
+  width: min(520px, 94vw);
+  overflow: hidden;
+  animation: cropIn .28s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes cropIn {
+  from { transform: scale(.88); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.crop-dialog-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.1rem 1.5rem;
+  background: var(--gold-pale);
+  border-bottom: 1.5px solid rgba(212,175,55,.3);
+}
+.crop-dialog-header h6 {
+  margin: 0; font-family: 'Playfair Display', serif;
+  font-size: 1rem; color: var(--txt-dark); font-weight: 700;
+}
+.crop-close {
+  background: none; border: none; cursor: pointer;
+  color: var(--txt-mid); font-size: 1.1rem; padding: .2rem .4rem;
+  border-radius: 6px; transition: background .15s;
+}
+.crop-close:hover { background: var(--cream2); }
+
+.crop-dialog-body {
+  padding: 1.25rem 1.5rem;
+  background: var(--cream);
+}
+.crop-preview-wrap {
+  width: 100%; max-height: 300px; overflow: hidden;
+  border-radius: 12px; background: var(--cream2);
+}
+.crop-preview-wrap img {
+  display: block; max-width: 100%;
+}
+
+.crop-hint {
+  margin-top: .75rem; text-align: center;
+  font-size: .78rem; color: var(--txt-light);
+}
+
+.crop-dialog-footer {
+  display: flex; gap: .75rem; justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1.5px solid var(--cream3);
+}
 </style>
 @endpush
 
@@ -198,7 +273,6 @@ textarea.form-control { resize: vertical; min-height: 90px; }
               title="Changer la photo">
         <i class="fas fa-camera"></i>
       </button>
-      {{-- ✅ FIX : pas de onchange ici — géré via addEventListener pour éviter double-trigger --}}
       <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" hidden>
     </div>
     <div class="profile-header-info">
@@ -258,17 +332,17 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     <div style="max-width:420px">
       <div style="margin-bottom:1rem">
         <label class="form-label">Mot de passe actuel</label>
-        <input type="password" id="inp_current" class="form-control">
+        <input type="password" id="inp_current" class="form-control" placeholder="••••••••">
       </div>
       <div style="margin-bottom:1rem">
-        <label class="form-label">Nouveau mot de passe</label>
-        <input type="password" id="inp_new" class="form-control">
+        <label class="form-label">Nouveau mot de passe <small style="color:var(--txt-light);font-weight:400">(min. 8 caractères)</small></label>
+        <input type="password" id="inp_new" class="form-control" placeholder="••••••••">
       </div>
       <div style="margin-bottom:1.25rem">
         <label class="form-label">Confirmer le nouveau mot de passe</label>
-        <input type="password" id="inp_confirm" class="form-control">
+        <input type="password" id="inp_confirm" class="form-control" placeholder="••••••••">
       </div>
-      <button class="btn-danger-outline" onclick="changePassword()">
+      <button class="btn-danger-outline" onclick="changePassword()" id="btnPwd">
         <i class="fas fa-key"></i> Modifier le mot de passe
       </button>
     </div>
@@ -286,19 +360,53 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 
 </div>
 
+{{-- ════════════════════════════════════
+     CROP MODAL
+════════════════════════════════════ --}}
+<div id="cropModal" role="dialog" aria-modal="true" aria-labelledby="cropModalTitle">
+  <div class="crop-dialog">
+    <div class="crop-dialog-header">
+      <h6 id="cropModalTitle">
+        <i class="fas fa-crop-alt" style="color:var(--gold-dk);margin-right:.5rem"></i>
+        Ajuster la photo de profil
+      </h6>
+      <button class="crop-close" onclick="closeCropModal()" title="Annuler">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="crop-dialog-body">
+      <div class="crop-preview-wrap">
+        <img id="cropImage" src="" alt="Image à recadrer">
+      </div>
+      <p class="crop-hint">
+        <i class="fas fa-arrows-alt" style="margin-right:.3rem"></i>
+        Faites glisser pour repositionner · Pincez ou molette pour zoomer
+      </p>
+    </div>
+    <div class="crop-dialog-footer">
+      <button class="btn-outline" onclick="closeCropModal()">
+        <i class="fas fa-times"></i> Annuler
+      </button>
+      <button class="btn-gold" onclick="confirmCrop()" id="btnConfirmCrop">
+        <i class="fas fa-check"></i> Confirmer
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 @endsection
 
 @push('scripts')
+{{-- Cropper.js --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script>
 (function() {
 /* ══════════════════════════════════════════
     PROFILE — RENTIFY V17
-    ✅ FIX : uploadAvatar via addEventListener (évite double-trigger)
-    ✅ FIX : input.value='' AU DÉBUT avant tout traitement
-    ✅ FIX : accept="image/jpeg,image/png,image/webp" sur l'input
-    ✅ FIX : validation taille côté JS avant envoi
-    ✅ API show() retourne data{} — cohérent avec ProfileController V17
+    ✅ FIX password : bouton disabled pendant envoi + clear fields après succès
+    ✅ FIX avatar   : Cropper.js modal avant upload + resize canvas 400×400
+    ✅ FIX crop     : closeCropModal() destroy() proprement
 ══════════════════════════════════════════ */
 
 /* ── Helpers localStorage ── */
@@ -344,7 +452,6 @@ if (!_user) {
 
 /* ══ LOAD PROFILE ══ */
 async function loadProfile() {
-  /* Affichage immédiat depuis localStorage */
   _renderHeader(_user);
   _renderAvatar(_photo(_user), _user.name);
 
@@ -364,12 +471,9 @@ async function loadProfile() {
     }
 
     var json  = await r.json();
-    /* ✅ ProfileController V17 retourne { data: {...} } */
     var fresh = (json && json.data) ? json.data : (json && json.id ? json : null);
-
     if (!fresh) throw new Error('Réponse API invalide');
 
-    /* ✅ Préserver photo si API renvoie null */
     if (!fresh.profile_photo_path && _photo(_user)) {
       fresh.profile_photo_path = _photo(_user);
     }
@@ -394,16 +498,14 @@ async function loadProfile() {
     document.getElementById('inp_bio').value   = _user.bio   || '';
   }
 
-  /* ✅ Historique chargé séparément — pas de risque de conflit */
   loadHistory();
 
-  /* ✅ FIX PRINCIPAL : addEventListener UNE SEULE FOIS sur l'input file
-     Evite le double-trigger du onchange inline + l'auto-trigger au load */
+  /* ✅ addEventListener UNE SEULE FOIS */
   var avatarInput = document.getElementById('avatarInput');
   if (avatarInput && !avatarInput._bound) {
     avatarInput._bound = true;
     avatarInput.addEventListener('change', function() {
-      uploadAvatar(this);
+      onAvatarFileSelected(this);
     });
   }
 }
@@ -453,36 +555,147 @@ async function saveProfile() {
   }
 }
 
-/* ══ UPLOAD AVATAR ══ */
-async function uploadAvatar(input) {
-  /* ✅ FIX : reset l'input EN PREMIER pour éviter re-trigger */
+/* ══════════════════════════════════════════
+   CROP MODAL — LOGIQUE COMPLÈTE
+══════════════════════════════════════════ */
+var _cropper = null;
+
+/* Étape 1 : l'utilisateur choisit un fichier → on ouvre le modal */
+function onAvatarFileSelected(input) {
   var file = (input.files && input.files[0]) ? input.files[0] : null;
+  /* ✅ Reset l'input immédiatement pour éviter re-trigger */
   input.value = '';
 
   if (!file) return;
 
-  /* ✅ Validation taille côté JS (évite l'erreur Laravel "max") */
-  if (file.size > 2 * 1024 * 1024) {
-    showToast('Image trop grande — max 2 Mo', 'error');
-    return;
-  }
-
-  /* ✅ Validation type côté JS */
+  /* Validation type */
   var allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   if (!allowed.includes(file.type)) {
     showToast('Format non supporté — JPG, PNG ou WebP uniquement', 'error');
     return;
   }
 
-  /* Preview immédiat */
+  /* Validation taille (max 5 Mo avant crop, sera réduit après) */
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Image trop grande — max 5 Mo', 'error');
+    return;
+  }
+
+  /* Lire le fichier et ouvrir le modal */
   var reader = new FileReader();
   reader.onload = function(e) {
-    document.getElementById('avatarImg').src = e.target.result;
+    openCropModal(e.target.result);
   };
   reader.readAsDataURL(file);
+}
 
+/* Étape 2 : Ouvrir le modal avec Cropper.js */
+function openCropModal(dataUrl) {
+  var modal = document.getElementById('cropModal');
+  var img   = document.getElementById('cropImage');
+
+  /* Détruire ancien cropper si existe */
+  if (_cropper) {
+    _cropper.destroy();
+    _cropper = null;
+  }
+
+  img.src = dataUrl;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  /* Init Cropper.js après que l'image soit chargée */
+  img.onload = function() {
+    _cropper = new Cropper(img, {
+      aspectRatio: 1,          /* ✅ Carré obligatoire pour avatar rond */
+      viewMode: 1,              /* Pas de dépassement hors image */
+      dragMode: 'move',
+      autoCropArea: 0.85,
+      restore: false,
+      guides: true,
+      center: true,
+      highlight: false,
+      cropBoxMovable: true,
+      cropBoxResizable: true,
+      toggleDragModeOnDblclick: false,
+    });
+  };
+}
+
+/* Étape 3 : L'utilisateur clique "Confirmer" */
+async function confirmCrop() {
+  if (!_cropper) return;
+
+  var btn = document.getElementById('btnConfirmCrop');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Upload…';
+
+  try {
+    /* ✅ Générer canvas 400×400 (taille optimale pour avatar) */
+    var canvas = _cropper.getCroppedCanvas({
+      width:  400,
+      height: 400,
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high',
+    });
+
+    /* ✅ Convertir canvas → Blob (JPEG qualité 85%) */
+    canvas.toBlob(async function(blob) {
+      if (!blob) {
+        showToast('Erreur lors du traitement de l\'image', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Confirmer';
+        return;
+      }
+
+      /* Vérification taille finale (max 2 Mo) */
+      if (blob.size > 2 * 1024 * 1024) {
+        showToast('Image trop grande après recadrage — max 2 Mo', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Confirmer';
+        return;
+      }
+
+      /* Preview immédiat dans le header */
+      var previewUrl = URL.createObjectURL(blob);
+      document.getElementById('avatarImg').src = previewUrl;
+
+      /* Fermer le modal */
+      closeCropModal();
+
+      /* Upload vers l'API */
+      await uploadAvatar(blob);
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-check"></i> Confirmer';
+    }, 'image/jpeg', 0.85);
+
+  } catch(e) {
+    console.error('Crop error:', e);
+    showToast('Erreur lors du recadrage', 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check"></i> Confirmer';
+  }
+}
+
+/* Fermer le modal proprement */
+function closeCropModal() {
+  var modal = document.getElementById('cropModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  if (_cropper) {
+    _cropper.destroy();
+    _cropper = null;
+  }
+}
+
+/* Rendre closeCropModal accessible globalement */
+window.closeCropModal = closeCropModal;
+
+/* ══ UPLOAD AVATAR (prend un Blob) ══ */
+async function uploadAvatar(blob) {
   var formData = new FormData();
-  formData.append('avatar', file);
+  formData.append('avatar', blob, 'avatar.jpg');
 
   try {
     var r = await fetch('/api/profile/avatar', {
@@ -490,7 +703,7 @@ async function uploadAvatar(input) {
       headers: {
         'Authorization': 'Bearer ' + _token(),
         'Accept': 'application/json'
-        /* ✅ PAS de Content-Type ici — le browser le set auto avec boundary pour FormData */
+        /* ✅ PAS de Content-Type — browser le set auto avec boundary */
       },
       body: formData
     });
@@ -498,7 +711,6 @@ async function uploadAvatar(input) {
     var json = await r.json();
 
     if (r.ok) {
-      /* ✅ ProfileController V17 retourne { data: { profile_photo_path } } */
       var newPath = json.data ? json.data.profile_photo_path : null;
 
       if (newPath) {
@@ -516,7 +728,6 @@ async function uploadAvatar(input) {
 
       showToast('Photo de profil mise à jour !', 'success');
     } else {
-      /* ✅ Afficher l'erreur Laravel précise */
       var msg = '';
       if (json.errors && json.errors.avatar) {
         msg = json.errors.avatar[0];
@@ -533,21 +744,39 @@ async function uploadAvatar(input) {
   }
 }
 
-/* ══ CHANGE PASSWORD ══ */
+/* ══════════════════════════════════════════
+   CHANGE PASSWORD — ✅ FIX COMPLET
+   - current_password / password / password_confirmation
+   - Bouton disabled pendant l'appel
+   - Clear les champs après succès
+   - Affiche le message d'erreur précis du serveur
+══════════════════════════════════════════ */
 async function changePassword() {
   var curr = document.getElementById('inp_current').value;
   var nw   = document.getElementById('inp_new').value;
   var conf = document.getElementById('inp_confirm').value;
 
+  /* Validations côté JS */
   if (!curr || !nw || !conf) {
-    showToast('Tous les champs sont obligatoires', 'error'); return;
+    showToast('Tous les champs sont obligatoires', 'error');
+    return;
   }
   if (nw !== conf) {
-    showToast('Les mots de passe ne correspondent pas', 'error'); return;
+    showToast('Les mots de passe ne correspondent pas', 'error');
+    return;
   }
   if (nw.length < 8) {
-    showToast('Minimum 8 caractères', 'error'); return;
+    showToast('Le nouveau mot de passe doit avoir au moins 8 caractères', 'error');
+    return;
   }
+  if (nw === curr) {
+    showToast('Le nouveau mot de passe doit être différent de l\'actuel', 'error');
+    return;
+  }
+
+  var btn = document.getElementById('btnPwd');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Modification…';
 
   try {
     var r = await fetch('/api/profile/password', {
@@ -557,24 +786,39 @@ async function changePassword() {
         'Authorization': 'Bearer ' + _token(),
         'Accept':        'application/json'
       },
+      /* ✅ Clés exactes attendues par Laravel (confirmed rule) */
       body: JSON.stringify({
         current_password:      curr,
         password:              nw,
         password_confirmation: conf
       })
     });
+
     var json = await r.json();
 
     if (r.ok) {
-      showToast('Mot de passe modifié avec succès', 'success');
+      showToast('Mot de passe modifié avec succès ✓', 'success');
+      /* ✅ Clear les champs après succès */
       document.getElementById('inp_current').value = '';
       document.getElementById('inp_new').value     = '';
       document.getElementById('inp_confirm').value = '';
     } else {
-      showToast(json.message || 'Erreur', 'error');
+      /* ✅ Afficher l'erreur précise du serveur (Laravel validation) */
+      var errMsg = '';
+      if (json.errors) {
+        var firstKey = Object.keys(json.errors)[0];
+        errMsg = json.errors[firstKey][0];
+      } else {
+        errMsg = json.message || 'Erreur lors du changement de mot de passe';
+      }
+      showToast(errMsg, 'error');
     }
   } catch(e) {
-    showToast('Erreur réseau', 'error');
+    console.error('changePassword error:', e);
+    showToast('Erreur réseau — réessayez', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-key"></i> Modifier le mot de passe';
   }
 }
 
@@ -653,6 +897,16 @@ function showToast(msg, type) {
     setTimeout(function() { t.remove(); }, 400);
   }, 3500);
 }
+
+/* ══ ESC key pour fermer le modal ══ */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCropModal();
+});
+
+/* ══ Click outside pour fermer ══ */
+document.getElementById('cropModal').addEventListener('click', function(e) {
+  if (e.target === this) closeCropModal();
+});
 
 /* ══ Utils ══ */
 function _esc(s) {
