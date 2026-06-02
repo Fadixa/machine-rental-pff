@@ -12,42 +12,20 @@ class ProfileController extends Controller
     // ─── GET /api/profile ─────────────────────────────────────────
     public function show(Request $request)
     {
-        $user = $request->user()->load([
-            'reservations' => fn($q) => $q->latest()->take(5)->with('machine:id,name,city,daily_price'),
-            'machines'     => fn($q) => $q->latest()->take(5)->withCount('reservations'),
-        ]);
+        $user = $request->user();
 
-        $stats = [];
-
-        if ($user->role === 'client') {
-            $stats = [
-                'total_reservations' => $user->reservations()->count(),
-                'completed'          => $user->reservations()->where('status', 'completed')->count(),
-                'pending'            => $user->reservations()->where('status', 'pending')->count(),
-                'total_spent'        => $user->reservations()
-                    ->where('status', 'completed')
-                    ->join('machines', 'reservations.machine_id', '=', 'machines.id')
-                    ->selectRaw('SUM(DATEDIFF(reservations.end_date, reservations.start_date) * machines.daily_price) as total')
-                    ->value('total') ?? 0,
-            ];
-        }
-
-        if ($user->role === 'owner') {
-            $stats = [
-                'total_machines'     => $user->machines()->count(),
-                'available_machines' => $user->machines()->where('status', 'available')->count(),
-                'total_reservations' => \App\Models\Reservation::whereHas('machine', fn($q) => $q->where('owner_id', $user->id))->count(),
-                'total_revenue'      => \App\Models\Reservation::whereHas('machine', fn($q) => $q->where('owner_id', $user->id))
-                    ->where('status', 'completed')
-                    ->join('machines', 'reservations.machine_id', '=', 'machines.id')
-                    ->selectRaw('SUM(DATEDIFF(reservations.end_date, reservations.start_date) * machines.daily_price) as total')
-                    ->value('total') ?? 0,
-            ];
-        }
-
+        // ✅ FIX : retourner data directement (profile/index.blade attend json.data)
         return response()->json([
-            'user'  => $user,
-            'stats' => $stats,
+            'data' => [
+                'id'                  => $user->id,
+                'name'                => $user->name,
+                'email'               => $user->email,
+                'phone'               => $user->phone,
+                'city'                => $user->city,
+                'bio'                 => $user->bio,
+                'role'                => $user->role,
+                'profile_photo_path'  => $user->profile_photo_path,
+            ],
         ]);
     }
 
@@ -65,9 +43,18 @@ class ProfileController extends Controller
 
         $user->update($validated);
 
+        // ✅ FIX : retourner data (cohérent avec show())
         return response()->json([
-            'message' => 'Profil mis à jour avec succès.',
-            'user'    => $user->fresh(),
+            'data' => [
+                'id'                  => $user->id,
+                'name'                => $user->name,
+                'email'               => $user->email,
+                'phone'               => $user->phone,
+                'city'                => $user->city,
+                'bio'                 => $user->bio,
+                'role'                => $user->role,
+                'profile_photo_path'  => $user->profile_photo_path,
+            ],
         ]);
     }
 
@@ -90,7 +77,7 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Mot de passe modifié avec succès.']);
     }
 
-    // ─── POST /api/profile/avatar ────────────────────────────────
+    // ─── POST /api/profile/avatar ─────────────────────────────────
     public function uploadAvatar(Request $request)
     {
         $request->validate([
@@ -99,20 +86,20 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        // ✅ FIX : Supprimer l'ancien avatar avec la bonne colonne profile_photo_path
+        // ✅ Supprimer l'ancien avatar si existant
         if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
             Storage::disk('public')->delete($user->profile_photo_path);
         }
 
         $path = $request->file('avatar')->store('avatars', 'public');
-        
-        // ✅ FIX : Update profile_photo_path au lieu de avatar
         $user->update(['profile_photo_path' => $path]);
 
+        // ✅ FIX : retourner data.profile_photo_path (attendu par le front)
         return response()->json([
-            'message'    => 'Photo de profil mise à jour.',
-            'avatar_url' => Storage::url($path),
-            'user'       => $user->fresh() // On retourne le user frais
+            'data' => [
+                'profile_photo_path' => $path,
+            ],
+            'message' => 'Photo de profil mise à jour.',
         ]);
     }
 }

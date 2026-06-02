@@ -1,5 +1,3 @@
-
-
 @extends('layouts.app')
 
 @push('styles')
@@ -17,7 +15,7 @@
   max-width: 900px; margin: 2rem auto; padding: 0 1rem;
 }
 
-/* ── Header profil — gold-pale, zéro navy bg ── */
+/* ── Header profil ── */
 .profile-header {
   background: var(--gold-pale);
   border: 1.5px solid rgba(212,175,55,.3);
@@ -167,7 +165,7 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Toast V13 ── */
+/* ── Toast ── */
 .toast-container {
   position: fixed; bottom: 2rem; right: 2rem; z-index: 99999;
   display: flex; flex-direction: column; gap: .6rem;
@@ -200,8 +198,8 @@ textarea.form-control { resize: vertical; min-height: 90px; }
               title="Changer la photo">
         <i class="fas fa-camera"></i>
       </button>
-      <input type="file" id="avatarInput" accept="image/*" hidden
-             onchange="uploadAvatar(this)">
+      {{-- ✅ FIX : pas de onchange ici — géré via addEventListener pour éviter double-trigger --}}
+      <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" hidden>
     </div>
     <div class="profile-header-info">
       <h4 id="headerName">—</h4>
@@ -229,12 +227,10 @@ textarea.form-control { resize: vertical; min-height: 90px; }
     <div class="form-grid">
       <div>
         <label class="form-label">Nom complet</label>
-        {{-- ✅ FIX: supprimé required — validation gérée en JS --}}
         <input type="text" id="inp_name" class="form-control" placeholder="Votre nom">
       </div>
       <div>
         <label class="form-label">Email <small style="color:var(--txt-light);font-weight:400">(non modifiable)</small></label>
-        {{-- ✅ FIX: readonly au lieu de disabled → affiche la valeur correctement --}}
         <input type="email" id="inp_email" class="form-control" readonly>
       </div>
       <div>
@@ -295,27 +291,23 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 
 @push('scripts')
 <script>
+(function() {
 /* ══════════════════════════════════════════
-    PROFILE — RENTIFY V15
-    ✅ FIX #1 : saveProfile() — body JSON ajouté (manquait complètement)
-    ✅ FIX #2 : inp_email readonly (plus disabled) → affiche la valeur
-    ✅ FIX #3 : required retiré des inputs HTML → validation 100% JS
-    ✅ Zéro navy bg
-    ✅ profile_photo_path persist après refresh
-    ✅ Navbar sync via refreshNavAvatar()
+    PROFILE — RENTIFY V17
+    ✅ FIX : uploadAvatar via addEventListener (évite double-trigger)
+    ✅ FIX : input.value='' AU DÉBUT avant tout traitement
+    ✅ FIX : accept="image/jpeg,image/png,image/webp" sur l'input
+    ✅ FIX : validation taille côté JS avant envoi
+    ✅ API show() retourne data{} — cohérent avec ProfileController V17
 ══════════════════════════════════════════ */
 
 /* ── Helpers localStorage ── */
 function _readUser()  { try { return JSON.parse(localStorage.getItem('auth_user') || 'null'); } catch(e) { return null; } }
 function _saveUser(u) { localStorage.setItem('auth_user', JSON.stringify(u)); }
 function _token()     { return localStorage.getItem('auth_token') || ''; }
+function _photo(u)    { return (u && (u.profile_photo_path || u.avatar)) || null; }
 
-/* ── Retourne la photo quelque soit le nom du champ ── */
-function _photo(u) {
-  return (u && (u.profile_photo_path || u.avatar)) || null;
-}
-
-/* ── Affiche l'avatar (img) ── */
+/* ── Affiche l'avatar ── */
 function _renderAvatar(photoPath, name) {
   var img = document.getElementById('avatarImg');
   if (photoPath) {
@@ -334,11 +326,11 @@ function _avatarFallback(name) {
        + '&background=D4AF37&color=1a1a2e&size=90&bold=true';
 }
 
-/* ── Met à jour le texte du header (nom/rôle/ville) ── */
+/* ── Met à jour le header ── */
 function _renderHeader(u) {
-  document.getElementById('headerName').textContent  = u.name  || '—';
-  document.getElementById('headerRole').textContent  = u.role  || '';
-  document.getElementById('headerCity').textContent  = u.city  ? '📍 ' + u.city : '';
+  document.getElementById('headerName').textContent = u.name  || '—';
+  document.getElementById('headerRole').textContent = u.role  || '';
+  document.getElementById('headerCity').textContent = u.city  ? '📍 ' + u.city : '';
 }
 
 /* ══ GUARD ══ */
@@ -352,7 +344,7 @@ if (!_user) {
 
 /* ══ LOAD PROFILE ══ */
 async function loadProfile() {
-  /* Affichage immédiat depuis localStorage (évite le flash blanc) */
+  /* Affichage immédiat depuis localStorage */
   _renderHeader(_user);
   _renderAvatar(_photo(_user), _user.name);
 
@@ -372,9 +364,8 @@ async function loadProfile() {
     }
 
     var json  = await r.json();
-    var fresh = (json && json.data && json.data.id) ? json.data
-              : (json && json.id)                   ? json
-              : null;
+    /* ✅ ProfileController V17 retourne { data: {...} } */
+    var fresh = (json && json.data) ? json.data : (json && json.id ? json : null);
 
     if (!fresh) throw new Error('Réponse API invalide');
 
@@ -383,24 +374,19 @@ async function loadProfile() {
       fresh.profile_photo_path = _photo(_user);
     }
 
-    /* ✅ Remplir le formulaire — chaque champ mapped correctement */
     document.getElementById('inp_name').value  = fresh.name  || '';
     document.getElementById('inp_email').value = fresh.email || '';
     document.getElementById('inp_phone').value = fresh.phone || '';
     document.getElementById('inp_city').value  = fresh.city  || '';
     document.getElementById('inp_bio').value   = fresh.bio   || '';
 
-    /* Mettre à jour header + avatar */
     _renderHeader(fresh);
     _renderAvatar(_photo(fresh), fresh.name);
-
-    /* Sauvegarder en localStorage */
     _saveUser(fresh);
     _user = fresh;
 
   } catch(e) {
     console.error('loadProfile error:', e);
-    /* Fallback sur localStorage si API échoue */
     document.getElementById('inp_name').value  = _user.name  || '';
     document.getElementById('inp_email').value = _user.email || '';
     document.getElementById('inp_phone').value = _user.phone || '';
@@ -408,7 +394,18 @@ async function loadProfile() {
     document.getElementById('inp_bio').value   = _user.bio   || '';
   }
 
+  /* ✅ Historique chargé séparément — pas de risque de conflit */
   loadHistory();
+
+  /* ✅ FIX PRINCIPAL : addEventListener UNE SEULE FOIS sur l'input file
+     Evite le double-trigger du onchange inline + l'auto-trigger au load */
+  var avatarInput = document.getElementById('avatarInput');
+  if (avatarInput && !avatarInput._bound) {
+    avatarInput._bound = true;
+    avatarInput.addEventListener('change', function() {
+      uploadAvatar(this);
+    });
+  }
 }
 
 /* ══ SAVE PROFILE ══ */
@@ -418,7 +415,6 @@ async function saveProfile() {
   var city  = document.getElementById('inp_city').value.trim();
   var bio   = document.getElementById('inp_bio').value.trim();
 
-  /* ✅ FIX #3 : validation JS — aucun required HTML sur les inputs */
   if (!name) { showToast('Le nom est obligatoire', 'error'); return; }
 
   var btn = document.getElementById('btnSave');
@@ -433,21 +429,17 @@ async function saveProfile() {
         'Authorization': 'Bearer ' + _token(),
         'Accept':        'application/json'
       },
-      /* ✅ FIX #1 : body manquait complètement dans la version précédente */
       body: JSON.stringify({ name: name, phone: phone, city: city, bio: bio })
     });
     var json = await r.json();
 
     if (r.ok) {
-      /* ✅ Merge propre — on ne touche PAS à profile_photo_path */
       var updated = Object.assign({}, _user, { name: name, phone: phone, city: city, bio: bio });
       _saveUser(updated);
       _user = updated;
-
       _renderHeader(_user);
       showToast('Profil mis à jour avec succès ✓', 'success');
     } else {
-      /* Affiche l'erreur Laravel (422 validation, 500, etc.) */
       var errMsg = (json.errors && Object.values(json.errors)[0])
                  ? Object.values(json.errors)[0][0]
                  : (json.message || 'Erreur lors de la sauvegarde');
@@ -463,12 +455,22 @@ async function saveProfile() {
 
 /* ══ UPLOAD AVATAR ══ */
 async function uploadAvatar(input) {
-  if (!input.files || !input.files[0]) return;
-  var file = input.files[0];
+  /* ✅ FIX : reset l'input EN PREMIER pour éviter re-trigger */
+  var file = (input.files && input.files[0]) ? input.files[0] : null;
+  input.value = '';
 
+  if (!file) return;
+
+  /* ✅ Validation taille côté JS (évite l'erreur Laravel "max") */
   if (file.size > 2 * 1024 * 1024) {
-    showToast('Image trop grande — max 2 MB', 'error');
-    input.value = '';
+    showToast('Image trop grande — max 2 Mo', 'error');
+    return;
+  }
+
+  /* ✅ Validation type côté JS */
+  var allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  if (!allowed.includes(file.type)) {
+    showToast('Format non supporté — JPG, PNG ou WebP uniquement', 'error');
     return;
   }
 
@@ -488,6 +490,7 @@ async function uploadAvatar(input) {
       headers: {
         'Authorization': 'Bearer ' + _token(),
         'Accept': 'application/json'
+        /* ✅ PAS de Content-Type ici — le browser le set auto avec boundary pour FormData */
       },
       body: formData
     });
@@ -495,25 +498,16 @@ async function uploadAvatar(input) {
     var json = await r.json();
 
     if (r.ok) {
-      var freshUser = json.user ? json.user : null;
-      var newPath = json.data
-        ? (json.data.profile_photo_path || json.data.avatar || null)
-        : (freshUser ? (freshUser.profile_photo_path || freshUser.avatar) : null);
+      /* ✅ ProfileController V17 retourne { data: { profile_photo_path } } */
+      var newPath = json.data ? json.data.profile_photo_path : null;
 
-      if (freshUser) {
-        _user = freshUser;
-        _saveUser(_user);
-      } else if (newPath) {
+      if (newPath) {
         _user = Object.assign({}, _user, {
           profile_photo_path: newPath,
           avatar: newPath
         });
         _saveUser(_user);
-      }
-
-      var validPath = _photo(_user);
-      if (validPath) {
-        document.getElementById('avatarImg').src = '/storage/' + validPath + '?t=' + Date.now();
+        document.getElementById('avatarImg').src = '/storage/' + newPath + '?t=' + Date.now();
       }
 
       if (typeof window.refreshNavAvatar === 'function') {
@@ -522,7 +516,14 @@ async function uploadAvatar(input) {
 
       showToast('Photo de profil mise à jour !', 'success');
     } else {
-      showToast(json.message || 'Erreur lors de l\'upload', 'error');
+      /* ✅ Afficher l'erreur Laravel précise */
+      var msg = '';
+      if (json.errors && json.errors.avatar) {
+        msg = json.errors.avatar[0];
+      } else {
+        msg = json.message || 'Erreur lors de l\'upload';
+      }
+      showToast(msg, 'error');
       _renderAvatar(_photo(_user), _user.name);
     }
   } catch(e) {
@@ -530,8 +531,6 @@ async function uploadAvatar(input) {
     showToast('Erreur réseau lors de l\'upload', 'error');
     _renderAvatar(_photo(_user), _user.name);
   }
-
-  input.value = '';
 }
 
 /* ══ CHANGE PASSWORD ══ */
@@ -590,8 +589,8 @@ async function loadHistory() {
       }
     });
     var json = await r.json();
-    var list = Array.isArray(json)           ? json
-             : Array.isArray(json.data)      ? json.data
+    var list = Array.isArray(json)      ? json
+             : Array.isArray(json.data) ? json.data
              : [];
 
     if (!list.length) {
@@ -629,7 +628,7 @@ async function loadHistory() {
 }
 
 /* ══ TABS ══ */
-function showTab(name, btn) {
+window.showTab = function(name, btn) {
   ['infos', 'security', 'history'].forEach(function(t) {
     document.getElementById('tab-' + t).style.display = (t === name) ? 'block' : 'none';
   });
@@ -637,9 +636,9 @@ function showTab(name, btn) {
     b.classList.remove('active');
   });
   if (btn) btn.classList.add('active');
-}
+};
 
-/* ══ TOAST V13 ══ */
+/* ══ TOAST ══ */
 function showToast(msg, type) {
   type = type || 'info';
   var icons = { success: '✅', error: '❌', info: 'ℹ️' };
@@ -659,5 +658,7 @@ function showToast(msg, type) {
 function _esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+})(); // fin IIFE
 </script>
 @endpush

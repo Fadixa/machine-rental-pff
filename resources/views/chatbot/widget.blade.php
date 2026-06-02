@@ -1,3 +1,15 @@
+{{-- ══ CHATBOT WIDGET — masqué pour admin/owner ══ --}}
+<script>
+(function(){
+  try {
+    var u = JSON.parse(localStorage.getItem('auth_user') || '{}');
+    if(u.role === 'admin' || u.role === 'owner') {
+      document.write('<style>#chat-toggle,#chat-window{display:none!important}</style>');
+    }
+  } catch(e){}
+})();
+</script>
+
 {{-- ── Bouton flottant --}}
 <button id="chat-toggle" onclick="toggleChat()" aria-label="Ouvrir le chat">
     <i class="fa fa-comment-dots" id="chat-icon-open"></i>
@@ -172,6 +184,10 @@
    Moteur : matching partiel normalisé + score pondéré
    25 catégories · variantes FR / darija / anglais
 ══════════════════════════════════════════════════════════════ */
+
+/* ── Guard : ne pas initialiser pour admin/owner ── */
+var _u = JSON.parse(localStorage.getItem('auth_user') || '{}');
+if (_u.role === 'admin' || _u.role === 'owner') return;
 
 const KB = [
 
@@ -398,11 +414,10 @@ function repondre(msg) {
     let score = 0;
     for (const key of cat.keys) {
       const nk = norm(key);
-      // Test regex pour les clés courtes (^...$)
       if (key.startsWith('^')) {
         if (new RegExp(key).test(n)) score += 20;
       } else if (n.includes(nk)) {
-        score += nk.length; // mots longs = plus de poids
+        score += nk.length;
       }
     }
     if (score > top) { top = score; best = cat; }
@@ -413,7 +428,6 @@ function repondre(msg) {
     return reps[Math.floor(Math.random() * reps.length)];
   }
 
-  // ── Fallback intelligent ──
   const fallbacks = [
     '🤔 Je n\'ai pas tout compris. Essayez de reformuler ou choisissez un sujet :\n\n📅 "Comment réserver ?"\n🏗 "Types de machines"\n💰 "Prix et tarifs"\n📄 "Mon contrat"\n📞 "Contacter le support"',
     '💬 Pourriez-vous reformuler votre question ?\nVoici ce que je peux faire pour vous :\n\n• Réservations & disponibilités\n• Catalogue de machines\n• Tarifs & paiement\n• Compte & profil\n• Support & contact',
@@ -457,7 +471,6 @@ window.envoyerMessage = function () {
   input.value = '';
   document.getElementById('chat-suggestions').style.display = 'none';
   const tid = afficherTyping();
-  // Délai naturel 500-900ms
   setTimeout(function () {
     supprimerTyping(tid);
     ajouterMessage(repondre(texte), 'bot');

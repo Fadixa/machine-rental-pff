@@ -177,18 +177,18 @@
 
 /* Colonne infos (navy) */
 .contact-info {
-    background: #9A7D20;
-    color: #fff;
+    background:#D4AF37;
+    color:black;
     padding: 50px 40px;
 }
 .contact-info h2 {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 10px;
-    color: #fff;
+    color: black;
 }
 .contact-info > p {
-    color: rgba(255,255,255,0.6);
+    color: black;
     font-size: 0.92rem;
     margin-bottom: 32px;
     line-height: 1.6;
@@ -208,7 +208,7 @@
     align-items: center;
     gap: 14px;
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.85);
+    color: black;
 }
 .info-list li i {
     width: 36px;
@@ -219,7 +219,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: gold;
+    color: black;
     font-size: 0.85rem;
     flex-shrink: 0;
 }
@@ -232,7 +232,7 @@
     color: rgba(255,255,255,0.55);
     line-height: 1.8;
 }
-.horaires strong { color: rgba(255,255,255,0.8); }
+.horaires strong { color: black); }
 
 /* Colonne formulaire */
 .contact-form-wrap {
@@ -289,7 +289,7 @@ select.input-custom    { cursor: pointer; }
 .btn-envoyer {
     width: 100%;
     padding: 13px;
-    background: #9A7D20;
+    background: #D4AF37;
     color: white;
     border: none;
     border-radius: 10px;
@@ -326,7 +326,7 @@ select.input-custom    { cursor: pointer; }
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-    color: #fff;
+    color: black;
     box-shadow: 0 8px 24px rgba(16,185,129,0.35);
     animation: popIn 0.4s ease;
 }
