@@ -635,18 +635,7 @@ body { background:var(--cream); color:var(--txt-dark); font-family:'DM Sans',sys
 </div>
 </section>
 
-{{-- Trust --}}
-<div class="trust-band">
-<div class="container">
-    <div class="trust-items">
-        <div class="trust-item"><i class="fas fa-shield-alt"></i> Contrats PDF sécurisés</div>
-        <div class="trust-item"><i class="fas fa-map-marker-alt"></i> 8 villes au Maroc</div>
-        <div class="trust-item"><i class="fas fa-clock"></i> Réservation en 2 min</div>
-        <div class="trust-item"><i class="fas fa-star"></i> Engins vérifiés</div>
-        <div class="trust-item"><i class="fas fa-headset"></i> Support 7j/7</div>
-    </div>
-</div>
-</div>
+
 
 {{-- ════ §2 CATEGORIES ════ --}}
 <section class="categories">

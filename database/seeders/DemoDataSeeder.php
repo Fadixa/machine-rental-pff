@@ -15,8 +15,8 @@ class DemoDataSeeder extends Seeder
         // ══════════════════════════════════════
         $users = [
             [
-                'name'     => 'Karim Bennani',
-                'email'    => 'karim@rentify.ma',
+                'name'     => 'Karima Bennani',
+                'email'    => 'karima@rentify.ma',
                 'password' => Hash::make('password'),
                 'role'     => 'owner',
                 'phone'    => '+212661234567',
@@ -58,7 +58,7 @@ class DemoDataSeeder extends Seeder
         //  Source : prestataires BTP Casablanca,
         //  Rabat, Marrakech (fourchette réelle)
         // ══════════════════════════════════════
-        $ownerId = DB::table('users')->where('email', 'karim@rentify.ma')->value('id');
+        $ownerId = DB::table('users')->where('email', 'karima@rentify.ma')->value('id');
 
         $machines = [
 
@@ -298,7 +298,7 @@ class DemoDataSeeder extends Seeder
             ['Rôle', 'Email', 'Password'],
             [
                 ['👑 Admin',  'admin@rentify.ma', 'password'],
-                ['🔑 Owner',  'karim@rentify.ma', 'password'],
+                ['🔑 Owner',  'karima@rentify.ma', 'password'],
                 ['👤 Client', 'fadwa@rentify.ma', 'password'],
             ]
         );
