@@ -127,11 +127,12 @@ body { background:var(--cream); color:var(--txt-dark); font-family:'DM Sans',sys
 .hero-visual {
     flex-shrink:0; position:relative;
     display:flex; align-items:center; justify-content:center;
+    min-width:400px;
 }
-.hv-ring3 { position:absolute; width:380px; height:380px; border-radius:50%; border:1px dashed rgba(212,175,55,.15); }
-.hv-ring2 { position:absolute; width:330px; height:330px; border-radius:50%; border:1px solid rgba(212,175,55,.25); }
+.hv-ring3 { position:absolute; width:480px; height:480px; border-radius:50%; border:1px dashed rgba(212,175,55,.15); }
+.hv-ring2 { position:absolute; width:420px; height:420px; border-radius:50%; border:1px solid rgba(212,175,55,.25); }
 .hv-circle {
-    width:280px; height:280px; border-radius:50%;
+    width:360px; height:360px; border-radius:50%;
     border:3px solid var(--gold); overflow:hidden;
     position:relative; z-index:1; background:var(--cream2);
     box-shadow:0 12px 48px var(--gold-glow);
