@@ -68,6 +68,10 @@
             max-width:1280px; margin:0 auto;
         }
 
+        nav, header, .navbar {
+    box-shadow: 0 1px 0 rgba(212,175,55,.2), 0 2px 8px rgba(15,27,45,.04);
+}
+
         /* Logo */
         .nav-logo {
             display:flex; align-items:center;

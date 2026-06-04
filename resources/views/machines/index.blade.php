@@ -871,9 +871,22 @@ function buildCard(m, i) {
         style="opacity:.5;cursor:not-allowed;background:var(--cream2);color:var(--txt-mid);border:1.5px solid var(--cream3)">
         ⛔ Indisponible</button>`;
     }
-  } else if (role === 'owner' || role === 'admin') {
+  } else if (role === 'admin') {
+    // Admin yqdar ymodifier kol machine
     reserveBtn = `<a href="/machines/${m.id}/edit" class="btn-reserver">✏️ Modifier</a>`;
-  } else {
+} else if (role === 'owner') {
+    // Owner — yshowliه "Modifier" rir 3la machines dyalh
+    if (m.owner?.id === user?.id || m.owner_id === user?.id) {
+        reserveBtn = `<a href="/machines/${m.id}/edit" class="btn-reserver">✏️ Modifier</a>`;
+    } else if (m.status === 'available') {
+        // Machine dyal owner akhor — yqdar yreservi
+        reserveBtn = `<button class="btn-reserver" onclick="openReservationModal(${m.id})">📋 Réserver</button>`;
+    } else {
+        reserveBtn = `<button class="btn-reserver" disabled
+            style="opacity:.5;cursor:not-allowed;background:var(--cream2);color:var(--txt-mid);border:1.5px solid var(--cream3)">
+            ⛔ Indisponible</button>`;
+    }
+}else {
     reserveBtn = `<a href="/login" class="btn-reserver">🔐 Se connecter pour réserver</a>`;
   }
 

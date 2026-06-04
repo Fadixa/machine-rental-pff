@@ -27,7 +27,6 @@ body { background: var(--cream); }
     border-radius:14px; overflow:hidden; position:sticky; top:90px;
     box-shadow:0 4px 20px rgba(15,27,45,.04);
 }
-/* ✅ FIX: navy → gold-pale */
 .dash-user-block {
     background:var(--gold-pale);
     border-bottom:1px solid rgba(212,175,55,.2);
@@ -40,7 +39,6 @@ body { background: var(--cream); }
     font-size:18px; font-weight:800; color:var(--txt-dark); flex-shrink:0;
     border:2px solid rgba(212,175,55,.35);
 }
-/* ✅ FIX: #fff → txt-dark */
 .dash-user-name { color:var(--txt-dark); font-size:14px; font-weight:700; }
 .dash-user-role {
     display:inline-flex; align-items:center; gap:4px;
@@ -129,7 +127,6 @@ body { background: var(--cream); }
     display:inline-flex; align-items:center; gap:5px;
     font-size:11px; font-weight:700; padding:3px 10px; border-radius:100px;
 }
-/* ✅ V9 badge colors — gold-pale pour pending (jamais orange) */
 .sb-pending   { background:#FEF9E7; color:var(--gold-dk); }
 .sb-accepted  { background:rgba(16,185,129,.1);  color:#065f46; }
 .sb-rejected  { background:rgba(239,68,68,.1);   color:#991b1b; }
@@ -161,7 +158,6 @@ body { background: var(--cream); }
     transition:transform .2s, box-shadow .2s, border-color .2s;
 }
 .fav-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(15,27,45,.08); border-color:rgba(212,175,55,.3); }
-/* ✅ FIX: navy → cream2 */
 .fav-photo { height:120px; overflow:hidden; background:var(--cream2); position:relative; }
 .fav-photo img { width:100%; height:100%; object-fit:cover; }
 .fav-remove {
@@ -223,7 +219,6 @@ body { background: var(--cream); }
 }
 .form-input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.1); }
 .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-/* ✅ FIX: navy bg → gold bg */
 .btn-save {
     background:var(--gold); color:var(--txt-dark); border:none;
     border-radius:9px; padding:11px 28px; font-size:.88rem; font-weight:700;
@@ -238,7 +233,6 @@ body { background: var(--cream); }
 .empty-title { font-size:15px; font-weight:700; color:var(--txt-dark); margin-bottom:5px; }
 .empty-sub { font-size:13px; }
 
-/* ✅ FIX: CTA banner navy → gold-pale + border gold */
 .cta-banner {
     background:var(--gold-pale);
     border:1.5px solid var(--gold);
@@ -246,9 +240,7 @@ body { background: var(--cream); }
     display:flex; align-items:center; justify-content:space-between;
     flex-wrap:wrap; gap:16px; margin-bottom:20px;
 }
-/* ✅ FIX: #fff → txt-dark */
 .cta-banner-title { font-size:15px; font-weight:800; color:var(--txt-dark); margin-bottom:4px; }
-/* ✅ FIX: rgba blanc → txt-mid */
 .cta-banner-sub   { font-size:12px; color:var(--txt); }
 .btn-cta {
     background:var(--gold); color:var(--txt-dark)!important;
@@ -258,7 +250,6 @@ body { background: var(--cream); }
 }
 .btn-cta:hover { background:var(--gold-dk); color:#fff!important; transform:translateY(-1px); }
 
-/* ✅ FIX: Toast — blanc + texte dark + bordure gold */
 #dash-toast {
     position:fixed; bottom:24px; right:24px; z-index:9999;
     background:#fff; color:var(--txt-dark);
@@ -298,7 +289,7 @@ body { background: var(--cream); }
 <script>
 (function () {
 
-/* ── Fallbacks si app.blade.php pas encore chargé ── */
+/* ── Fallbacks ── */
 if (typeof getFavorites   === 'undefined') window.getFavorites   = () => JSON.parse(localStorage.getItem('rentify_favorites') || '[]');
 if (typeof isFavorite     === 'undefined') window.isFavorite     = id => getFavorites().includes(Number(id));
 if (typeof toggleFavorite === 'undefined') window.toggleFavorite = id => {
@@ -318,10 +309,9 @@ if (_user.role === 'driver') { window.location.replace('/dashboard/driver'); ret
    STATE
    ══════════════════════════════════════ */
 const user = _user;
-let allReservations = [];
+let allReservations = null; /* FIX: null = pas encore chargé, [] = chargé mais vide */
 let activeTab = 'reservations';
 
-/* Filters */
 let filterStatus = '', filterType = '', filterCity = '', filterSearch = '';
 
 /* ══════════════════════════════════════
@@ -339,7 +329,7 @@ function toast(msg, isErr=false) {
    ══════════════════════════════════════ */
 const fDate  = d => d ? new Date(d).toLocaleDateString('fr-MA',{day:'2-digit',month:'short',year:'numeric'}) : '—';
 const fMoney = n => Number(n||0).toLocaleString('fr-MA') + ' DH';
-const initial = (user.name||'C')[0].toUpperCase();
+const initial  = (user.name||'C')[0].toUpperCase();
 const firstName = (user.name||'Client').split(' ')[0];
 
 const TYPE_PHOTO = {
@@ -407,17 +397,21 @@ async function render() {
    TAB: RÉSERVATIONS
    ══════════════════════════════════════ */
 async function renderReservationsTab() {
-    if (!allReservations.length) {
+
+    /* FIX: charge uniquement si pas encore chargé (null) */
+    if (allReservations === null) {
         try {
             const d = await API.get('/api/reservations');
-            allReservations = d?.data || (Array.isArray(d)?d:[]);
-            if (!allReservations.length) allReservations = demoReservations();
-        } catch(e) { allReservations = demoReservations(); }
+            /* FIX: accepte array direct ou {data:[]} — jamais fallback demo */
+            allReservations = Array.isArray(d) ? d : (Array.isArray(d?.data) ? d.data : []);
+        } catch(e) {
+            allReservations = [];
+        }
     }
 
-    const total     = allReservations.length;
-    const active    = allReservations.filter(r=>r.status==='accepted').length;
-    const pending   = allReservations.filter(r=>r.status==='pending').length;
+    const total   = allReservations.length;
+    const active  = allReservations.filter(r=>r.status==='accepted').length;
+    const pending = allReservations.filter(r=>r.status==='pending').length;
 
     /* Apply filters */
     let filtered = allReservations;
@@ -496,8 +490,11 @@ function renderReservationsTable(list) {
     if (!list.length) return `
         <div class="empty-state">
             <span class="empty-ico">📋</span>
-            <div class="empty-title">Aucune réservation trouvée</div>
-            <div class="empty-sub">Modifiez vos filtres ou faites votre première réservation</div>
+            <div class="empty-title">Aucune réservation</div>
+            <div class="empty-sub">Vous n'avez pas encore effectué de réservation</div>
+            <a href="/machines" class="btn-cta" style="display:inline-flex;margin-top:14px">
+                <i class="fas fa-search"></i> Parcourir les machines
+            </a>
         </div>`;
 
     const sMap = {
@@ -519,7 +516,9 @@ function renderReservationsTable(list) {
         ${list.map(r => {
             const st = sMap[r.status] || {label:r.status, cls:'sb-default'};
             const phone = r.machine?.owner?.phone;
-            const waUrl = phone ? `https://wa.me/${phone.replace(/\D/g,'').replace(/^0/,'212')}?text=${encodeURIComponent('Bonjour, ma réservation "'+( r.machine?.name||'')+'" sur Rentify a été acceptée. Comment procéder ?')}` : null;
+            const waUrl = phone
+                ? `https://wa.me/${phone.replace(/\D/g,'').replace(/^0/,'212')}?text=${encodeURIComponent('Bonjour, ma réservation "'+(r.machine?.name||'')+'" sur Rentify a été acceptée. Comment procéder ?')}`
+                : null;
             return `<tr>
                 <td>
                     <div style="font-weight:700;color:var(--txt-dark)">${r.machine?.name||'—'}</div>
@@ -559,12 +558,9 @@ function renderReservationsTable(list) {
    ══════════════════════════════════════ */
 function renderFavoritesTab() {
     const favIds = getFavorites();
-
     return `
     <div class="dash-header">
-        <div style="font-size:22px;font-weight:900;color:var(--txt-dark);letter-spacing:-.4px">
-            ❤️ Mes favoris
-        </div>
+        <div style="font-size:22px;font-weight:900;color:var(--txt-dark);letter-spacing:-.4px">❤️ Mes favoris</div>
         <div style="font-size:13px;color:var(--txt);margin-top:3px">
             ${favIds.length} machine${favIds.length>1?'s':''} sauvegardée${favIds.length>1?'s':''}
         </div>
@@ -754,8 +750,11 @@ window.downloadContrat = async function(id, btn) {
 window.cancelRes = async function(id) {
     if (!confirm('Annuler cette réservation ?')) return;
     const r = await API.patch(`/api/reservations/${id}/cancel`);
-    if (r.ok) { toast('Réservation annulée'); allReservations=[]; render(); }
-    else toast('Erreur', true);
+    if (r.ok) {
+        toast('Réservation annulée');
+        allReservations = null; /* FIX: force reload */
+        render();
+    } else toast('Erreur', true);
 };
 
 window.saveProfile = async function() {
@@ -781,8 +780,11 @@ window.changePwd = async function() {
     };
     if (!body.current_password || !body.password) { toast('Remplissez les champs', true); return; }
     const r = await API.put('/api/profile/password', body);
-    if (r.ok) { toast('Mot de passe mis à jour ✅'); document.getElementById('p-pwd-current').value=''; document.getElementById('p-pwd-new').value=''; }
-    else toast(r.data?.message||'Erreur', true);
+    if (r.ok) {
+        toast('Mot de passe mis à jour ✅');
+        document.getElementById('p-pwd-current').value='';
+        document.getElementById('p-pwd-new').value='';
+    } else toast(r.data?.message||'Erreur', true);
 };
 
 window.doLogout = function() {
@@ -796,17 +798,6 @@ window.doLogout = function() {
    ══════════════════════════════════════ */
 function afterRender() {
     if (activeTab==='favorites') loadFavoriteMachines();
-}
-
-/* ══════════════════════════════════════
-   DEMO DATA
-   ══════════════════════════════════════ */
-function demoReservations() {
-    return [
-        {id:1,machine_id:1,machine:{name:'JCB 3CX Backhoe Loader',type:'Excavatrice',city:'Casablanca',owner:{name:'Karim',phone:'0612345678'}},start_date:'2026-05-10',end_date:'2026-05-15',total_price:12500,status:'accepted'},
-        {id:2,machine_id:2,machine:{name:'Manitou MT 1840',       type:'Chargeuse',  city:'Rabat',     owner:{name:'Karim',phone:'0612345678'}},start_date:'2026-05-20',end_date:'2026-05-22',total_price:3600, status:'pending'},
-        {id:3,machine_id:3,machine:{name:'Caterpillar 320 GX',    type:'Excavatrice',city:'Marrakech', owner:{name:'Karim',phone:null}},         start_date:'2026-04-01',end_date:'2026-04-07',total_price:19200,status:'completed'},
-    ];
 }
 
 /* ══════════════════════════════════════

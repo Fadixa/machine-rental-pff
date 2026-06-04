@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Dashboard Propriétaire — Rentify')
@@ -20,7 +21,6 @@
 
 body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 
-/* ── Layout principal ── */
 .owner-layout {
   display:grid;
   grid-template-columns:260px 1fr;
@@ -28,9 +28,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   padding-top:0;
 }
 
-/* ══════════════════════════════════
-   SIDEBAR — 100% CLAIR
-══════════════════════════════════ */
 .owner-sidebar {
   background:var(--cream);
   padding:2rem 1.25rem;
@@ -94,9 +91,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   padding:.5rem 1rem .3rem; margin-top:.5rem;
 }
 
-/* ══════════════════════════════════
-   MAIN CONTENT
-══════════════════════════════════ */
 .owner-main { padding:2rem 2.5rem; overflow-x:hidden; }
 
 .page-header {
@@ -110,9 +104,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 .page-header p { color:var(--txt-mid); font-size:.88rem; margin:.25rem 0 0; }
 
-/* ══════════════════════════════════
-   STAT CARDS
-══════════════════════════════════ */
 .stats-grid {
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -146,49 +137,13 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   font-family:'Playfair Display',serif;
 }
 .stat-label { color:var(--txt-mid); font-size:.8rem; margin-top:.3rem; }
-.stat-delta {
-  font-size:.75rem; font-weight:600; margin-top:.4rem;
-}
+.stat-delta { font-size:.75rem; font-weight:600; margin-top:.4rem; }
 .stat-delta.up { color:var(--green); }
 .stat-delta.down { color:var(--red); }
-
-/* ══════════════════════════════════
-   TABS
-══════════════════════════════════ */
-.tabs-bar {
-  display:flex; gap:.5rem;
-  border-bottom:2px solid var(--cream3);
-  margin-bottom:1.75rem;
-}
-.tab-btn {
-  display:flex; align-items:center; gap:.5rem;
-  padding:.65rem 1.25rem;
-  background:none; border:none; cursor:pointer;
-  font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:600;
-  color:var(--txt-mid); border-bottom:3px solid transparent;
-  margin-bottom:-2px; transition:all .2s;
-  border-radius:8px 8px 0 0;
-}
-.tab-btn:hover { color:var(--navy); background:var(--cream2); }
-.tab-btn.active {
-  color:var(--gold-dk);
-  border-bottom-color:var(--gold);
-  background:var(--gold-pale);
-}
-.tab-badge {
-  background:var(--gold); color:var(--txt-dark);
-  font-size:.68rem; font-weight:700;
-  padding:.1rem .45rem; border-radius:20px;
-  min-width:18px; text-align:center;
-}
-.tab-btn.active .tab-badge { background:var(--gold-dk); color:#fff; }
 
 .tab-panel { display:none; }
 .tab-panel.active { display:block; }
 
-/* ══════════════════════════════════
-   TOOLBAR
-══════════════════════════════════ */
 .toolbar {
   display:flex; align-items:center; gap:.75rem;
   margin-bottom:1.25rem; flex-wrap:wrap;
@@ -217,10 +172,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 }
 .toolbar select:focus { border-color:var(--gold); }
 
-/* ══════════════════════════════════
-   BUTTONS — V10 GOLD SYSTEM
-══════════════════════════════════ */
-/* .btn-navy = alias rétrocompat → gold bg */
 .btn-navy {
   background:var(--gold); color:var(--txt-dark);
   border:2px solid var(--gold);
@@ -259,9 +210,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 .btn-icon.danger:hover { background:#fee2e2; color:var(--red); }
 .btn-icon.success:hover { background:#dcfce7; color:var(--green); }
 
-/* ══════════════════════════════════
-   MACHINES GRID
-══════════════════════════════════ */
 .machines-grid {
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -311,18 +259,13 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   text-transform:uppercase; color:var(--gold-dk);
   margin-bottom:.3rem;
 }
-.machine-card-name {
-  font-weight:700; color:var(--navy); font-size:1rem;
-  margin-bottom:.25rem;
-}
+.machine-card-name { font-weight:700; color:var(--navy); font-size:1rem; margin-bottom:.25rem; }
 .machine-card-city { color:var(--txt-light); font-size:.8rem; }
 .machine-card-price {
   display:flex; align-items:baseline; gap:.25rem;
   margin:.75rem 0 .5rem;
 }
-.machine-card-price strong {
-  font-size:1.1rem; color:var(--navy); font-weight:800;
-}
+.machine-card-price strong { font-size:1.1rem; color:var(--navy); font-weight:800; }
 .machine-card-price span { font-size:.78rem; color:var(--txt-mid); }
 .machine-card-actions {
   display:flex; gap:.5rem; padding:.75rem 1.25rem;
@@ -330,7 +273,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--cream);
 }
 
-/* Mini 3D viewer — fond crème */
 .mini-viewer-modal {
   position:fixed; inset:0; z-index:9999;
   background:rgba(10,16,28,.75); backdrop-filter:blur(8px);
@@ -364,9 +306,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:linear-gradient(135deg,#0d1a2e,#162540);
 }
 
-/* ══════════════════════════════════
-   TABLE RÉSERVATIONS
-══════════════════════════════════ */
 .table-wrapper {
   background:#fff;
   border:1px solid rgba(212,175,55,.12);
@@ -374,10 +313,7 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   overflow:hidden;
   box-shadow:var(--shadow);
 }
-.rentify-table {
-  width:100%; border-collapse:collapse;
-  font-size:.85rem;
-}
+.rentify-table { width:100%; border-collapse:collapse; font-size:.85rem; }
 .rentify-table thead tr {
   background:var(--cream);
   border-bottom:2px solid var(--cream3);
@@ -416,12 +352,8 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   font-size:.75rem; font-weight:700; color:var(--navy); flex-shrink:0;
 }
 
-/* Actions réservations */
 .res-actions { display:flex; gap:.4rem; }
 
-/* ══════════════════════════════════
-   MODAL
-══════════════════════════════════ */
 .modal-overlay {
   position:fixed; inset:0; z-index:8888;
   background:rgba(10,16,28,.7); backdrop-filter:blur(6px);
@@ -458,14 +390,10 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
   background:var(--cream);
 }
 
-/* ── Form ── */
 .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
 .form-group { display:flex; flex-direction:column; gap:.4rem; }
 .form-group.full { grid-column:1/-1; }
-.form-label {
-  font-size:.8rem; font-weight:700; color:var(--navy);
-  letter-spacing:.03em;
-}
+.form-label { font-size:.8rem; font-weight:700; color:var(--navy); letter-spacing:.03em; }
 .form-control {
   padding:.6rem .9rem;
   border:1.5px solid var(--cream3); border-radius:10px;
@@ -478,7 +406,6 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
 textarea.form-control { resize:vertical; min-height:90px; }
 select.form-control { cursor:pointer; }
 
-/* Upload images */
 .upload-zone {
   border:2px dashed var(--cream3); border-radius:12px;
   padding:2rem; text-align:center; cursor:pointer;
@@ -490,9 +417,7 @@ select.form-control { cursor:pointer; }
 .upload-zone p { color:var(--txt-mid); font-size:.85rem; margin:0; }
 .upload-zone p strong { color:var(--navy); }
 
-.img-preview-grid {
-  display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem;
-}
+.img-preview-grid { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem; }
 .img-preview-item {
   position:relative; width:72px; height:72px;
   border-radius:8px; overflow:hidden; border:2px solid var(--cream3);
@@ -507,10 +432,7 @@ select.form-control { cursor:pointer; }
 }
 .img-preview-remove:hover { background:var(--red); }
 
-/* Dispo toggle */
-.dispo-group {
-  display:flex; gap:.5rem; flex-wrap:wrap;
-}
+.dispo-group { display:flex; gap:.5rem; flex-wrap:wrap; }
 .dispo-btn {
   padding:.45rem 1rem; border-radius:20px;
   font-size:.8rem; font-weight:700; cursor:pointer;
@@ -521,9 +443,6 @@ select.form-control { cursor:pointer; }
 .dispo-btn[data-val="unavailable"].active  { border-color:var(--red); background:#fee2e2; color:#dc2626; }
 .dispo-btn[data-val="maintenance"].active  { border-color:var(--gold); background:#FEF9E7; color:var(--gold-dk); }
 
-/* ══════════════════════════════════
-   CONFIRM DIALOG
-══════════════════════════════════ */
 .confirm-overlay {
   position:fixed; inset:0; z-index:9999;
   background:rgba(10,16,28,.75); backdrop-filter:blur(6px);
@@ -542,9 +461,6 @@ select.form-control { cursor:pointer; }
 .confirm-box p  { color:var(--txt-mid); font-size:.88rem; margin:0 0 1.5rem; }
 .confirm-btns   { display:flex; gap:.75rem; justify-content:center; }
 
-/* ══════════════════════════════════
-   TOAST — fond blanc
-══════════════════════════════════ */
 .toast-container {
   position:fixed; bottom:2rem; right:2rem;
   z-index:99999; display:flex; flex-direction:column; gap:.6rem;
@@ -564,9 +480,6 @@ select.form-control { cursor:pointer; }
 .toast.error   { border-left:4px solid var(--red); }
 .toast.info    { border-left:4px solid var(--gold); }
 
-/* ══════════════════════════════════
-   REVENUE CHART
-══════════════════════════════════ */
 .chart-card {
   background:#fff; border:1px solid rgba(212,175,55,.12);
   border-radius:var(--radius); padding:1.5rem;
@@ -578,19 +491,11 @@ select.form-control { cursor:pointer; }
   display:flex; align-items:center; gap:.5rem;
 }
 
-/* ══════════════════════════════════
-   EMPTY STATE
-══════════════════════════════════ */
-.empty-state {
-  text-align:center; padding:4rem 2rem;
-}
+.empty-state { text-align:center; padding:4rem 2rem; }
 .empty-state-icon { font-size:3rem; margin-bottom:1rem; opacity:.5; }
 .empty-state h3 { color:var(--navy); font-size:1.1rem; margin:0 0 .5rem; }
 .empty-state p  { color:var(--txt-mid); font-size:.88rem; }
 
-/* ══════════════════════════════════
-   LOADING SKELETON
-══════════════════════════════════ */
 .skeleton {
   background:linear-gradient(90deg,var(--cream2) 25%,var(--cream3) 50%,var(--cream2) 75%);
   background-size:200% 100%;
@@ -599,21 +504,22 @@ select.form-control { cursor:pointer; }
 }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-/* ══════════════════════════════════
-   REVENUE TABLE
-══════════════════════════════════ */
 .revenue-row { display:flex; align-items:center; gap:.75rem; padding:.6rem 0; border-bottom:1px solid var(--cream2); }
 .revenue-row:last-child { border-bottom:none; }
 .revenue-bar-wrap { flex:1; background:var(--cream2); border-radius:4px; height:6px; }
 .revenue-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--gold),var(--gold-dk)); }
 .revenue-amount { font-weight:700; color:var(--navy); font-size:.88rem; min-width:80px; text-align:right; }
 
-/* ══════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════ */
-@media(max-width:1200px) {
-  .stats-grid { grid-template-columns:repeat(2,1fr); }
+/* ── Tab badge sidebar ── */
+.tab-badge {
+  background:var(--gold); color:var(--txt-dark);
+  font-size:.68rem; font-weight:700;
+  padding:.1rem .45rem; border-radius:20px;
+  min-width:18px; text-align:center;
+  margin-left:auto;
 }
+
+@media(max-width:1200px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
 @media(max-width:900px) {
   .owner-layout { grid-template-columns:1fr; }
   .owner-sidebar {
@@ -621,14 +527,14 @@ select.form-control { cursor:pointer; }
     display:flex; flex-wrap:wrap; gap:.5rem;
     padding:1rem; border-bottom:1.5px solid rgba(212,175,55,.2); border-right:none;
   }
-  .sidebar-profile      { display:none; }
-  .sidebar-section-label{ display:none; }
+  .sidebar-profile { display:none; }
+  .sidebar-section-label { display:none; }
   .owner-main { padding:1.5rem 1.25rem; }
 }
 @media(max-width:600px) {
-  .stats-grid     { grid-template-columns:1fr 1fr; }
-  .form-grid      { grid-template-columns:1fr; }
-  .machines-grid  { grid-template-columns:1fr; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .form-grid { grid-template-columns:1fr; }
+  .machines-grid { grid-template-columns:1fr; }
 }
 </style>
 @endpush
@@ -636,9 +542,7 @@ select.form-control { cursor:pointer; }
 @section('content')
 <div class="owner-layout" id="ownerLayout">
 
-  {{-- ════════════════════════════════════════
-       SIDEBAR
-  ════════════════════════════════════════ --}}
+  <!-- SIDEBAR -->
   <aside class="owner-sidebar">
     <div class="sidebar-profile">
       <div id="sidebarAvatarWrap">
@@ -658,13 +562,20 @@ select.form-control { cursor:pointer; }
       <li>
         <a href="#" data-tab="machines" onclick="switchSideTab('machines',this);return false;">
           <span class="nav-icon">🏗</span> Mes Machines
-          <span class="tab-badge ms-auto" id="sideNavMachinesBadge">0</span>
+          <span class="tab-badge" id="sideNavMachinesBadge">0</span>
         </a>
       </li>
       <li>
         <a href="#" data-tab="reservations" onclick="switchSideTab('reservations',this);return false;">
-          <span class="nav-icon">📋</span> Réservations
-          <span class="tab-badge ms-auto" id="sideNavResBadge" style="background:#ef4444;color:#fff">0</span>
+          <span class="nav-icon">📋</span> Réservations reçues
+          <span class="tab-badge" id="sideNavResBadge" style="background:#ef4444;color:#fff">0</span>
+        </a>
+      </li>
+      {{-- FIX: Tab "Mes locations" — réservations faites kao client --}}
+      <li>
+        <a href="#" data-tab="my-bookings" onclick="switchSideTab('my-bookings',this);return false;">
+          <span class="nav-icon">🛒</span> Mes locations
+          <span class="tab-badge" id="sideNavBookingsBadge" style="background:var(--gold-dk);color:#fff">0</span>
         </a>
       </li>
       <li><span class="sidebar-section-label">Compte</span></li>
@@ -681,12 +592,9 @@ select.form-control { cursor:pointer; }
     </ul>
   </aside>
 
-  {{-- ════════════════════════════════════════
-       MAIN
-  ════════════════════════════════════════ --}}
+  <!-- MAIN -->
   <main class="owner-main">
 
-    {{-- ── Header ── --}}
     <div class="page-header">
       <div>
         <h1>Dashboard Propriétaire</h1>
@@ -697,18 +605,14 @@ select.form-control { cursor:pointer; }
       </button>
     </div>
 
-    {{-- ── Tab Overview ── --}}
+    <!-- Tab Overview -->
     <div id="tab-overview" class="tab-panel active">
-
-      {{-- Stats --}}
       <div class="stats-grid" id="statsGrid">
         <div class="stat-card skeleton" style="height:130px"></div>
         <div class="stat-card skeleton" style="height:130px"></div>
         <div class="stat-card skeleton" style="height:130px"></div>
         <div class="stat-card skeleton" style="height:130px"></div>
       </div>
-
-      {{-- Charts row --}}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem" id="chartsRow">
         <div class="chart-card">
           <h3>📈 Revenus mensuels</h3>
@@ -719,17 +623,12 @@ select.form-control { cursor:pointer; }
           <div id="machineRevenueList"></div>
         </div>
       </div>
-
-      {{-- Recent reservations --}}
       <div class="chart-card">
         <h3>🕐 Réservations récentes</h3>
         <div class="table-wrapper" style="box-shadow:none;border:none">
           <table class="rentify-table" id="recentResTable">
             <thead>
-              <tr>
-                <th>#</th><th>Client</th><th>Machine</th>
-                <th>Période</th><th>Montant</th><th>Statut</th><th>Actions</th>
-              </tr>
+              <tr><th>#</th><th>Client</th><th>Machine</th><th>Période</th><th>Montant</th><th>Statut</th><th>Actions</th></tr>
             </thead>
             <tbody id="recentResTbody">
               <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--txt-light)">Chargement…</td></tr>
@@ -739,7 +638,7 @@ select.form-control { cursor:pointer; }
       </div>
     </div>
 
-    {{-- ── Tab Machines ── --}}
+    <!-- Tab Machines -->
     <div id="tab-machines" class="tab-panel">
       <div class="toolbar">
         <div class="toolbar-search">
@@ -768,7 +667,6 @@ select.form-control { cursor:pointer; }
         </button>
       </div>
       <div class="machines-grid" id="machinesGrid">
-        {{-- Skeletons --}}
         @for($i=0;$i<4;$i++)
         <div style="background:#fff;border-radius:14px;overflow:hidden;border:1px solid rgba(212,175,55,.12)">
           <div class="skeleton" style="height:160px"></div>
@@ -782,7 +680,7 @@ select.form-control { cursor:pointer; }
       </div>
     </div>
 
-    {{-- ── Tab Réservations ── --}}
+    <!-- Tab Réservations reçues -->
     <div id="tab-reservations" class="tab-panel">
       <div class="toolbar">
         <div class="toolbar-search">
@@ -804,17 +702,37 @@ select.form-control { cursor:pointer; }
       <div class="table-wrapper">
         <table class="rentify-table">
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Client</th>
-              <th>Machine</th>
-              <th>Dates</th>
-              <th>Prix total</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
+            <tr><th>#</th><th>Client</th><th>Machine</th><th>Dates</th><th>Prix total</th><th>Statut</th><th>Actions</th></tr>
           </thead>
           <tbody id="reservationsTbody">
+            <tr><td colspan="7" style="text-align:center;padding:2.5rem;color:var(--txt-light)">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FIX: Tab "Mes locations" — réservations faites kao client -->
+    <div id="tab-my-bookings" class="tab-panel">
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Rechercher…" id="bookingSearchInput" oninput="filterMyBookings()">
+        </div>
+        <select id="bookingStatusFilter" onchange="filterMyBookings()">
+          <option value="">Tous les statuts</option>
+          <option value="pending">En attente</option>
+          <option value="accepted">Confirmée</option>
+          <option value="rejected">Refusée</option>
+          <option value="completed">Terminée</option>
+          <option value="cancelled">Annulée</option>
+        </select>
+      </div>
+      <div class="table-wrapper">
+        <table class="rentify-table">
+          <thead>
+            <tr><th>#</th><th>Machine</th><th>Propriétaire</th><th>Dates</th><th>Prix total</th><th>Statut</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="myBookingsTbody">
             <tr><td colspan="7" style="text-align:center;padding:2.5rem;color:var(--txt-light)">Chargement…</td></tr>
           </tbody>
         </table>
@@ -824,9 +742,7 @@ select.form-control { cursor:pointer; }
   </main>
 </div>
 
-{{-- ════════════════════════════════════════
-     MODAL MACHINE (Add / Edit)
-════════════════════════════════════════ --}}
+<!-- MODAL MACHINE -->
 <div class="modal-overlay" id="machineModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -835,12 +751,10 @@ select.form-control { cursor:pointer; }
     </div>
     <div class="modal-body">
       <div class="form-grid">
-
         <div class="form-group">
           <label class="form-label">Nom de la machine *</label>
           <input type="text" class="form-control" id="machineName" placeholder="Ex: Excavatrice JCB 3CX">
         </div>
-
         <div class="form-group">
           <label class="form-label">Type *</label>
           <select class="form-control" id="machineType">
@@ -855,32 +769,26 @@ select.form-control { cursor:pointer; }
             <option value="camion">Camion</option>
           </select>
         </div>
-
         <div class="form-group">
           <label class="form-label">Prix / jour (MAD) *</label>
           <input type="number" class="form-control" id="machinePriceDay" placeholder="500">
         </div>
-
         <div class="form-group">
           <label class="form-label">Prix / heure (MAD)</label>
           <input type="number" class="form-control" id="machinePriceHour" placeholder="75">
         </div>
-
         <div class="form-group">
           <label class="form-label">Ville *</label>
           <input type="text" class="form-control" id="machineCity" placeholder="Casablanca">
         </div>
-
         <div class="form-group">
           <label class="form-label">Localisation précise</label>
           <input type="text" class="form-control" id="machineLocation" placeholder="Zone industrielle Ain Sebaâ">
         </div>
-
         <div class="form-group full">
           <label class="form-label">Description</label>
-          <textarea class="form-control" id="machineDescription" placeholder="Décrivez votre machine, ses caractéristiques…"></textarea>
+          <textarea class="form-control" id="machineDescription" placeholder="Décrivez votre machine…"></textarea>
         </div>
-
         <div class="form-group full">
           <label class="form-label">Disponibilité</label>
           <div class="dispo-group">
@@ -889,7 +797,6 @@ select.form-control { cursor:pointer; }
             <button type="button" class="dispo-btn"        data-val="maintenance" onclick="setDispo(this)">🔧 Maintenance</button>
           </div>
         </div>
-
         <div class="form-group full">
           <label class="form-label">Photos de la machine</label>
           <div class="upload-zone" id="uploadZone">
@@ -900,7 +807,6 @@ select.form-control { cursor:pointer; }
           </div>
           <div class="img-preview-grid" id="imgPreviewGrid"></div>
         </div>
-
       </div>
     </div>
     <div class="modal-footer">
@@ -912,9 +818,7 @@ select.form-control { cursor:pointer; }
   </div>
 </div>
 
-{{-- ════════════════════════════════════════
-     MINI 3D VIEWER MODAL
-════════════════════════════════════════ --}}
+<!-- MINI 3D VIEWER -->
 <div class="mini-viewer-modal" id="miniViewerModal">
   <div class="mini-viewer-box">
     <div class="mini-viewer-header">
@@ -928,9 +832,7 @@ select.form-control { cursor:pointer; }
   </div>
 </div>
 
-{{-- ════════════════════════════════════════
-     CONFIRM DIALOG
-════════════════════════════════════════ --}}
+<!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
     <div class="confirm-icon" id="confirmIcon">⚠️</div>
@@ -943,7 +845,6 @@ select.form-control { cursor:pointer; }
   </div>
 </div>
 
-{{-- Toast container --}}
 <div class="toast-container" id="toastContainer"></div>
 
 @endsection
@@ -952,12 +853,6 @@ select.form-control { cursor:pointer; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-/* ═══════════════════════════════════════════════════
-   RENTIFY — DASHBOARD OWNER
-   Stack: Laravel 11 | Blade | Sanctum | Vanilla JS
-═══════════════════════════════════════════════════ */
-
-/* ══ CONSTANTS ══ */
 const TYPE_PHOTO = {
   excavatrice:'/images/img3.png', grue:'/images/img4.png',
   bulldozer:'/images/img1.png', chargeuse:'/images/img2.png',
@@ -979,9 +874,9 @@ const STATUS_DISPO = {
   maintenance: '<span class="machine-card-status status-maintenance">🔧 Maintenance</span>',
 };
 
-/* ══ STATE ══ */
 let allMachines = [];
-let allReservations = [];
+let allReservations = [];   // réservations REÇUES (machines dyalh)
+let allMyBookings   = [];   // réservations FAITES kao client
 let editMachineId = null;
 let currentDispo = 'available';
 let miniViewerAnim = null;
@@ -990,17 +885,11 @@ let confirmCallback = null;
 let revenueChart = null;
 let selectedFiles = [];
 
-/* ══════════════════════════════════
-   INIT
-══════════════════════════════════ */
+/* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', async () => {
   const user = window.getUser ? window.getUser() : JSON.parse(localStorage.getItem('auth_user'));
-  if (!user || user.role !== 'owner') {
-    window.location.href = '/login';
-    return;
-  }
+  if (!user || user.role !== 'owner') { window.location.href = '/login'; return; }
 
-  // Sidebar user info
   document.getElementById('sidebarName').textContent = user.name || 'Propriétaire';
   document.getElementById('headerGreeting').textContent =
     `Bonjour ${user.name?.split(' ')[0] || ''} 👋 — bienvenue sur votre espace`;
@@ -1009,28 +898,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     avatarWrap.innerHTML = `<img src="/storage/${user.profile_photo_path}" class="sidebar-avatar" alt="Avatar">`;
   }
 
-  await Promise.all([loadMachines(), loadReservations()]);
+  await Promise.all([loadMachines(), loadReservations(), loadMyBookings()]);
   renderStats();
   renderRevenueChart();
   renderMachineRevenueList();
   renderRecentReservations();
   renderMachinesGrid();
   renderReservationsTable();
+  renderMyBookingsTable();
 });
 
-/* ══════════════════════════════════
-   DATA LOADING
-══════════════════════════════════ */
+/* ══ DATA LOADING ══ */
 async function loadMachines() {
   try {
     const data = await window.API.get('/api/my-machines');
     allMachines = Array.isArray(data) ? data : (data.data || data.machines || []);
     document.getElementById('sideNavMachinesBadge').textContent = allMachines.length;
     populateMachineFilter();
-  } catch(e) {
-    console.error('loadMachines', e);
-    allMachines = [];
-  }
+  } catch(e) { allMachines = []; }
 }
 
 async function loadReservations() {
@@ -1039,15 +924,26 @@ async function loadReservations() {
     allReservations = Array.isArray(data) ? data : (data.data || data.reservations || []);
     const pending = allReservations.filter(r => r.status === 'pending').length;
     document.getElementById('sideNavResBadge').textContent = pending;
+  } catch(e) { allReservations = []; }
+}
+
+/* FIX: charge les réservations FAITES par cet owner kao client */
+async function loadMyBookings() {
+  try {
+    const data = await window.API.get('/api/my-bookings');
+    allMyBookings = Array.isArray(data) ? data : (data.data || []);
+    document.getElementById('sideNavBookingsBadge').textContent = allMyBookings.length;
   } catch(e) {
-    console.error('loadReservations', e);
-    allReservations = [];
+    /* Fallback: si /api/my-bookings n'existe pas encore, on essaie /api/reservations?as_client=1 */
+    try {
+      const data = await window.API.get('/api/reservations?as_client=1');
+      allMyBookings = Array.isArray(data) ? data : (data.data || []);
+      document.getElementById('sideNavBookingsBadge').textContent = allMyBookings.length;
+    } catch(e2) { allMyBookings = []; }
   }
 }
 
-/* ══════════════════════════════════
-   STATS
-══════════════════════════════════ */
+/* ══ STATS ══ */
 function renderStats() {
   const totalMachines = allMachines.length;
   const available = allMachines.filter(m => m.status === 'available').length;
@@ -1077,13 +973,10 @@ function renderStats() {
 function calcAvgRating() {
   const ratings = allMachines.flatMap(m => m.ratings || []).map(r => parseFloat(r.rating));
   if (!ratings.length) return '—';
-  const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
-  return avg.toFixed(1) + ' ⭐';
+  return (ratings.reduce((a,b) => a+b, 0) / ratings.length).toFixed(1) + ' ⭐';
 }
 
-/* ══════════════════════════════════
-   CHARTS
-══════════════════════════════════ */
+/* ══ CHARTS ══ */
 function renderRevenueChart() {
   const months = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'];
   const monthlyRev = new Array(12).fill(0);
@@ -1093,7 +986,6 @@ function renderRevenueChart() {
       const d = new Date(r.start_date || r.created_at);
       if (!isNaN(d)) monthlyRev[d.getMonth()] += parseFloat(r.total_price || 0);
     });
-
   const ctx = document.getElementById('revenueChart').getContext('2d');
   if (revenueChart) revenueChart.destroy();
   revenueChart = new Chart(ctx, {
@@ -1101,28 +993,17 @@ function renderRevenueChart() {
     data: {
       labels: months,
       datasets: [{
-        label: 'Revenus (MAD)',
-        data: monthlyRev,
-        backgroundColor: 'rgba(212,175,55,.25)',
-        borderColor: '#D4AF37',
-        borderWidth: 2,
-        borderRadius: 6,
-        borderSkipped: false,
+        label: 'Revenus (MAD)', data: monthlyRev,
+        backgroundColor: 'rgba(212,175,55,.25)', borderColor: '#D4AF37',
+        borderWidth: 2, borderRadius: 6, borderSkipped: false,
       }]
     },
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
       scales: {
-        y: {
-          beginAtZero: true,
-          grid: { color: 'rgba(212,175,55,.08)' },
-          ticks: { color: '#9992a4', font: { size: 11 } }
-        },
-        x: {
-          grid: { display: false },
-          ticks: { color: '#9992a4', font: { size: 11 } }
-        }
+        y: { beginAtZero:true, grid:{ color:'rgba(212,175,55,.08)' }, ticks:{ color:'#9992a4', font:{size:11} } },
+        x: { grid:{ display:false }, ticks:{ color:'#9992a4', font:{size:11} } }
       }
     }
   });
@@ -1136,10 +1017,8 @@ function renderMachineRevenueList() {
       const name = r.machine?.name || `Machine #${r.machine_id}`;
       revenueByMachine[name] = (revenueByMachine[name] || 0) + parseFloat(r.total_price || 0);
     });
-
   const sorted = Object.entries(revenueByMachine).sort((a,b) => b[1]-a[1]).slice(0,6);
   const max = sorted[0]?.[1] || 1;
-
   const container = document.getElementById('machineRevenueList');
   if (!sorted.length) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><p>Aucun revenu enregistré</p></div>`;
@@ -1149,30 +1028,20 @@ function renderMachineRevenueList() {
     <div class="revenue-row">
       <div style="font-size:.82rem;color:var(--navy);font-weight:600;min-width:120px;max-width:140px;
         overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${name}">${name}</div>
-      <div class="revenue-bar-wrap">
-        <div class="revenue-bar" style="width:${(rev/max*100).toFixed(1)}%"></div>
-      </div>
+      <div class="revenue-bar-wrap"><div class="revenue-bar" style="width:${(rev/max*100).toFixed(1)}%"></div></div>
       <div class="revenue-amount">${rev.toLocaleString('fr-MA')} MAD</div>
     </div>
   `).join('');
 }
 
-/* ══════════════════════════════════
-   RECENT RESERVATIONS
-══════════════════════════════════ */
 function renderRecentReservations() {
-  const recent = [...allReservations]
-    .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, 6);
-
+  const recent = [...allReservations].sort((a,b) => new Date(b.created_at)-new Date(a.created_at)).slice(0,6);
   document.getElementById('recentResTbody').innerHTML = recent.length
     ? recent.map(r => buildResRow(r)).join('')
-    : `<tr><td colspan="7" class="empty-state"><div class="empty-state-icon">📭</div><p>Aucune réservation</p></td></tr>`;
+    : `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">📭</div><p>Aucune réservation</p></div></td></tr>`;
 }
 
-/* ══════════════════════════════════
-   MACHINES GRID
-══════════════════════════════════ */
+/* ══ MACHINES GRID ══ */
 function renderMachinesGrid(machines) {
   const list = machines || allMachines;
   const grid = document.getElementById('machinesGrid');
@@ -1193,16 +1062,13 @@ function buildMachineCard(m) {
   const img = m.images?.[0]?.path
     ? `/storage/${m.images[0].path}`
     : (TYPE_PHOTO[m.type?.toLowerCase()] || '/images/img1.png');
-
   return `
   <div class="machine-card" id="mc-${m.id}">
     <div class="machine-card-img">
       <img src="${img}" alt="${m.name}" loading="lazy"
         onerror="this.src='${TYPE_PHOTO[m.type?.toLowerCase()]||'/images/img1.png'}'">
       ${STATUS_DISPO[m.status] || ''}
-      <button class="machine-card-3d" onclick="openMiniViewer(${m.id},'${escHtml(m.name)}','${m.type?.toLowerCase()}')" title="Vue 3D">
-        🎲
-      </button>
+      <button class="machine-card-3d" onclick="openMiniViewer(${m.id},'${escHtml(m.name)}','${m.type?.toLowerCase()}')" title="Vue 3D">🎲</button>
     </div>
     <div class="machine-card-body">
       <div class="machine-card-type">${m.type || 'Machine'}</div>
@@ -1236,20 +1102,16 @@ function filterMachines() {
   renderMachinesGrid(filtered);
 }
 
-/* ══════════════════════════════════
-   RESERVATIONS TABLE
-══════════════════════════════════ */
+/* ══ RESERVATIONS TABLE (reçues) ══ */
 function renderReservationsTable(reservations) {
   const list = reservations || allReservations;
   const tbody = document.getElementById('reservationsTbody');
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="7">
-      <div class="empty-state">
-        <div class="empty-state-icon">📭</div>
-        <h3>Aucune réservation</h3>
-        <p>Les demandes de location apparaîtront ici</p>
-      </div>
-    </td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+      <div class="empty-state-icon">📭</div>
+      <h3>Aucune réservation</h3>
+      <p>Les demandes de location apparaîtront ici</p>
+    </div></td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(r => buildResRow(r, true)).join('');
@@ -1261,39 +1123,32 @@ function buildResRow(r, withActions = false) {
   const end   = r.end_date   ? new Date(r.end_date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '—';
   const price = parseFloat(r.total_price||0).toLocaleString('fr-MA');
   const machineName = r.machine?.name || `Machine #${r.machine_id}`;
-
   let actions = '';
   if (withActions) {
     if (r.status === 'pending') {
-      actions = `
-        <div class="res-actions">
-          <button class="btn-gold btn-sm" onclick="respondReservation(${r.id},'accept')">✅ Accepter</button>
-          <button class="btn-outline btn-sm" onclick="respondReservation(${r.id},'reject')" style="border-color:var(--red);color:var(--red)">❌ Refuser</button>
-        </div>`;
+      actions = `<div class="res-actions">
+        <button class="btn-gold btn-sm" onclick="respondReservation(${r.id},'accept')">✅ Accepter</button>
+        <button class="btn-outline btn-sm" onclick="respondReservation(${r.id},'reject')" style="border-color:var(--red);color:var(--red)">❌ Refuser</button>
+      </div>`;
     } else if (r.status === 'accepted') {
-      actions = `
-        <div class="res-actions">
-          <button class="btn-outline btn-sm" onclick="respondReservation(${r.id},'complete')">🏆 Terminer</button>
-          <a href="https://wa.me/${r.client?.phone || ''}?text=Bonjour ${encodeURIComponent(r.client?.name||'')} !"
-             target="_blank" class="btn-outline btn-sm">💬 WhatsApp</a>
-        </div>`;
+      actions = `<div class="res-actions">
+        <button class="btn-outline btn-sm" onclick="respondReservation(${r.id},'complete')">🏆 Terminer</button>
+        <a href="https://wa.me/${r.client?.phone || ''}?text=Bonjour ${encodeURIComponent(r.client?.name||'')} !"
+           target="_blank" class="btn-outline btn-sm">💬 WhatsApp</a>
+      </div>`;
     } else {
       actions = `<span style="color:var(--txt-light);font-size:.8rem">—</span>`;
     }
   }
-
-  return `
-  <tr>
+  return `<tr>
     <td style="color:var(--txt-light);font-size:.8rem">#${r.id}</td>
-    <td>
-      <div class="client-info">
-        <div class="client-avatar">${clientInitial}</div>
-        <div>
-          <div style="font-weight:600;color:var(--navy);font-size:.85rem">${escHtml(r.client?.name||'—')}</div>
-          <div style="font-size:.75rem;color:var(--txt-light)">${escHtml(r.client?.phone||'')}</div>
-        </div>
+    <td><div class="client-info">
+      <div class="client-avatar">${clientInitial}</div>
+      <div>
+        <div style="font-weight:600;color:var(--navy);font-size:.85rem">${escHtml(r.client?.name||'—')}</div>
+        <div style="font-size:.75rem;color:var(--txt-light)">${escHtml(r.client?.phone||'')}</div>
       </div>
-    </td>
+    </div></td>
     <td style="font-weight:600;color:var(--navy)">${escHtml(machineName)}</td>
     <td style="font-size:.82rem">${start} → ${end}</td>
     <td><strong style="color:var(--navy)">${price} MAD</strong></td>
@@ -1318,54 +1173,136 @@ function populateMachineFilter() {
   const sel = document.getElementById('resMachineFilter');
   allMachines.forEach(m => {
     const opt = document.createElement('option');
-    opt.value = m.id;
-    opt.textContent = m.name;
+    opt.value = m.id; opt.textContent = m.name;
     sel.appendChild(opt);
   });
 }
 
-/* ══════════════════════════════════
-   RESPOND RESERVATION
-══════════════════════════════════ */
+/* ══ FIX: MES LOCATIONS TABLE (faites kao client) ══ */
+function renderMyBookingsTable(bookings) {
+  const list = bookings || allMyBookings;
+  const tbody = document.getElementById('myBookingsTbody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+      <div class="empty-state-icon">🛒</div>
+      <h3>Aucune location effectuée</h3>
+      <p>Vos réservations chez d'autres propriétaires apparaîtront ici</p>
+      <a href="/machines" class="btn-gold" style="margin-top:1rem;display:inline-flex">🔍 Parcourir les machines</a>
+    </div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(r => {
+    const start = r.start_date ? new Date(r.start_date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '—';
+    const end   = r.end_date   ? new Date(r.end_date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '—';
+    const price = parseFloat(r.total_price||0).toLocaleString('fr-MA');
+    const machineName  = r.machine?.name  || `Machine #${r.machine_id}`;
+    const ownerName    = r.machine?.owner?.name  || 'Propriétaire';
+    const ownerPhone   = r.machine?.owner?.phone || '';
+    const ownerInitial = ownerName[0].toUpperCase();
+
+    let actions = '';
+    if (r.status === 'accepted') {
+      const waUrl = ownerPhone
+        ? `https://wa.me/${ownerPhone.replace(/\D/g,'').replace(/^0/,'212')}?text=${encodeURIComponent('Bonjour, ma réservation "'+machineName+'" sur Rentify a été acceptée.')}`
+        : null;
+      actions = `<div class="res-actions">
+        <button class="btn-outline btn-sm" onclick="downloadContrat(${r.id},this)">📄 Contrat</button>
+        ${waUrl ? `<a href="${waUrl}" target="_blank" class="btn-outline btn-sm" style="background:#25D366;color:#fff;border-color:#25D366">💬 WhatsApp</a>` : ''}
+      </div>`;
+    } else if (r.status === 'pending') {
+      actions = `<button class="btn-outline btn-sm" style="border-color:var(--red);color:var(--red)"
+        onclick="cancelMyBooking(${r.id})">✕ Annuler</button>`;
+    } else {
+      actions = `<span style="color:var(--txt-light);font-size:.8rem">—</span>`;
+    }
+
+    return `<tr>
+      <td style="color:var(--txt-light);font-size:.8rem">#${r.id}</td>
+      <td>
+        <div style="font-weight:600;color:var(--navy);font-size:.85rem">${escHtml(machineName)}</div>
+        <div style="font-size:.75rem;color:var(--txt-light)">${escHtml(r.machine?.type||'')} · ${escHtml(r.machine?.city||'')}</div>
+      </td>
+      <td><div class="client-info">
+        <div class="client-avatar">${ownerInitial}</div>
+        <div style="font-weight:600;color:var(--navy);font-size:.85rem">${escHtml(ownerName)}</div>
+      </div></td>
+      <td style="font-size:.82rem">${start} → ${end}</td>
+      <td><strong style="color:var(--navy)">${price} MAD</strong></td>
+      <td>${STATUS_BADGE[r.status] || r.status}</td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterMyBookings() {
+  const q      = document.getElementById('bookingSearchInput').value.toLowerCase();
+  const status = document.getElementById('bookingStatusFilter').value;
+  const filtered = allMyBookings.filter(r =>
+    (!q || (r.machine?.name||'').toLowerCase().includes(q)) &&
+    (!status || r.status === status)
+  );
+  renderMyBookingsTable(filtered);
+}
+
+async function cancelMyBooking(id) {
+  if (!confirm('Annuler cette réservation ?')) return;
+  const r = await window.API.patch(`/api/reservations/${id}/cancel`);
+  if (r.ok) {
+    showToast('success', '✅ Réservation annulée');
+    await loadMyBookings();
+    renderMyBookingsTable();
+  } else {
+    showToast('error', '❌ Erreur');
+  }
+}
+
+async function downloadContrat(id, btn) {
+  const orig = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '⏳';
+  try {
+    const r = await fetch(`/api/reservations/${id}/contrat`, {
+      headers:{'Authorization':'Bearer '+window.getToken(),'Accept':'application/pdf'}
+    });
+    if (!r.ok) throw new Error('Erreur');
+    const blob = await r.blob(), url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `contrat-rentify-${id}.pdf`;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 200);
+    showToast('success', '✅ Contrat téléchargé');
+  } catch(e) { showToast('error', '❌ Erreur'); }
+  finally { btn.disabled = false; btn.innerHTML = orig; }
+}
+
+/* ══ RESPOND RESERVATION ══ */
 async function respondReservation(id, action) {
   const labels = {
-    accept:  { title:'Accepter la réservation', msg:'Confirmer l\'acceptation de cette réservation ?', icon:'✅' },
-    reject:  { title:'Refuser la réservation',  msg:'Confirmer le refus de cette réservation ?',       icon:'❌' },
-    complete:{ title:'Marquer comme terminée',  msg:'Confirmer la fin de cette location ?',            icon:'🏆' },
+    accept:  { title:'Accepter la réservation', msg:'Confirmer l\'acceptation ?', icon:'✅' },
+    reject:  { title:'Refuser la réservation',  msg:'Confirmer le refus ?',       icon:'❌' },
+    complete:{ title:'Marquer comme terminée',  msg:'Confirmer la fin ?',         icon:'🏆' },
   };
   const l = labels[action];
   openConfirm(l.icon, l.title, l.msg, async () => {
     try {
       const res = await window.API.patch(`/api/reservations/${id}/${action}`);
       if (res.ok || res.status === 200) {
-        const idx = allReservations.findIndex(r => r.id === id);
-        if (idx !== -1) {
-          const map = { accept:'accepted', reject:'rejected', complete:'completed' };
-          allReservations[idx].status = map[action];
-        }
         await loadReservations();
         renderReservationsTable();
         renderRecentReservations();
         renderStats();
         showToast('success', '✅ Réservation mise à jour');
       } else {
-        showToast('error', '❌ Erreur : ' + (res.data?.message || 'Réessayez'));
+        showToast('error', '❌ ' + (res.data?.message || 'Réessayez'));
       }
-    } catch(e) {
-      showToast('error', '❌ Erreur réseau');
-    }
+    } catch(e) { showToast('error', '❌ Erreur réseau'); }
   });
 }
 
-/* ══════════════════════════════════
-   MACHINE MODAL
-══════════════════════════════════ */
+/* ══ MACHINE MODAL ══ */
 function openMachineModal(id = null) {
   editMachineId = id;
   selectedFiles = [];
   document.getElementById('imgPreviewGrid').innerHTML = '';
   document.getElementById('machineImages').value = '';
-
   if (id) {
     const m = allMachines.find(x => x.id == id);
     if (!m) return;
@@ -1379,7 +1316,6 @@ function openMachineModal(id = null) {
     document.getElementById('machineLocation').value    = m.location || '';
     document.getElementById('machineDescription').value = m.description || '';
     setDispoVal(m.status || 'available');
-
     (m.images || []).forEach(img => {
       const div = document.createElement('div');
       div.className = 'img-preview-item';
@@ -1389,23 +1325,17 @@ function openMachineModal(id = null) {
   } else {
     document.getElementById('machineModalTitle').textContent = 'Ajouter une machine';
     document.getElementById('machineModalSaveBtn').innerHTML = '<span>💾</span> Enregistrer';
-    document.getElementById('machineName').value        = '';
-    document.getElementById('machineType').value        = '';
-    document.getElementById('machinePriceDay').value    = '';
-    document.getElementById('machinePriceHour').value   = '';
-    document.getElementById('machineCity').value        = '';
-    document.getElementById('machineLocation').value    = '';
-    document.getElementById('machineDescription').value = '';
+    ['machineName','machinePriceDay','machinePriceHour','machineCity','machineLocation','machineDescription']
+      .forEach(id => document.getElementById(id).value = '');
+    document.getElementById('machineType').value = '';
     setDispoVal('available');
   }
-
   document.getElementById('machineModal').classList.add('open');
 }
 
 function closeMachineModal() {
   document.getElementById('machineModal').classList.remove('open');
-  editMachineId = null;
-  selectedFiles = [];
+  editMachineId = null; selectedFiles = [];
 }
 
 function setDispo(btn) {
@@ -1416,9 +1346,7 @@ function setDispo(btn) {
 
 function setDispoVal(val) {
   currentDispo = val;
-  document.querySelectorAll('.dispo-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.val === val);
-  });
+  document.querySelectorAll('.dispo-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
 }
 
 function previewImages(event) {
@@ -1431,8 +1359,7 @@ function previewImages(event) {
       const div = document.createElement('div');
       div.className = 'img-preview-item';
       div.dataset.fileIdx = selectedFiles.length - files.length + i;
-      div.innerHTML = `
-        <img src="${e.target.result}" alt="">
+      div.innerHTML = `<img src="${e.target.result}" alt="">
         <button class="img-preview-remove" onclick="removePreview(this,${selectedFiles.length - files.length + i})">✕</button>`;
       grid.appendChild(div);
     };
@@ -1440,128 +1367,92 @@ function previewImages(event) {
   });
 }
 
-function removePreview(btn, idx) {
-  selectedFiles[idx] = null;
-  btn.parentNode.remove();
-}
+function removePreview(btn, idx) { selectedFiles[idx] = null; btn.parentNode.remove(); }
 
 async function saveMachine() {
   const name     = document.getElementById('machineName').value.trim();
   const type     = document.getElementById('machineType').value;
   const priceDay = document.getElementById('machinePriceDay').value;
   const city     = document.getElementById('machineCity').value.trim();
-
   if (!name || !type || !priceDay || !city) {
-    showToast('error', '⚠️ Veuillez remplir tous les champs obligatoires');
-    return;
+    showToast('error', '⚠️ Veuillez remplir tous les champs obligatoires'); return;
   }
-
   const btn = document.getElementById('machineModalSaveBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> Enregistrement…';
-
+  btn.disabled = true; btn.innerHTML = '<span>⏳</span> Enregistrement…';
   try {
     const formData = new FormData();
-    formData.append('name',          name);
-    formData.append('type',          type);
+    formData.append('name', name); formData.append('type', type);
     formData.append('price_per_day', priceDay);
-    formData.append('price_per_hour',document.getElementById('machinePriceHour').value || 0);
-    formData.append('city',          city);
-    formData.append('location',      document.getElementById('machineLocation').value.trim());
-    formData.append('description',   document.getElementById('machineDescription').value.trim());
-    formData.append('status',        currentDispo);
-
+    formData.append('price_per_hour', document.getElementById('machinePriceHour').value || 0);
+    formData.append('city', city);
+    formData.append('location', document.getElementById('machineLocation').value.trim());
+    formData.append('description', document.getElementById('machineDescription').value.trim());
+    formData.append('status', currentDispo);
     selectedFiles.filter(Boolean).forEach((f, i) => formData.append(`images[${i}]`, f));
-
-    const token = window.getToken ? window.getToken() : localStorage.getItem('auth_token');
-    const url   = editMachineId ? `/api/machines/${editMachineId}` : '/api/machines';
-    const method= 'POST';
+    const token  = window.getToken ? window.getToken() : localStorage.getItem('auth_token');
+    const url    = editMachineId ? `/api/machines/${editMachineId}` : '/api/machines';
     if (editMachineId) formData.append('_method', 'PUT');
-
     const response = await fetch(url, {
-      method,
+      method: 'POST',
       headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
       body: formData,
     });
     const data = await response.json();
-
     if (response.ok) {
       showToast('success', editMachineId ? '✅ Machine mise à jour !' : '✅ Machine ajoutée !');
       closeMachineModal();
       await loadMachines();
-      renderMachinesGrid();
-      renderStats();
+      renderMachinesGrid(); renderStats();
     } else {
       const errs = data.errors ? Object.values(data.errors).flat().join(' | ') : (data.message || 'Erreur');
       showToast('error', '❌ ' + errs);
     }
-  } catch(e) {
-    showToast('error', '❌ Erreur réseau');
-  } finally {
+  } catch(e) { showToast('error', '❌ Erreur réseau'); }
+  finally {
     btn.disabled = false;
     btn.innerHTML = editMachineId ? '<span>💾</span> Mettre à jour' : '<span>💾</span> Enregistrer';
   }
 }
 
-/* ══════════════════════════════════
-   CHANGE STATUS
-══════════════════════════════════ */
+/* ══ CHANGE STATUS ══ */
 function changeStatus(id) {
   const m = allMachines.find(x => x.id == id);
   if (!m) return;
   const nextStatus = { available:'unavailable', unavailable:'maintenance', maintenance:'available' };
   const next = nextStatus[m.status] || 'available';
   const labels = { available:'Disponible ✅', unavailable:'Indisponible ❌', maintenance:'Maintenance 🔧' };
-  openConfirm('🔄', 'Changer le statut', `Passer la machine "${m.name}" en : ${labels[next]} ?`, async () => {
+  openConfirm('🔄', 'Changer le statut', `Passer "${m.name}" en : ${labels[next]} ?`, async () => {
     try {
       const res = await window.API.put(`/api/machines/${id}`, { status: next });
       if (res.ok || res.status === 200) {
         const idx = allMachines.findIndex(x => x.id == id);
         if (idx !== -1) allMachines[idx].status = next;
-        renderMachinesGrid();
-        renderStats();
-        showToast('success', `✅ Statut mis à jour : ${labels[next]}`);
-      } else {
-        showToast('error', '❌ Erreur lors de la mise à jour');
-      }
-    } catch(e) {
-      showToast('error', '❌ Erreur réseau');
-    }
+        renderMachinesGrid(); renderStats();
+        showToast('success', `✅ Statut : ${labels[next]}`);
+      } else { showToast('error', '❌ Erreur'); }
+    } catch(e) { showToast('error', '❌ Erreur réseau'); }
   });
 }
 
-/* ══════════════════════════════════
-   DELETE MACHINE
-══════════════════════════════════ */
+/* ══ DELETE MACHINE ══ */
 function deleteMachine(id, name) {
   openConfirm('🗑', 'Supprimer la machine',
-    `Êtes-vous sûr de vouloir supprimer "${name}" ? Cette action est irréversible.`,
+    `Supprimer "${name}" ? Action irréversible.`,
     async () => {
       try {
         const res = await window.API.delete(`/api/machines/${id}`);
         if (res.ok || res.status === 200 || res.status === 204) {
           allMachines = allMachines.filter(m => m.id != id);
           allReservations = allReservations.filter(r => r.machine_id != id);
-          renderMachinesGrid();
-          renderStats();
-          renderRecentReservations();
-          renderReservationsTable();
+          renderMachinesGrid(); renderStats(); renderRecentReservations(); renderReservationsTable();
           showToast('success', '✅ Machine supprimée');
-        } else {
-          showToast('error', '❌ Impossible de supprimer cette machine');
-        }
-      } catch(e) {
-        showToast('error', '❌ Erreur réseau');
-      }
+        } else { showToast('error', '❌ Impossible de supprimer'); }
+      } catch(e) { showToast('error', '❌ Erreur réseau'); }
     }
   );
 }
 
-/* ══════════════════════════════════
-   MINI 3D VIEWER (Three.js r128)
-   — No OrbitControls (CDN indispo)
-   — Palettes gold system
-══════════════════════════════════ */
+/* ══ MINI 3D VIEWER ══ */
 const PALETTE_3D = {
   excavatrice:{ body:0xD4AF37, arm:0x9A7D20, cabin:0x0F1B2D },
   grue:       { body:0xD4AF37, arm:0x5a5660, cabin:0x162540 },
@@ -1578,169 +1469,92 @@ function openMiniViewer(machineId, name, type) {
   document.getElementById('miniViewerModal').classList.add('open');
   setTimeout(() => initMiniViewer(type), 50);
 }
-
 function closeMiniViewer() {
   document.getElementById('miniViewerModal').classList.remove('open');
   destroyMiniViewer();
 }
-
 function destroyMiniViewer() {
   if (miniViewerAnim)     { cancelAnimationFrame(miniViewerAnim); miniViewerAnim = null; }
   if (miniViewerRenderer) { miniViewerRenderer.dispose(); miniViewerRenderer = null; }
 }
-
 function initMiniViewer(type) {
   destroyMiniViewer();
   const canvas = document.getElementById('miniViewerCanvas');
-  const W = canvas.clientWidth  || 380;
-  const H = canvas.clientHeight || 280;
+  const W = canvas.clientWidth || 380, H = canvas.clientHeight || 280;
   const pal = PALETTE_3D[type?.toLowerCase()] || PALETTE_3D.excavatrice;
-
   const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  miniViewerRenderer = renderer;
-
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0d1a2e);
-
+  renderer.setSize(W, H); renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.shadowMap.enabled = true; miniViewerRenderer = renderer;
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0d1a2e);
   const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
-  camera.position.set(4, 3, 5);
-  camera.lookAt(0, 0.5, 0);
-
+  camera.position.set(4,3,5); camera.lookAt(0,0.5,0);
   scene.add(new THREE.AmbientLight(0xffffff, 0.6));
   const dir = new THREE.DirectionalLight(0xD4AF37, 1.2);
-  dir.position.set(5, 8, 5);
-  dir.castShadow = true;
-  scene.add(dir);
+  dir.position.set(5,8,5); dir.castShadow = true; scene.add(dir);
   scene.add(new THREE.PointLight(0x162540, 0.8, 20));
-
-  const groundGeo = new THREE.CylinderGeometry(3, 3, 0.1, 32);
-  const groundMat = new THREE.MeshStandardMaterial({ color:0x162540 });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.position.y = -0.3;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
+  const ground = new THREE.Mesh(new THREE.CylinderGeometry(3,3,.1,32), new THREE.MeshStandardMaterial({color:0x162540}));
+  ground.position.y = -0.3; ground.receiveShadow = true; scene.add(ground);
   const group = new THREE.Group();
   buildMachine3D(group, type?.toLowerCase() || 'excavatrice', pal);
   scene.add(group);
-
-  const grid = new THREE.GridHelper(6, 6, 0x1a2f4a, 0x1a2f4a);
-  grid.position.y = -0.25;
-  scene.add(grid);
-
-  let isDragging = false, prevX = 0, prevY = 0;
-  let rotY = 0, rotX = 0.2;
-
+  scene.add(Object.assign(new THREE.GridHelper(6,6,0x1a2f4a,0x1a2f4a), {position:{y:-0.25,x:0,z:0}}));
+  let isDragging=false, prevX=0, prevY=0, rotY=0, rotX=0.2;
   canvas.addEventListener('mousedown',  e => { isDragging=true; prevX=e.clientX; prevY=e.clientY; });
-  canvas.addEventListener('mousemove',  e => {
-    if (!isDragging) return;
-    rotY += (e.clientX - prevX) * 0.01;
-    rotX += (e.clientY - prevY) * 0.008;
-    rotX  = Math.max(-0.5, Math.min(0.8, rotX));
-    prevX = e.clientX; prevY = e.clientY;
-  });
+  canvas.addEventListener('mousemove',  e => { if (!isDragging) return; rotY+=(e.clientX-prevX)*.01; rotX+=(e.clientY-prevY)*.008; rotX=Math.max(-0.5,Math.min(0.8,rotX)); prevX=e.clientX; prevY=e.clientY; });
   canvas.addEventListener('mouseup',    () => isDragging=false);
   canvas.addEventListener('mouseleave', () => isDragging=false);
-  canvas.addEventListener('touchstart', e => { prevX=e.touches[0].clientX; prevY=e.touches[0].clientY; });
-  canvas.addEventListener('touchmove',  e => {
-    e.preventDefault();
-    rotY += (e.touches[0].clientX - prevX) * 0.01;
-    rotX += (e.touches[0].clientY - prevY) * 0.008;
-    rotX  = Math.max(-0.5, Math.min(0.8, rotX));
-    prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
-  }, { passive:false });
-
   function animate() {
     miniViewerAnim = requestAnimationFrame(animate);
     if (!isDragging) rotY += 0.007;
     group.rotation.y = rotY;
-    const radius = 6;
-    camera.position.x = radius * Math.sin(rotY) * Math.cos(rotX);
-    camera.position.z = radius * Math.cos(rotY) * Math.cos(rotX);
-    camera.position.y = radius * Math.sin(rotX) + 1;
-    camera.lookAt(0, 0.5, 0);
+    const r = 6;
+    camera.position.x = r*Math.sin(rotY)*Math.cos(rotX);
+    camera.position.z = r*Math.cos(rotY)*Math.cos(rotX);
+    camera.position.y = r*Math.sin(rotX)+1;
+    camera.lookAt(0,0.5,0);
     renderer.render(scene, camera);
   }
   animate();
 }
-
 function buildMachine3D(group, type, pal) {
-  const matBody  = new THREE.MeshStandardMaterial({ color:pal.body,  metalness:.4, roughness:.5 });
-  const matArm   = new THREE.MeshStandardMaterial({ color:pal.arm,   metalness:.3, roughness:.6 });
-  const matCabin = new THREE.MeshStandardMaterial({ color:pal.cabin, metalness:.6, roughness:.3 });
-  const matWheel = new THREE.MeshStandardMaterial({ color:0x222222,  metalness:.2, roughness:.8 });
-  const matGlass = new THREE.MeshStandardMaterial({ color:0x88bbff,  transparent:true, opacity:.6, metalness:.1 });
-
-  const addMesh = (geo, mat, x=0,y=0,z=0, rx=0,ry=0,rz=0) => {
-    const m = new THREE.Mesh(geo, mat);
-    m.position.set(x,y,z);
-    m.rotation.set(rx,ry,rz);
-    m.castShadow = true;
-    group.add(m);
-    return m;
+  const matBody  = new THREE.MeshStandardMaterial({color:pal.body, metalness:.4, roughness:.5});
+  const matArm   = new THREE.MeshStandardMaterial({color:pal.arm,  metalness:.3, roughness:.6});
+  const matCabin = new THREE.MeshStandardMaterial({color:pal.cabin,metalness:.6, roughness:.3});
+  const matWheel = new THREE.MeshStandardMaterial({color:0x222222, metalness:.2, roughness:.8});
+  const matGlass = new THREE.MeshStandardMaterial({color:0x88bbff, transparent:true, opacity:.6});
+  const add = (geo,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0) => {
+    const m = new THREE.Mesh(geo,mat); m.position.set(x,y,z); m.rotation.set(rx,ry,rz); m.castShadow=true; group.add(m); return m;
   };
-
-  if (type === 'excavatrice' || type === 'tractopelle') {
-    addMesh(new THREE.BoxGeometry(2,.8,1.2), matBody, 0,.4,0);
-    addMesh(new THREE.BoxGeometry(1,.8,1), matCabin, -.4,1.2,0);
-    addMesh(new THREE.BoxGeometry(.9,.6,.9), matGlass, -.4,1.6,0);
-    addMesh(new THREE.BoxGeometry(2.2,.35,1.6), matArm, 0,.05,0);
-    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, s*0.85,-.1,.7));
-    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, s*0.85,-.1,-.7));
-    addMesh(new THREE.BoxGeometry(.25,1.2,.2), matArm, .6,1.4,0, 0,0,-.4);
-    addMesh(new THREE.BoxGeometry(.2,.9,.18), matArm, 1.25,.9,0, 0,0,.35);
-    addMesh(new THREE.BoxGeometry(.5,.25,.15), matArm, 1.6,.3,0, 0,0,.5);
-
-  } else if (type === 'grue') {
-    addMesh(new THREE.CylinderGeometry(.6,.8,.4,8), matBody, 0,.2,0);
-    addMesh(new THREE.BoxGeometry(.35,4,.35), matBody, 0,2,0);
-    addMesh(new THREE.BoxGeometry(3.5,.2,.2), matArm, .5,4,0);
-    addMesh(new THREE.BoxGeometry(.8,.4,.4), matArm, -1,4.2,0);
-    addMesh(new THREE.BoxGeometry(.7,.7,.6), matCabin, .1,3.3,0);
-    addMesh(new THREE.BoxGeometry(.6,.5,.5), matGlass, .1,3.6,0);
-    addMesh(new THREE.CylinderGeometry(.03,.03,2.5,6), matArm, 1.8,2.7,0);
-    addMesh(new THREE.BoxGeometry(.35,.2,.2), matArm, 1.8,1.4,0);
-    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.4,.4,.25,8), matWheel, s*.8,0,0, 0,0,Math.PI/2));
-
-  } else if (type === 'bulldozer') {
-    addMesh(new THREE.BoxGeometry(2.2,1,1.6), matBody, 0,.5,0);
-    addMesh(new THREE.BoxGeometry(1,1,1.3), matCabin, -.3,1.2,0);
-    addMesh(new THREE.BoxGeometry(.9,.7,1.1), matGlass, -.3,1.55,0);
-    addMesh(new THREE.BoxGeometry(.2,1.1,1.8), matArm, 1.3,.7,0, 0,0,-.15);
-    [-1,1].forEach(s => {
-      addMesh(new THREE.BoxGeometry(2.4,.35,.4), matArm, 0,.05,s*.7);
-      addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, .85,.05,s*.7);
-      addMesh(new THREE.CylinderGeometry(.35,.35,.35,12), matWheel, -.85,.05,s*.7);
-    });
-
-  } else if (type === 'chargeuse') {
-    addMesh(new THREE.BoxGeometry(2,.9,1.4), matBody, 0,.45,0);
-    addMesh(new THREE.BoxGeometry(.9,.9,1.1), matCabin, -.3,1.1,0);
-    addMesh(new THREE.BoxGeometry(.8,.65,.9), matGlass, -.3,1.4,0);
-    addMesh(new THREE.BoxGeometry(.15,.5,1.5), matArm, 1.1,.8,0);
-    addMesh(new THREE.BoxGeometry(.8,.15,1.5), matArm, 1.4,.55,0);
-    [-1,1].forEach(s => addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel, s*.8,.05,s*.55, 0,0,Math.PI/2));
-
+  if (type==='excavatrice'||type==='tractopelle') {
+    add(new THREE.BoxGeometry(2,.8,1.2),matBody,0,.4,0);
+    add(new THREE.BoxGeometry(1,.8,1),matCabin,-.4,1.2,0);
+    add(new THREE.BoxGeometry(.9,.6,.9),matGlass,-.4,1.6,0);
+    add(new THREE.BoxGeometry(2.2,.35,1.6),matArm,0,.05,0);
+    [-1,1].forEach(s=>{add(new THREE.CylinderGeometry(.35,.35,.35,12),matWheel,s*.85,-.1,.7);add(new THREE.CylinderGeometry(.35,.35,.35,12),matWheel,s*.85,-.1,-.7);});
+    add(new THREE.BoxGeometry(.25,1.2,.2),matArm,.6,1.4,0,0,0,-.4);
+    add(new THREE.BoxGeometry(.2,.9,.18),matArm,1.25,.9,0,0,0,.35);
+    add(new THREE.BoxGeometry(.5,.25,.15),matArm,1.6,.3,0,0,0,.5);
+  } else if (type==='grue') {
+    add(new THREE.CylinderGeometry(.6,.8,.4,8),matBody,0,.2,0);
+    add(new THREE.BoxGeometry(.35,4,.35),matBody,0,2,0);
+    add(new THREE.BoxGeometry(3.5,.2,.2),matArm,.5,4,0);
+    add(new THREE.BoxGeometry(.7,.7,.6),matCabin,.1,3.3,0);
+    add(new THREE.CylinderGeometry(.03,.03,2.5,6),matArm,1.8,2.7,0);
+    [-1,1].forEach(s=>add(new THREE.CylinderGeometry(.4,.4,.25,8),matWheel,s*.8,0,0,0,0,Math.PI/2));
+  } else if (type==='bulldozer') {
+    add(new THREE.BoxGeometry(2.2,1,1.6),matBody,0,.5,0);
+    add(new THREE.BoxGeometry(1,1,1.3),matCabin,-.3,1.2,0);
+    add(new THREE.BoxGeometry(.2,1.1,1.8),matArm,1.3,.7,0,0,0,-.15);
+    [-1,1].forEach(s=>{add(new THREE.BoxGeometry(2.4,.35,.4),matArm,0,.05,s*.7);add(new THREE.CylinderGeometry(.35,.35,.35,12),matWheel,.85,.05,s*.7);add(new THREE.CylinderGeometry(.35,.35,.35,12),matWheel,-.85,.05,s*.7);});
   } else {
-    addMesh(new THREE.BoxGeometry(2.5,.8,1.4), matBody, .3,.4,0);
-    addMesh(new THREE.BoxGeometry(1.1,1.1,1.3), matCabin, -1,1,0);
-    addMesh(new THREE.BoxGeometry(.9,.8,1.1), matGlass, -1,1.3,0);
-    addMesh(new THREE.BoxGeometry(1.8,.15,1.4), matArm, .5,.8,0);
-    addMesh(new THREE.BoxGeometry(.1,.5,1.4), matArm, 1.35,.95,0);
-    addMesh(new THREE.BoxGeometry(.1,.5,1.4), matArm, -.4,.95,0);
-    [-1,1].forEach(s => {
-      addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel, -1.2,0,s*.55, 0,0,Math.PI/2);
-      addMesh(new THREE.CylinderGeometry(.4,.4,.4,12), matWheel,  .8,0,s*.55, 0,0,Math.PI/2);
-    });
+    add(new THREE.BoxGeometry(2.5,.8,1.4),matBody,.3,.4,0);
+    add(new THREE.BoxGeometry(1.1,1.1,1.3),matCabin,-1,1,0);
+    add(new THREE.BoxGeometry(1.8,.15,1.4),matArm,.5,.8,0);
+    [-1,1].forEach(s=>{add(new THREE.CylinderGeometry(.4,.4,.4,12),matWheel,-1.2,0,s*.55,0,0,Math.PI/2);add(new THREE.CylinderGeometry(.4,.4,.4,12),matWheel,.8,0,s*.55,0,0,Math.PI/2);});
   }
 }
 
-/* ══════════════════════════════════
-   TABS NAVIGATION
-══════════════════════════════════ */
+/* ══ TABS ══ */
 function switchSideTab(tabId, link) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   const panel = document.getElementById(`tab-${tabId}`);
@@ -1750,27 +1564,18 @@ function switchSideTab(tabId, link) {
   destroyMiniViewer();
 }
 
-/* ══════════════════════════════════
-   CONFIRM DIALOG
-══════════════════════════════════ */
+/* ══ CONFIRM ══ */
 function openConfirm(icon, title, msg, callback) {
   document.getElementById('confirmIcon').textContent  = icon;
   document.getElementById('confirmTitle').textContent = title;
   document.getElementById('confirmMsg').textContent   = msg;
   confirmCallback = callback;
   document.getElementById('confirmOverlay').classList.add('open');
-  document.getElementById('confirmOkBtn').onclick = () => {
-    closeConfirm();
-    callback();
-  };
+  document.getElementById('confirmOkBtn').onclick = () => { closeConfirm(); callback(); };
 }
-function closeConfirm() {
-  document.getElementById('confirmOverlay').classList.remove('open');
-}
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); }
 
-/* ══════════════════════════════════
-   TOAST
-══════════════════════════════════ */
+/* ══ TOAST ══ */
 function showToast(type, message) {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
@@ -1779,15 +1584,10 @@ function showToast(type, message) {
   toast.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span>${message}</span>`;
   container.appendChild(toast);
   requestAnimationFrame(() => toast.classList.add('show'));
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 400);
-  }, 3500);
+  setTimeout(() => { toast.classList.remove('show'); setTimeout(()=>toast.remove(),400); }, 3500);
 }
 
-/* ══════════════════════════════════
-   LOGOUT
-══════════════════════════════════ */
+/* ══ LOGOUT ══ */
 async function handleLogout() {
   try { await window.API.post('/api/logout'); } catch(e) {}
   localStorage.removeItem('auth_token');
@@ -1795,25 +1595,15 @@ async function handleLogout() {
   window.location.href = '/login';
 }
 
-/* ══════════════════════════════════
-   UTILS
-══════════════════════════════════ */
+/* ══ UTILS ══ */
 function escHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.getElementById('machineModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeMachineModal();
-});
-document.getElementById('miniViewerModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeMiniViewer();
-});
-document.getElementById('confirmOverlay').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeConfirm();
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeMachineModal(); closeMiniViewer(); closeConfirm(); }
-});
+document.getElementById('machineModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeMachineModal(); });
+document.getElementById('miniViewerModal').addEventListener('click', e => { if (e.target===e.currentTarget) closeMiniViewer(); });
+document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeConfirm(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') { closeMachineModal(); closeMiniViewer(); closeConfirm(); } });
 </script>
 @endpush

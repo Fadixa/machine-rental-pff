@@ -11,12 +11,22 @@ class DemoDataSeeder extends Seeder
     public function run(): void
     {
         // ══════════════════════════════════════
-        //  USERS
+        //  USERS — 3 comptes test uniquement
+        //  Les nouveaux inscrits n'auront PAS de réservations
         // ══════════════════════════════════════
         $users = [
             [
-                'name'     => 'Karima Bennani',
-                'email'    => 'karima@rentify.ma',
+                'name'     => 'Admin Rentify',
+                'email'    => 'admin@rentify.ma',
+                'password' => Hash::make('password'),
+                'role'     => 'admin',
+                'phone'    => '+212600000000',
+                'city'     => 'Casablanca',
+                'bio'      => 'Équipe Rentify.',
+            ],
+            [
+                'name'     => 'Karim Benali',
+                'email'    => 'karim@rentify.ma',
                 'password' => Hash::make('password'),
                 'role'     => 'owner',
                 'phone'    => '+212661234567',
@@ -32,17 +42,9 @@ class DemoDataSeeder extends Seeder
                 'city'     => 'Rabat',
                 'bio'      => 'Entreprise de construction.',
             ],
-            [
-                'name'     => 'Admin Rentify',
-                'email'    => 'admin@rentify.ma',
-                'password' => Hash::make('password'),
-                'role'     => 'admin',
-                'phone'    => '+212600000000',
-                'city'     => 'Casablanca',
-                'bio'      => 'Équipe Rentify.',
-            ],
         ];
 
+        // updateOrInsert uniquement pour les 3 comptes test
         foreach ($users as $u) {
             DB::table('users')->updateOrInsert(
                 ['email' => $u['email']],
@@ -54,16 +56,13 @@ class DemoDataSeeder extends Seeder
         }
 
         // ══════════════════════════════════════
-        //  MACHINES — Prix marché marocain 2025
-        //  Source : prestataires BTP Casablanca,
-        //  Rabat, Marrakech (fourchette réelle)
+        //  MACHINES — liées à karim@rentify.ma
         // ══════════════════════════════════════
-        $ownerId = DB::table('users')->where('email', 'karima@rentify.ma')->value('id');
+        $ownerId = DB::table('users')->where('email', 'karim@rentify.ma')->value('id');
 
         $machines = [
 
             // ── Excavatrice / Pelle ──────────────────────────────────
-            // Marché : 2 800 – 4 500 MAD/j selon puissance
             [
                 'name'           => 'JCB 3CX Backhoe Loader',
                 'type'           => 'Excavatrice',
@@ -79,7 +78,6 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── Chargeuse télescopique ───────────────────────────────
-            // Marché : 2 200 – 3 500 MAD/j
             [
                 'name'           => 'Manitou MT 1840',
                 'type'           => 'Chargeuse',
@@ -95,7 +93,6 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── Pelle hydraulique grande puissance ──────────────────
-            // Marché : 3 500 – 5 500 MAD/j (CAT 320 = haut de gamme)
             [
                 'name'           => 'Caterpillar 320 GX',
                 'type'           => 'Excavatrice',
@@ -111,7 +108,6 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── Camion benne ─────────────────────────────────────────
-            // Marché : 1 800 – 3 000 MAD/j (Volvo FH16 = premium)
             [
                 'name'           => 'Camion Benne Volvo FH16',
                 'type'           => 'Camion',
@@ -127,7 +123,6 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── Compacteur standard ──────────────────────────────────
-            // Marché : 1 400 – 2 200 MAD/j
             [
                 'name'           => 'Compacteur Bomag BW 213',
                 'type'           => 'Compacteur',
@@ -142,12 +137,11 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img15.jpeg',
             ],
 
-            // ── Convoi exceptionnel + transport machines ─────────────
-            // Marché : 4 500 – 7 000 MAD/j (convoi spécialisé)
+            // ── Convoi exceptionnel ──────────────────────────────────
             [
                 'name'           => 'Scania Convoi Plateau + Excavatrice',
                 'type'           => 'Transport',
-                'description'    => 'Camion Scania plateau surbaissé pour transport de machines lourdes — convoi exceptionnel.',
+                'description'    => 'Camion Scania plateau surbaissé pour transport de machines lourdes.',
                 'price_per_day'  => 5500,
                 'price_per_hour' => 720,
                 'status'         => 'available',
@@ -159,7 +153,6 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── JCB 3CX Pro ──────────────────────────────────────────
-            // Marché : 2 800 – 3 800 MAD/j
             [
                 'name'           => 'JCB 3CX Pro — Édition Chantier',
                 'type'           => 'Excavatrice',
@@ -174,12 +167,11 @@ class DemoDataSeeder extends Seeder
                 'image'          => 'images/img12.png',
             ],
 
-            // ── JCB 4CX grande puissance ─────────────────────────────
-            // Marché : 3 500 – 5 000 MAD/j
+            // ── JCB 4CX ─────────────────────────────────────────────
             [
                 'name'           => 'JCB 4CX Super — Haute Performance',
                 'type'           => 'Excavatrice',
-                'description'    => 'Pelleteuse-chargeuse JCB 4CX puissance maximale, idéale pour grands chantiers et travaux publics.',
+                'description'    => 'Pelleteuse-chargeuse JCB 4CX puissance maximale, idéale pour grands chantiers.',
                 'price_per_day'  => 4500,
                 'price_per_hour' => 600,
                 'status'         => 'available',
@@ -191,11 +183,10 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── Niveleuse ────────────────────────────────────────────
-            // Marché : 3 000 – 4 500 MAD/j (machine spécialisée)
             [
                 'name'           => 'Terex TG110 Niveleuse',
                 'type'           => 'Niveleuse',
-                'description'    => 'Niveleuse Terex TG110 pour dressage et finition de plateformes, routes et pistes.',
+                'description'    => 'Niveleuse Terex TG110 pour dressage et finition de plateformes et routes.',
                 'price_per_day'  => 3500,
                 'price_per_hour' => 460,
                 'status'         => 'available',
@@ -207,11 +198,10 @@ class DemoDataSeeder extends Seeder
             ],
 
             // ── Compacteur rouleau vibrant ───────────────────────────
-            // Marché : 1 600 – 2 500 MAD/j
             [
                 'name'           => 'Compacteur Rouleau Vibrant RV-200',
                 'type'           => 'Compacteur',
-                'description'    => 'Rouleau vibrant monocylindre pour compactage de sols, remblais et sous-couches routières.',
+                'description'    => 'Rouleau vibrant monocylindre pour compactage de sols et remblais.',
                 'price_per_day'  => 1800,
                 'price_per_hour' => 240,
                 'status'         => 'available',
@@ -235,17 +225,21 @@ class DemoDataSeeder extends Seeder
         }
 
         // ══════════════════════════════════════
-        //  RESERVATIONS — total_price recalculé
+        //  RESERVATIONS — liées à fadwa@rentify.ma UNIQUEMENT
+        //  Les nouveaux comptes inscrits commencent vides
         // ══════════════════════════════════════
-        $clientId = DB::table('users')->where('email', 'fadwa@rentify.ma')->value('id');
+        $fadwaId  = DB::table('users')->where('email', 'fadwa@rentify.ma')->value('id');
         $machine1 = DB::table('machines')->where('name', 'JCB 3CX Backhoe Loader')->value('id');
         $machine2 = DB::table('machines')->where('name', 'Manitou MT 1840')->value('id');
         $machine3 = DB::table('machines')->where('name', 'Caterpillar 320 GX')->value('id');
 
+        // Sécurité : on insère uniquement si fadwa existe et les machines existent
+        if (!$fadwaId) return;
+
         $reservations = [
             [
                 'machine_id'  => $machine1,
-                'client_id'   => $clientId,
+                'client_id'   => $fadwaId,
                 'start_date'  => '2026-05-10',
                 'end_date'    => '2026-05-15',
                 'status'      => 'accepted',
@@ -254,7 +248,7 @@ class DemoDataSeeder extends Seeder
             ],
             [
                 'machine_id'  => $machine2,
-                'client_id'   => $clientId,
+                'client_id'   => $fadwaId,
                 'start_date'  => '2026-05-20',
                 'end_date'    => '2026-05-22',
                 'status'      => 'pending',
@@ -263,7 +257,7 @@ class DemoDataSeeder extends Seeder
             ],
             [
                 'machine_id'  => $machine3,
-                'client_id'   => $clientId,
+                'client_id'   => $fadwaId,
                 'start_date'  => '2026-04-01',
                 'end_date'    => '2026-04-07',
                 'status'      => 'completed',
@@ -273,11 +267,13 @@ class DemoDataSeeder extends Seeder
         ];
 
         foreach ($reservations as $res) {
-            if (!$res['machine_id'] || !$clientId) continue;
+            // Vérification machine existe
+            if (!$res['machine_id']) continue;
 
+            // Pas de doublon
             $exists = DB::table('reservations')
                 ->where('machine_id', $res['machine_id'])
-                ->where('client_id',  $clientId)
+                ->where('client_id',  $fadwaId)
                 ->where('start_date', $res['start_date'])
                 ->exists();
 
@@ -297,9 +293,9 @@ class DemoDataSeeder extends Seeder
         $this->command->table(
             ['Rôle', 'Email', 'Password'],
             [
-                ['👑 Admin',  'admin@rentify.ma', 'password'],
-                ['🔑 Owner',  'karima@rentify.ma', 'password'],
-                ['👤 Client', 'fadwa@rentify.ma', 'password'],
+                ['👑 Admin',  'admin@rentify.ma',  'password'],
+                ['🔑 Owner',  'karim@rentify.ma',  'password'],
+                ['👤 Client', 'fadwa@rentify.ma',  'password'],
             ]
         );
         $this->command->info('🏗  ' . DB::table('machines')->count()    . ' machines en base');

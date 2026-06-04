@@ -137,7 +137,26 @@ body { background:var(--cream); color:var(--txt-dark); font-family:'DM Sans',sys
     position:relative; z-index:1; background:var(--cream2);
     box-shadow:0 12px 48px var(--gold-glow);
 }
-.hv-circle img { width:100%; height:100%; object-fit:cover; filter:brightness(.92) saturate(.95); }
+.hv-circle img {
+    width:100%; height:100%; object-fit:cover;
+    filter:brightness(.92) saturate(.95);
+    animation: machineDrive 3s ease-in-out infinite alternate;
+    transform-origin: center center;
+}
+@keyframes machineDrive {
+    0%   { transform: scale(1)    translateX(0px)  rotate(0deg); }
+    50%  { transform: scale(1.04) translateX(6px)  rotate(.4deg); }
+    100% { transform: scale(1.07) translateX(12px) rotate(.8deg); }
+}
+
+.hv-circle {
+    /* ... (garde le CSS existant) ... */
+    animation: floatCircle 4s ease-in-out infinite;
+}
+@keyframes floatCircle {
+    0%,100% { transform: translateY(0px);   box-shadow: 0 12px 48px var(--gold-glow); }
+    50%      { transform: translateY(-10px); box-shadow: 0 24px 64px var(--gold-glow); }
+}
 .hv-dot { position:absolute; border-radius:50%; background:var(--gold); }
 .hv-dot1 { width:14px; height:14px; top:12px; right:36px; opacity:.5; z-index:2; }
 .hv-dot2 { width:9px;  height:9px;  bottom:28px; left:16px; opacity:.35; z-index:2; }
@@ -572,9 +591,11 @@ body { background:var(--cream); color:var(--txt-dark); font-family:'DM Sans',sys
             <h1 class="hero-h1">Louez les meilleurs<br><em>engins BTP</em><br>au Maroc</h1>
             <p class="hero-desc">Excavatrice, grue, bulldozer ou compacteur — trouvez l'engin qu'il vous faut à Casablanca, Rabat, Marrakech et partout au Maroc. Réservation simple, contrat PDF immédiat.</p>
             <div class="hero-cta">
-                <a href="/machines" class="btn-primary"><i class="fas fa-search"></i> Voir les engins</a>
-                <a href="/register" class="btn-secondary"><i class="fas fa-user-plus"></i> Créer un compte</a>
-            </div>
+    <a href="/machines" class="btn-primary"><i class="fas fa-search"></i> Voir les engins</a>
+    <span id="hero-cta-auth">
+        <a href="/register" class="btn-secondary"><i class="fas fa-user-plus"></i> Créer un compte</a>
+    </span>
+</div>
             <div class="hero-stats">
                 <div class="hstat"><div class="hstat-n">120+</div><div class="hstat-l">Engins disponibles</div></div>
                 <div class="hstat"><div class="hstat-n">8</div><div class="hstat-l">Villes couvertes</div></div>
@@ -834,9 +855,11 @@ body { background:var(--cream); color:var(--txt-dark); font-family:'DM Sans',sys
                     <div class="adv-kpi"><div class="adv-kpi-n">8</div><div class="adv-kpi-l">Villes</div></div>
                     <div class="adv-kpi"><div class="adv-kpi-n">98%</div><div class="adv-kpi-l">Satisfaction</div></div>
                 </div>
-                <a href="/register" class="btn-primary" style="width:100%;justify-content:center">
-                    <i class="fas fa-user-plus"></i> Rejoindre Rentify
-                </a>
+                <span id="adv-cta-auth">
+    <a href="/register" class="btn-primary" style="width:100%;justify-content:center">
+        <i class="fas fa-user-plus"></i> Rejoindre Rentify
+    </a>
+</span>
             </div>
         </div>
     </div>
@@ -1105,6 +1128,25 @@ const DEMO_LATEST=[
 
 let allMachines=[];
 
+
+(function(){
+    const token = localStorage.getItem('auth_token');
+    const user  = localStorage.getItem('auth_user');
+    if (token && user) {
+        // Hero CTA
+        const hero = document.getElementById('hero-cta-auth');
+        if (hero) hero.innerHTML = '<a href="/profile" class="btn-secondary"><i class="fas fa-user"></i> Mon espace</a>';
+
+        // Avantages card
+        const adv = document.getElementById('adv-cta-auth');
+        if (adv) adv.innerHTML = '<a href="/profile" class="btn-primary" style="width:100%;justify-content:center"><i class="fas fa-user"></i> Mon espace</a>';
+
+        // CTA final (section §11)
+        const cta = document.getElementById('cta-final-auth');
+        if (cta) cta.innerHTML = '<a href="/machines" class="btn-primary"><i class="fas fa-search"></i> Voir les engins</a>';
+    }
+})();
+
 async function loadMachines(){
     try {
         const d=await API.get('/api/machines?status=available&per_page=50');
@@ -1128,13 +1170,26 @@ function renderLatest(list){ document.getElementById('latest-grid').innerHTML=li
 
 function updateCategoryCounts(list){
     const types=['excavatrice','grue','bulldozer','chargeuse','compacteur','tractopelle','camion'];
-    document.getElementById('count-all').textContent=list.length+' engins';
-    types.forEach(t=>{
-        const el=document.getElementById('count-'+t);
-        if(el){ const n=list.filter(m=>(m.type||'').toLowerCase()===t).length; el.textContent=n+' engin'+(n>1?'s':''); }
+    const counts = { all: list.length };
+    types.forEach(t => {
+        counts[t] = list.filter(m=>(m.type||'').toLowerCase()===t).length;
     });
+
+    // ✅ Sauvegarder dans localStorage
+    localStorage.setItem('rentify_cat_counts', JSON.stringify(counts));
+
+    _renderCounts(counts);
 }
 
+function _renderCounts(counts){
+    const types=['excavatrice','grue','bulldozer','chargeuse','compacteur','tractopelle','camion'];
+    const el_all = document.getElementById('count-all');
+    if(el_all) el_all.textContent = (counts.all||0)+' engins';
+    types.forEach(t=>{
+        const el=document.getElementById('count-'+t);
+        if(el){ const n=counts[t]||0; el.textContent=n+' engin'+(n>1?'s':''); }
+    });
+}
 function filterByType(type,btn){
     document.querySelectorAll('.cat-card').forEach(c=>c.classList.remove('active'));
     btn.classList.add('active');
@@ -1161,6 +1216,14 @@ document.getElementById('search-budget')?.addEventListener('keydown',e=>{ if(e.k
     },{threshold:0.1});
     document.querySelectorAll('.anim-up').forEach(el=>obs.observe(el));
 })();
+
+
+// ✅ Afficher les counts en cache fori (avant API)
+(function(){
+    const cached = localStorage.getItem('rentify_cat_counts');
+    if(cached){ try{ _renderCounts(JSON.parse(cached)); }catch(e){} }
+})();
+
 
 loadMachines();
 </script>

@@ -9,14 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_suspended')->default(false)->after('role');
+            if (!Schema::hasColumn('users', 'is_suspended')) {
+                $table->boolean('is_suspended')->default(false)->after('role');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('is_suspended');
+            if (Schema::hasColumn('users', 'is_suspended')) {
+                $table->dropColumn('is_suspended');
+            }
         });
     }
 };

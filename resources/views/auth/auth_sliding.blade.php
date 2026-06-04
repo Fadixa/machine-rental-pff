@@ -8,10 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-/* ═══════════════════════════════════════════════
-   RENTIFY — SLIDING AUTH — GOLD / CRÈME
-   Exactement comme le template vert mais Rentify
-═══════════════════════════════════════════════ */
 :root {
     --gold:       #D9A74A;
     --gold-dk:    #B8892E;
@@ -46,28 +42,26 @@ body {
 .auth-wrapper {
     width: 100%;
     max-width: 960px;
-    height: 580px;
+    /* FIX: min-height au lieu de height fixe */
+    min-height: 580px;
     position: relative;
     border-radius: var(--radius-lg);
     border: 1px solid var(--gold);
     background: var(--cream);
-    overflow: hidden;
+    /* FIX: clip au lieu de hidden — garde le border-radius mais ne coupe pas l'alert */
+    overflow: clip;
     box-shadow:
         0 30px 80px rgba(0,0,0,.10),
         0 0 0 4px rgba(217,167,74,.07),
         inset 0 0 60px rgba(217,167,74,.03);
 }
 
-/* ═══════════════════════════════════════
-   FORMS CONTAINER — two halves, side by side
-   Left = Login form | Right = Register form
-═══════════════════════════════════════ */
+/* FIX: forms-wrap en relative + min-height au lieu de absolute+inset */
 .forms-wrap {
-    position: absolute;
-    inset: 0;
     display: flex;
     width: 100%;
-    height: 100%;
+    min-height: 580px;
+    position: relative;
 }
 
 /* ── SHARED FORM PANEL ── */
@@ -76,20 +70,22 @@ body {
     flex-shrink: 0;
     background: var(--white);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 3rem 3.5rem;
+    /* FIX: padding top kbr bach content ma ykon mzdahmch */
+    padding: 2.5rem 3.5rem;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
-/* Login stays on left, register on right */
 .panel-login  { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
 .panel-register { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
 
 .form-inner {
     width: 100%;
     max-width: 320px;
+    /* FIX: padding top bach alert tbant complet */
+    padding-top: 1.5rem;
 }
 
 /* ── TITLES ── */
@@ -109,9 +105,7 @@ body {
 }
 
 /* ── INPUTS ── */
-.field-group {
-    margin-bottom: 1rem;
-}
+.field-group { margin-bottom: 1rem; }
 .field-label {
     display: block;
     font-size: .72rem;
@@ -121,9 +115,7 @@ body {
     color: var(--gold-dk);
     margin-bottom: .4rem;
 }
-.field-wrap {
-    position: relative;
-}
+.field-wrap { position: relative; }
 .field-icon {
     position: absolute;
     left: 1rem;
@@ -166,7 +158,6 @@ body {
 }
 .field-error.show { display: flex; }
 
-/* Password toggle */
 .pw-toggle {
     position: absolute;
     right: .9rem;
@@ -182,7 +173,6 @@ body {
 }
 .pw-toggle:hover { color: var(--charcoal); }
 
-/* ── FORGOT ── */
 .row-remember {
     display: flex;
     align-items: center;
@@ -240,11 +230,7 @@ body {
     opacity: 0;
     transition: opacity .2s;
 }
-.btn-main:hover {
-    background: var(--gold-dk);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(217,167,74,.45);
-}
+.btn-main:hover { background: var(--gold-dk); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(217,167,74,.45); }
 .btn-main:hover::after { opacity: 1; }
 .btn-main:active { transform: translateY(0); }
 
@@ -261,7 +247,6 @@ body {
 .btn-main.loading .btn-label { opacity: 0; }
 .btn-main.loading .btn-spinner { display: block; }
 
-/* OR divider */
 .or-row {
     display: flex;
     align-items: center;
@@ -272,14 +257,8 @@ body {
     font-weight: 500;
     letter-spacing: .08em;
 }
-.or-row::before, .or-row::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--cream3);
-}
+.or-row::before, .or-row::after { content: ''; flex: 1; height: 1px; background: var(--cream3); }
 
-/* Google button */
 .btn-google {
     width: 100%;
     padding: .7rem;
@@ -298,18 +277,10 @@ body {
     transition: border-color .2s, box-shadow .2s;
     margin-bottom: 1.2rem;
 }
-.btn-google:hover {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px var(--gold-glow);
-}
+.btn-google:hover { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
 .btn-google svg { width: 18px; height: 18px; }
 
-/* Switch link text */
-.switch-text {
-    font-size: .8rem;
-    color: var(--mid);
-    text-align: center;
-}
+.switch-text { font-size: .8rem; color: var(--mid); text-align: center; }
 .switch-text strong {
     color: var(--gold-dk);
     font-weight: 700;
@@ -320,12 +291,12 @@ body {
 .switch-text strong:hover { opacity: .7; }
 
 /* ═══════════════════════════════════════
-   OVERLAY PANEL — The sliding logo cover
+   OVERLAY PANEL
 ═══════════════════════════════════════ */
 .overlay-wrap {
     position: absolute;
     top: 0;
-    left: 50%; /* starts on right */
+    left: 50%;
     width: 50%;
     height: 100%;
     z-index: 100;
@@ -334,14 +305,11 @@ body {
     transition: transform var(--trans), border-radius var(--trans);
     will-change: transform;
 }
-
-/* When register mode: slide overlay to the LEFT */
 .auth-wrapper.register-mode .overlay-wrap {
     transform: translateX(-100%);
     border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 
-/* Overlay background — cream + subtle gold pattern */
 .overlay-bg {
     position: absolute;
     inset: 0;
@@ -350,14 +318,7 @@ body {
         radial-gradient(ellipse at 80% 80%, rgba(217,167,74,.12) 0%, transparent 50%),
         linear-gradient(145deg, #FCFBF7 0%, #F5F2EA 50%, #EDE8DA 100%);
 }
-
-/* Subtle geometric circles decoration */
-.overlay-deco {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
+.overlay-deco { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .overlay-deco::before {
     content: '';
     position: absolute;
@@ -375,7 +336,6 @@ body {
     bottom: -50px; left: -50px;
 }
 
-/* Inner content panels (left + right messages) */
 .overlay-inner {
     position: absolute;
     inset: 0;
@@ -383,11 +343,10 @@ body {
     width: 200%;
     transition: transform var(--trans);
     will-change: transform;
-    transform: translateX(-50%);  /* ← default: show right panel */
+    transform: translateX(-50%);
 }
-.auth-wrapper.register-mode .overlay-inner {
-    transform: translateX(0);     /* ← register: show left panel */
-}
+.auth-wrapper.register-mode .overlay-inner { transform: translateX(0); }
+
 .overlay-panel {
     width: 50%;
     display: flex;
@@ -400,7 +359,6 @@ body {
     text-align: center;
 }
 
-/* LOGO */
 .logo-ring {
     width: 130px; height: 130px;
     border-radius: 50%;
@@ -414,16 +372,8 @@ body {
     overflow: hidden;
     flex-shrink: 0;
 }
-.logo-ring img {
-    width: 90px; height: 90px;
-    object-fit: contain;
-    border-radius: 50%;
-}
-/* Fallback if no image */
-.logo-ring-svg {
-    width: 60px; height: 60px;
-    color: var(--gold);
-}
+.logo-ring img { width: 90px; height: 90px; object-fit: contain; border-radius: 50%; }
+.logo-ring-svg { width: 60px; height: 60px; color: var(--gold); }
 
 .brand-name {
     font-family: 'Playfair Display', serif;
@@ -444,7 +394,6 @@ body {
     line-height: 1.6;
 }
 
-/* Overlay CTA button */
 .btn-overlay {
     padding: .7rem 2rem;
     border: 1.5px solid var(--gold);
@@ -459,24 +408,14 @@ body {
     cursor: pointer;
     transition: background .2s, color .2s, transform .15s;
 }
-.btn-overlay:hover {
-    background: var(--gold);
-    color: var(--charcoal);
-    transform: translateY(-1px);
-}
-
-.overlay-note {
-    font-size: .78rem;
-    color: var(--mid);
-    margin-bottom: .9rem;
-}
+.btn-overlay:hover { background: var(--gold); color: var(--charcoal); transform: translateY(-1px); }
+.overlay-note { font-size: .78rem; color: var(--mid); margin-bottom: .9rem; }
 
 /* ═══════════════════════════════════════
    REGISTER MULTI-STEP
 ═══════════════════════════════════════ */
 .step-wrap { width: 100%; }
 
-/* Stepper */
 .stepper {
     display: flex;
     align-items: center;
@@ -498,27 +437,11 @@ body {
     transition: all .3s;
     flex-shrink: 0;
 }
-.step-dot.active {
-    border-color: var(--gold);
-    background: var(--gold);
-    color: var(--charcoal);
-    box-shadow: 0 0 0 3px var(--gold-glow);
-}
-.step-dot.done {
-    border-color: var(--gold-dk);
-    background: var(--gold-dk);
-    color: white;
-}
-.step-line {
-    height: 1.5px;
-    width: 40px;
-    background: var(--cream3);
-    border-radius: 2px;
-    transition: background .3s;
-}
+.step-dot.active { border-color: var(--gold); background: var(--gold); color: var(--charcoal); box-shadow: 0 0 0 3px var(--gold-glow); }
+.step-dot.done   { border-color: var(--gold-dk); background: var(--gold-dk); color: white; }
+.step-line { height: 1.5px; width: 40px; background: var(--cream3); border-radius: 2px; transition: background .3s; }
 .step-line.done { background: var(--gold-dk); }
 
-/* Step 1 — Role Selection */
 .step-1 { display: block; }
 .step-2 { display: none; opacity: 0; transform: translateX(20px); transition: opacity .35s, transform .35s; }
 .step-2.visible { display: block; opacity: 1; transform: translateX(0); }
@@ -531,19 +454,9 @@ body {
     margin-bottom: .3rem;
     letter-spacing: .02em;
 }
-.step-sub {
-    font-size: .8rem;
-    color: var(--mid);
-    margin-bottom: 1.3rem;
-}
+.step-sub { font-size: .8rem; color: var(--mid); margin-bottom: 1.3rem; }
 
-/* Role cards */
-.role-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: .75rem;
-    margin-bottom: 1.3rem;
-}
+.role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1.3rem; }
 .role-card {
     border: 1.5px solid var(--cream3);
     border-radius: var(--radius);
@@ -563,17 +476,9 @@ body {
     opacity: 0;
     transition: opacity .2s;
 }
-.role-card:hover {
-    border-color: var(--gold-light);
-    background: white;
-}
+.role-card:hover { border-color: var(--gold-light); background: white; }
 .role-card:hover::before { opacity: 1; }
-.role-card.selected {
-    border-color: var(--gold);
-    border-width: 2px;
-    background: white;
-    box-shadow: 0 0 0 3px var(--gold-glow);
-}
+.role-card.selected { border-color: var(--gold); border-width: 2px; background: white; box-shadow: 0 0 0 3px var(--gold-glow); }
 .role-card.selected::before { opacity: 1; }
 
 .role-card-icon {
@@ -588,25 +493,10 @@ body {
     color: var(--mid);
     transition: background .2s, color .2s;
 }
-.role-card.selected .role-card-icon {
-    background: var(--gold);
-    color: var(--charcoal);
-}
-.role-card-title {
-    font-size: .82rem;
-    font-weight: 700;
-    color: var(--charcoal);
-    display: block;
-    margin-bottom: .25rem;
-}
-.role-card-desc {
-    font-size: .7rem;
-    color: var(--mid);
-    line-height: 1.4;
-    display: block;
-}
+.role-card.selected .role-card-icon { background: var(--gold); color: var(--charcoal); }
+.role-card-title { font-size: .82rem; font-weight: 700; color: var(--charcoal); display: block; margin-bottom: .25rem; }
+.role-card-desc  { font-size: .7rem; color: var(--mid); line-height: 1.4; display: block; }
 
-/* Check badge on selected */
 .role-check {
     position: absolute;
     top: .5rem; right: .5rem;
@@ -621,12 +511,12 @@ body {
 }
 .role-card.selected .role-check { display: flex; }
 
-/* Alert */
+/* Alert — FIX padding complet */
 .alert-box {
-    padding: .65rem .9rem;
+    padding: .8rem 1rem;
     border-radius: var(--radius);
     font-size: .78rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     display: none;
     align-items: flex-start;
     gap: .5rem;
@@ -640,74 +530,46 @@ body {
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 768px) {
     body { align-items: flex-start; padding: 1rem; }
-    .auth-wrapper {
-        height: auto;
-        min-height: 100vh;
-        border-radius: var(--radius-lg);
-        flex-direction: column;
-    }
-    .forms-wrap { position: relative; flex-direction: column; }
-    .form-panel {
-        width: 100%;
-        border-radius: 0;
-        padding: 2.5rem 1.5rem;
-    }
+    .auth-wrapper { min-height: auto; border-radius: var(--radius-lg); flex-direction: column; }
+    .forms-wrap { flex-direction: column; min-height: auto; }
+    .form-panel { width: 100%; border-radius: 0; padding: 2rem 1.5rem; }
     .panel-login { display: block; }
     .panel-register { display: none; }
     .auth-wrapper.register-mode .panel-login { display: none; }
     .auth-wrapper.register-mode .panel-register { display: flex; }
     .overlay-wrap { display: none; }
-    .mobile-toggle {
-        display: flex;
-        justify-content: center;
-        padding: 1rem;
-        border-top: 1px solid var(--cream3);
-    }
+    .mobile-toggle { display: flex; justify-content: center; padding: 1rem; border-top: 1px solid var(--cream3); }
 }
-@media (min-width: 769px) {
-    .mobile-toggle { display: none; }
-}
+@media (min-width: 769px) { .mobile-toggle { display: none; } }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     RENTIFY AUTH CONTAINER
-══════════════════════════════════════════════ -->
 <div class="auth-wrapper" id="authWrapper">
-
-    <!-- ── FORMS CONTAINER (login left / register right) ── -->
     <div class="forms-wrap">
 
         <!-- LOGIN FORM — LEFT -->
         <div class="form-panel panel-login">
             <div class="form-inner">
-
                 <p class="form-subtitle" style="margin-bottom:.2rem">Bon retour 👋</p>
                 <h1 class="form-welcome">Welcome</h1>
                 <p class="form-subtitle">Connectez-vous avec votre email</p>
 
-                <!-- Error alert -->
                 <div class="alert-box error" id="loginAlert">
                     <i class="fas fa-circle-exclamation"></i>
                     <span id="loginAlertMsg">Email ou mot de passe incorrect.</span>
                 </div>
 
                 <form id="loginForm" novalidate>
-
-                    <!-- Email -->
                     <div class="field-group">
                         <label class="field-label">Email Id</label>
                         <div class="field-wrap">
                             <i class="fas fa-envelope field-icon"></i>
                             <input type="email" id="loginEmail" class="field-input" placeholder="votre@email.com" autocomplete="email">
                         </div>
-                        <div class="field-error" id="loginEmailErr">
-                            <i class="fas fa-circle-xmark"></i> Email invalide.
-                        </div>
+                        <div class="field-error" id="loginEmailErr"><i class="fas fa-circle-xmark"></i> Email invalide.</div>
                     </div>
 
-                    <!-- Password -->
                     <div class="field-group">
                         <label class="field-label">Password</label>
                         <div class="field-wrap">
@@ -717,21 +579,16 @@ body {
                                 <i class="fas fa-eye" id="loginPwIcon"></i>
                             </button>
                         </div>
-                        <div class="field-error" id="loginPwErr">
-                            <i class="fas fa-circle-xmark"></i> Minimum 6 caractères.
-                        </div>
+                        <div class="field-error" id="loginPwErr"><i class="fas fa-circle-xmark"></i> Minimum 6 caractères.</div>
                     </div>
 
-                    <!-- Remember + Forgot -->
                     <div class="row-remember">
                         <label class="remember-lbl">
-                            <input type="checkbox" id="loginRemember">
-                            Se souvenir
+                            <input type="checkbox" id="loginRemember"> Se souvenir
                         </label>
                         <a href="#" class="forgot-link">Mot de passe oublié ?</a>
                     </div>
 
-                    <!-- Submit -->
                     <button type="submit" class="btn-main" id="loginBtn">
                         <span class="btn-label">LOGIN</span>
                         <span class="btn-spinner"></span>
@@ -739,7 +596,6 @@ body {
 
                     <div class="or-row">OR</div>
 
-                    <!-- Google -->
                     <button type="button" class="btn-google" onclick="alert('Demo: Google login')">
                         <svg viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -751,46 +607,38 @@ body {
                     </button>
 
                     <p class="switch-text">
-                        Don't have account?
-                        <strong onclick="switchToRegister()">Register Now</strong>
+                        Don't have account? <strong onclick="switchToRegister()">Register Now</strong>
                     </p>
-
                 </form>
             </div>
         </div>
 
         <!-- REGISTER FORM — RIGHT -->
-        <div class="form-panel panel-register">
+        <div class="form-panel panel-register" id="registerPanel">
             <div class="form-inner">
 
-                <!-- Error alert -->
+                <!-- FIX: Alert fawq kol chi — dima visible -->
                 <div class="alert-box error" id="regAlert">
                     <i class="fas fa-circle-exclamation"></i>
                     <span id="regAlertMsg">Une erreur est survenue.</span>
                 </div>
 
-                <!-- STEP 1 — ROLE -->
+                <!-- STEP 1 -->
                 <div class="step-wrap" id="step1">
-                    <!-- Stepper -->
                     <div class="stepper">
                         <div class="step-dot active" id="dot1">1</div>
                         <div class="step-line" id="stepLine"></div>
                         <div class="step-dot" id="dot2">2</div>
                     </div>
-
                     <h2 class="step-heading">Je suis...</h2>
                     <p class="step-sub">Sélectionnez votre profil pour continuer</p>
-
                     <div class="role-cards">
-                        <!-- Client -->
                         <div class="role-card" id="cardClient" onclick="selectRole('client')">
                             <div class="role-check"><i class="fas fa-check"></i></div>
                             <div class="role-card-icon"><i class="fas fa-hard-hat"></i></div>
                             <span class="role-card-title">Client</span>
                             <span class="role-card-desc">Je veux louer des engins BTP</span>
                         </div>
-
-                        <!-- Propriétaire -->
                         <div class="role-card" id="cardOwner" onclick="selectRole('owner')">
                             <div class="role-check"><i class="fas fa-check"></i></div>
                             <div class="role-card-icon"><i class="fas fa-industry"></i></div>
@@ -798,36 +646,28 @@ body {
                             <span class="role-card-desc">Je propose mes engins à la location</span>
                         </div>
                     </div>
-
-                    <button type="button" class="btn-main" id="continuerBtn" onclick="goStep2()" disabled
-                        style="opacity:.5; cursor:not-allowed">
+                    <button type="button" class="btn-main" id="continuerBtn" onclick="goStep2()" disabled style="opacity:.5;cursor:not-allowed">
                         <span class="btn-label">Continuer &nbsp;→</span>
                     </button>
-
                     <p class="switch-text" style="margin-top:1rem">
-                        Déjà un compte ?
-                        <strong onclick="switchToLogin()">Se connecter</strong>
+                        Déjà un compte ? <strong onclick="switchToLogin()">Se connecter</strong>
                     </p>
                 </div>
 
-                <!-- STEP 2 — FORM FIELDS -->
+                <!-- STEP 2 -->
                 <div class="step-wrap step-2" id="step2">
-                    <!-- Stepper -->
                     <div class="stepper">
-                        <div class="step-dot done" id="dot1b"><i class="fas fa-check" style="font-size:.6rem"></i></div>
+                        <div class="step-dot done"><i class="fas fa-check" style="font-size:.6rem"></i></div>
                         <div class="step-line done"></div>
-                        <div class="step-dot active" id="dot2b">2</div>
+                        <div class="step-dot active">2</div>
                     </div>
 
-                    <div style="display:flex; align-items:center; gap:.7rem; margin-bottom:1.3rem">
+                    <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:1.3rem">
                         <button type="button" onclick="goStep1()"
                             style="background:none;border:none;cursor:pointer;color:var(--mid);font-size:.85rem;padding:0;display:flex;align-items:center;gap:.3rem;font-family:'DM Sans',sans-serif">
                             <i class="fas fa-arrow-left" style="font-size:.75rem"></i> Retour
                         </button>
-                        <div style="display:flex;align-items:center;gap:.4rem">
-                            <span style="font-size:.72rem;color:var(--light);background:var(--cream2);padding:.25rem .6rem;border-radius:100px;font-weight:500"
-                                id="selectedRoleTag">Client</span>
-                        </div>
+                        <span style="font-size:.72rem;color:var(--light);background:var(--cream2);padding:.25rem .6rem;border-radius:100px;font-weight:500" id="selectedRoleTag">Client</span>
                     </div>
 
                     <h2 class="step-heading" style="font-size:1.5rem;margin-bottom:.2rem">Créer un compte</h2>
@@ -836,31 +676,24 @@ body {
                     <form id="registerForm" novalidate>
                         <input type="hidden" id="selectedRole" value="client">
 
-                        <!-- Name -->
                         <div class="field-group">
                             <label class="field-label">Nom complet</label>
                             <div class="field-wrap">
                                 <i class="fas fa-user field-icon"></i>
                                 <input type="text" id="regName" class="field-input" placeholder="Votre nom complet" autocomplete="name">
                             </div>
-                            <div class="field-error" id="regNameErr">
-                                <i class="fas fa-circle-xmark"></i> Minimum 3 caractères.
-                            </div>
+                            <div class="field-error" id="regNameErr"><i class="fas fa-circle-xmark"></i> Minimum 3 caractères.</div>
                         </div>
 
-                        <!-- Email -->
                         <div class="field-group">
                             <label class="field-label">Email</label>
                             <div class="field-wrap">
                                 <i class="fas fa-envelope field-icon"></i>
                                 <input type="email" id="regEmail" class="field-input" placeholder="votre@email.com" autocomplete="email">
                             </div>
-                            <div class="field-error" id="regEmailErr">
-                                <i class="fas fa-circle-xmark"></i> Email invalide.
-                            </div>
+                            <div class="field-error" id="regEmailErr"><i class="fas fa-circle-xmark"></i> Email invalide.</div>
                         </div>
 
-                        <!-- Phone -->
                         <div class="field-group">
                             <label class="field-label">Téléphone</label>
                             <div class="field-wrap">
@@ -869,7 +702,6 @@ body {
                             </div>
                         </div>
 
-                        <!-- Password -->
                         <div class="field-group">
                             <label class="field-label">Mot de passe</label>
                             <div class="field-wrap">
@@ -879,103 +711,71 @@ body {
                                     <i class="fas fa-eye" id="regPwIcon"></i>
                                 </button>
                             </div>
-                            <div class="field-error" id="regPwErr">
-                                <i class="fas fa-circle-xmark"></i> Minimum 6 caractères.
-                            </div>
+                            <div class="field-error" id="regPwErr"><i class="fas fa-circle-xmark"></i> Minimum 6 caractères.</div>
                         </div>
 
-                        <!-- Submit -->
                         <button type="submit" class="btn-main" id="registerBtn" style="margin-top:.4rem">
-                            <span class="btn-label">
-                                <i class="fas fa-user-plus"></i> Créer mon compte
-                            </span>
+                            <span class="btn-label"><i class="fas fa-user-plus"></i> Créer mon compte</span>
                             <span class="btn-spinner"></span>
                         </button>
 
                         <p class="switch-text" style="margin-top:.9rem">
-                            Déjà un compte ?
-                            <strong onclick="switchToLogin()">Se connecter</strong>
+                            Déjà un compte ? <strong onclick="switchToLogin()">Se connecter</strong>
                         </p>
                     </form>
                 </div>
 
             </div>
         </div>
+    </div>
 
-    </div><!-- /.forms-wrap -->
-
-
-    <!-- ══════════════════════════════════════════════
-         OVERLAY PANEL — slides over the forms
-         Default: covers RIGHT half (register side)
-         On register-mode: slides to LEFT (covers login)
-    ══════════════════════════════════════════════ -->
+    <!-- OVERLAY -->
     <div class="overlay-wrap" id="overlayWrap">
         <div class="overlay-bg"></div>
         <div class="overlay-deco"></div>
-
-        <!-- Two inner panels: right panel (login state) | left panel (register state) -->
-        <div class="overlay-inner" id="overlayInner">
-
-            <!-- LEFT INNER — visible when register mode (overlay is on left) -->
+        <div class="overlay-inner">
             <div class="overlay-panel">
                 <div class="logo-ring">
-                    <img src="{{ asset('images/logo.jpeg') }}" alt="Rentify"
-    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <img src="{{ asset('images/logo.jpeg') }}" alt="Rentify" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                     <i class="fas fa-hard-hat logo-ring-svg" style="display:none;font-size:2rem;color:var(--gold)"></i>
                 </div>
                 <div class="brand-name"><span class="rent">RENT</span><span class="ify">IFY</span></div>
                 <p class="brand-tagline">Location de machines de chantier au Maroc</p>
-                <p class="overlay-note" style="font-size:.78rem;color:var(--mid)">Déjà un compte ?</p>
+                <p class="overlay-note">Déjà un compte ?</p>
                 <button class="btn-overlay" onclick="switchToLogin()">Se connecter</button>
             </div>
-
-            <!-- RIGHT INNER — visible in default login state (overlay is on right) -->
             <div class="overlay-panel">
                 <div class="logo-ring">
-                    <img src="{{ asset('images/logo.jpeg') }}" alt="Rentify"
-    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <img src="{{ asset('images/logo.jpeg') }}" alt="Rentify" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                     <i class="fas fa-hard-hat logo-ring-svg" style="display:none;font-size:2rem;color:var(--gold)"></i>
                 </div>
                 <div class="brand-name"><span class="rent">RENT</span><span class="ify">IFY</span></div>
                 <p class="brand-tagline">Location de machines de chantier au Maroc</p>
-                <p class="overlay-note" style="font-size:.78rem;color:var(--mid)">Pas encore de compte ?</p>
+                <p class="overlay-note">Pas encore de compte ?</p>
                 <button class="btn-overlay" onclick="switchToRegister()">S'inscrire</button>
             </div>
-
         </div>
     </div>
 
-    <!-- Mobile toggle (small screens) -->
     <div class="mobile-toggle" id="mobileTgl">
         <p class="switch-text" id="mobileSwitchText">
-            Pas de compte ?
-            <strong onclick="switchToRegister()">S'inscrire</strong>
+            Pas de compte ? <strong onclick="switchToRegister()">S'inscrire</strong>
         </p>
     </div>
-
-</div><!-- /.auth-wrapper -->
-
+</div>
 
 <script>
-/* ════════════════════════════════════════════
-   RENTIFY AUTH — SLIDING PANEL JS
-════════════════════════════════════════════ */
-
 const wrapper  = document.getElementById('authWrapper');
 let isRegister = false;
 let selectedRole = null;
 
-// ── SWITCH TO REGISTER ──
 function switchToRegister() {
     isRegister = true;
     wrapper.classList.add('register-mode');
-    // Reset to step 1
     showStep1(false);
     updateMobileToggle();
 }
 
-// ── SWITCH TO LOGIN ──
 function switchToLogin() {
     isRegister = false;
     wrapper.classList.remove('register-mode');
@@ -983,64 +783,44 @@ function switchToLogin() {
     clearAlerts();
 }
 
-// ── MOBILE TOGGLE TEXT ──
 function updateMobileToggle() {
     const t = document.getElementById('mobileSwitchText');
-    if (isRegister) {
-        t.innerHTML = 'Déjà un compte ? <strong onclick="switchToLogin()">Se connecter</strong>';
-    } else {
-        t.innerHTML = 'Pas de compte ? <strong onclick="switchToRegister()">S\'inscrire</strong>';
-    }
+    t.innerHTML = isRegister
+        ? 'Déjà un compte ? <strong onclick="switchToLogin()">Se connecter</strong>'
+        : 'Pas de compte ? <strong onclick="switchToRegister()">S\'inscrire</strong>';
 }
 
-// ── ROLE SELECTION ──
 function selectRole(role) {
     selectedRole = role;
     document.getElementById('selectedRole').value = role;
-
     document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById(role === 'client' ? 'cardClient' : 'cardOwner')
-        .classList.add('selected');
-
-    // Enable continuer button
+    document.getElementById(role === 'client' ? 'cardClient' : 'cardOwner').classList.add('selected');
     const btn = document.getElementById('continuerBtn');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.style.cursor = 'pointer';
+    btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
 }
 
-// ── STEP 1 → STEP 2 ──
 function goStep2() {
     if (!selectedRole) return;
-
     const s1 = document.getElementById('step1');
     const s2 = document.getElementById('step2');
-
-    // Update role tag
     document.getElementById('selectedRoleTag').textContent =
         selectedRole === 'client' ? '👷 Client' : '🏗️ Propriétaire';
-
-    // Fade out step 1
     s1.style.opacity = '0';
     s1.style.transform = 'translateX(-20px)';
     s1.style.transition = 'opacity .3s, transform .3s';
-
     setTimeout(() => {
         s1.style.display = 'none';
         s2.style.display = 'block';
-        // Force reflow
         s2.offsetHeight;
         s2.classList.add('visible');
     }, 300);
 }
 
-// ── STEP 2 → STEP 1 ──
 function goStep1() {
     const s1 = document.getElementById('step1');
     const s2 = document.getElementById('step2');
-
     s2.classList.remove('visible');
-
+    clearAlerts();
     setTimeout(() => {
         s2.style.display = 'none';
         s1.style.display = 'block';
@@ -1053,7 +833,7 @@ function goStep1() {
     }, 300);
 }
 
-function showStep1(animate = true) {
+function showStep1(animate) {
     const s1 = document.getElementById('step1');
     const s2 = document.getElementById('step2');
     s2.classList.remove('visible');
@@ -1061,9 +841,9 @@ function showStep1(animate = true) {
     s1.style.display = 'block';
     s1.style.opacity = '1';
     s1.style.transform = 'none';
+    clearAlerts();
 }
 
-// ── PASSWORD TOGGLES ──
 function initPwToggle(inputId, btnId, iconId) {
     document.getElementById(btnId).addEventListener('click', () => {
         const inp  = document.getElementById(inputId);
@@ -1076,65 +856,50 @@ function initPwToggle(inputId, btnId, iconId) {
 initPwToggle('loginPw', 'loginPwToggle', 'loginPwIcon');
 initPwToggle('regPw', 'regPwToggle', 'regPwIcon');
 
-// ── VALIDATION HELPERS ──
 function showFieldError(inputId, errId, show) {
-    const inp = document.getElementById(inputId);
-    const err = document.getElementById(errId);
-    inp?.classList.toggle('is-error', show);
-    err?.classList.toggle('show', show);
+    document.getElementById(inputId)?.classList.toggle('is-error', show);
+    document.getElementById(errId)?.classList.toggle('show', show);
     return !show;
 }
 function validEmail(v) { return v.includes('@') && v.includes('.') && v.length > 5; }
 
 function clearAlerts() {
     document.getElementById('loginAlert').style.display = 'none';
-    document.getElementById('regAlert').style.display = 'none';
+    document.getElementById('regAlert').style.display   = 'none';
 }
 
 function showAlert(id, msgId, msg) {
     const box = document.getElementById(id);
     document.getElementById(msgId).textContent = msg;
     box.style.display = 'flex';
-    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// ── LOGIN SUBMIT ──
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    clearAlerts();
-
+    e.preventDefault(); clearAlerts();
     const email = document.getElementById('loginEmail').value.trim();
     const pw    = document.getElementById('loginPw').value;
-
     let ok = true;
     ok = showFieldError('loginEmail', 'loginEmailErr', !validEmail(email)) && ok;
     ok = showFieldError('loginPw', 'loginPwErr', pw.length < 6) && ok;
     if (!ok) return;
-
     const btn = document.getElementById('loginBtn');
     btn.classList.add('loading'); btn.disabled = true;
-
     try {
         const res  = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({
-                email, password: pw,
-                remember: document.getElementById('loginRemember').checked
-            })
+            body: JSON.stringify({ email, password: pw, remember: document.getElementById('loginRemember').checked })
         });
         const data = await res.json();
-
         if (res.ok && data.token) {
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('auth_user', JSON.stringify(data.user));
             const role = data.user?.role;
-            if (role === 'admin')  window.location.replace('/dashboard/admin');
+            if (role === 'admin')      window.location.replace('/dashboard/admin');
             else if (role === 'owner') window.location.replace('/dashboard/owner');
-            else window.location.replace('/dashboard/client');
+            else                       window.location.replace('/dashboard/client');
         } else {
-            showAlert('loginAlert', 'loginAlertMsg',
-                data.message || 'Email ou mot de passe incorrect.');
+            showAlert('loginAlert', 'loginAlertMsg', data.message || 'Email ou mot de passe incorrect.');
         }
     } catch(err) {
         showAlert('loginAlert', 'loginAlertMsg', 'Erreur de connexion au serveur.');
@@ -1143,49 +908,44 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     }
 });
 
-// ── REGISTER SUBMIT ──
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    clearAlerts();
-
+    e.preventDefault(); clearAlerts();
     const name  = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const pw    = document.getElementById('regPw').value;
     const phone = document.getElementById('regPhone').value.trim();
     const role  = document.getElementById('selectedRole').value;
-
     let ok = true;
-    ok = showFieldError('regName', 'regNameErr', name.length < 3) && ok;
+    ok = showFieldError('regName',  'regNameErr',  name.length < 3)   && ok;
     ok = showFieldError('regEmail', 'regEmailErr', !validEmail(email)) && ok;
-    ok = showFieldError('regPw', 'regPwErr', pw.length < 6) && ok;
+    ok = showFieldError('regPw',    'regPwErr',    pw.length < 6)      && ok;
     if (!ok) return;
-
     const btn = document.getElementById('registerBtn');
     btn.classList.add('loading'); btn.disabled = true;
-
     try {
         const res  = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({
-                name, email, password: pw,
-                password_confirmation: pw,
-                role, phone
-            })
+            body: JSON.stringify({ name, email, password: pw, password_confirmation: pw, role, phone })
         });
         const data = await res.json();
-
         if (res.ok && data.token) {
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('auth_user', JSON.stringify(data.user));
             const r = data.user?.role;
             setTimeout(() => {
                 if (r === 'owner') window.location.replace('/dashboard/owner');
-                else window.location.replace('/dashboard/client');
+                else               window.location.replace('/dashboard/client');
             }, 300);
         } else {
-            showAlert('regAlert', 'regAlertMsg',
-                data.message || 'Erreur lors de la création du compte.');
+            let msg = 'Erreur lors de la création du compte.';
+            if (data.errors) {
+                const firstKey = Object.keys(data.errors)[0];
+                msg = data.errors[firstKey][0];
+            } else if (data.message) {
+                msg = data.message;
+            }
+            showAlert('regAlert', 'regAlertMsg', msg);
         }
     } catch(err) {
         showAlert('regAlert', 'regAlertMsg', 'Erreur de connexion au serveur.');
@@ -1194,11 +954,9 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     }
 });
 
-// ── Check if URL has ?mode=register ──
 if (new URLSearchParams(window.location.search).get('mode') === 'register') {
     switchToRegister();
 }
 </script>
-
 </body>
 </html>
