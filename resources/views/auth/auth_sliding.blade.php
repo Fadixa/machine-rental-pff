@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -38,17 +39,14 @@ body {
     padding: 1.5rem;
 }
 
-/* ═══════════ OUTER WRAPPER ═══════════ */
 .auth-wrapper {
     width: 100%;
     max-width: 960px;
-    /* FIX: min-height au lieu de height fixe */
     min-height: 580px;
     position: relative;
     border-radius: var(--radius-lg);
     border: 1px solid var(--gold);
     background: var(--cream);
-    /* FIX: clip au lieu de hidden — garde le border-radius mais ne coupe pas l'alert */
     overflow: clip;
     box-shadow:
         0 30px 80px rgba(0,0,0,.10),
@@ -56,7 +54,6 @@ body {
         inset 0 0 60px rgba(217,167,74,.03);
 }
 
-/* FIX: forms-wrap en relative + min-height au lieu de absolute+inset */
 .forms-wrap {
     display: flex;
     width: 100%;
@@ -64,7 +61,6 @@ body {
     position: relative;
 }
 
-/* ── SHARED FORM PANEL ── */
 .form-panel {
     width: 50%;
     flex-shrink: 0;
@@ -72,7 +68,6 @@ body {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    /* FIX: padding top kbr bach content ma ykon mzdahmch */
     padding: 2.5rem 3.5rem;
     position: relative;
     overflow: visible;
@@ -84,11 +79,9 @@ body {
 .form-inner {
     width: 100%;
     max-width: 320px;
-    /* FIX: padding top bach alert tbant complet */
     padding-top: 1.5rem;
 }
 
-/* ── TITLES ── */
 .form-welcome {
     font-family: 'Playfair Display', serif;
     font-size: 2.6rem;
@@ -104,7 +97,6 @@ body {
     margin-bottom: 1.8rem;
 }
 
-/* ── INPUTS ── */
 .field-group { margin-bottom: 1rem; }
 .field-label {
     display: block;
@@ -199,7 +191,6 @@ body {
 }
 .forgot-link:hover { opacity: .7; }
 
-/* ── BUTTONS ── */
 .btn-main {
     width: 100%;
     padding: .8rem;
@@ -276,9 +267,10 @@ body {
     color: var(--charcoal);
     transition: border-color .2s, box-shadow .2s;
     margin-bottom: 1.2rem;
+    text-decoration: none;
 }
 .btn-google:hover { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-glow); }
-.btn-google svg { width: 18px; height: 18px; }
+.btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 .switch-text { font-size: .8rem; color: var(--mid); text-align: center; }
 .switch-text strong {
@@ -511,7 +503,6 @@ body {
 }
 .role-card.selected .role-check { display: flex; }
 
-/* Alert — FIX padding complet */
 .alert-box {
     padding: .8rem 1rem;
     border-radius: var(--radius);
@@ -548,7 +539,9 @@ body {
 <div class="auth-wrapper" id="authWrapper">
     <div class="forms-wrap">
 
-        <!-- LOGIN FORM — LEFT -->
+        <!-- ══════════════════════════════
+             LOGIN FORM — LEFT
+        ══════════════════════════════ -->
         <div class="form-panel panel-login">
             <div class="form-inner">
                 <p class="form-subtitle" style="margin-bottom:.2rem">Bon retour 👋</p>
@@ -594,9 +587,9 @@ body {
                         <span class="btn-spinner"></span>
                     </button>
 
-                    <div class="or-row">OR</div>
+                    <div class="or-row">OU</div>
 
-                    <button type="button" class="btn-google" onclick="alert('Demo: Google login')">
+                    <a href="/auth/google" class="btn-google">
                         <svg viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -604,7 +597,7 @@ body {
                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
                         Continuer avec Google
-                    </button>
+                    </a>
 
                     <p class="switch-text">
                         Don't have account? <strong onclick="switchToRegister()">Register Now</strong>
@@ -613,17 +606,18 @@ body {
             </div>
         </div>
 
-        <!-- REGISTER FORM — RIGHT -->
+        <!-- ══════════════════════════════
+             REGISTER FORM — RIGHT
+        ══════════════════════════════ -->
         <div class="form-panel panel-register" id="registerPanel">
             <div class="form-inner">
 
-                <!-- FIX: Alert fawq kol chi — dima visible -->
                 <div class="alert-box error" id="regAlert">
                     <i class="fas fa-circle-exclamation"></i>
                     <span id="regAlertMsg">Une erreur est survenue.</span>
                 </div>
 
-                <!-- STEP 1 -->
+                <!-- STEP 1 — Choix rôle -->
                 <div class="step-wrap" id="step1">
                     <div class="stepper">
                         <div class="step-dot active" id="dot1">1</div>
@@ -649,12 +643,25 @@ body {
                     <button type="button" class="btn-main" id="continuerBtn" onclick="goStep2()" disabled style="opacity:.5;cursor:not-allowed">
                         <span class="btn-label">Continuer &nbsp;→</span>
                     </button>
-                    <p class="switch-text" style="margin-top:1rem">
+
+                    <div class="or-row" style="margin-top:1rem">OU</div>
+
+                    <a href="/auth/google" class="btn-google">
+                        <svg viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        S'inscrire avec Google
+                    </a>
+
+                    <p class="switch-text">
                         Déjà un compte ? <strong onclick="switchToLogin()">Se connecter</strong>
                     </p>
                 </div>
 
-                <!-- STEP 2 -->
+                <!-- STEP 2 — Infos compte -->
                 <div class="step-wrap step-2" id="step2">
                     <div class="stepper">
                         <div class="step-dot done"><i class="fas fa-check" style="font-size:.6rem"></i></div>
@@ -954,7 +961,16 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     }
 });
 
-if (new URLSearchParams(window.location.search).get('mode') === 'register') {
+// Handle Google error redirects
+const urlParams = new URLSearchParams(window.location.search);
+const googleError = urlParams.get('error');
+if (googleError === 'google_failed') {
+    showAlert('loginAlert', 'loginAlertMsg', 'Échec de la connexion Google. Réessayez.');
+} else if (googleError === 'suspended') {
+    showAlert('loginAlert', 'loginAlertMsg', 'Ce compte est suspendu. Contactez l\'administrateur.');
+}
+
+if (urlParams.get('mode') === 'register') {
     switchToRegister();
 }
 </script>

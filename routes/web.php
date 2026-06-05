@@ -51,3 +51,7 @@ Route::get('/favoris', fn() => view('client.favorites'));
 
 Route::get('/login', fn() => view('auth.auth_sliding'));
 Route::get('/register', fn() => view('auth.auth_sliding'));
+
+Route::get('/auth/google',          [App\Http\Controllers\Auth\GoogleController::class, 'redirect']);
+Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'callback']);
+Route::get('/auth/google/success', fn() => view('auth.google_success'));
