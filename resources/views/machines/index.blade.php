@@ -569,16 +569,16 @@ body { background:var(--cream); font-family:'DM Sans',sans-serif; }
     <div class="filter-section">
       <span class="filter-section-label">Type de machine</span>
       <div class="type-chips" id="typeChips">
-        <button class="type-chip active" data-type="" onclick="selectType(this)">Tous</button>
-        <button class="type-chip" data-type="excavatrice" onclick="selectType(this)">⛏ Excavatrice</button>
-        <button class="type-chip" data-type="grue" onclick="selectType(this)">🏗 Grue</button>
-        <button class="type-chip" data-type="bulldozer" onclick="selectType(this)">🚜 Bulldozer</button>
-        <button class="type-chip" data-type="chargeuse" onclick="selectType(this)">🚛 Chargeuse</button>
-        <button class="type-chip" data-type="compacteur" onclick="selectType(this)">🔧 Compacteur</button>
-        <button class="type-chip" data-type="nacelle" onclick="selectType(this)">🪜 Nacelle</button>
-        <button class="type-chip" data-type="tractopelle" onclick="selectType(this)">🚧 Tractopelle</button>
-        <button class="type-chip" data-type="camion" onclick="selectType(this)">🚚 Camion</button>
-      </div>
+  <button class="type-chip active" data-type="" onclick="selectType(this)">Tous</button>
+  <button class="type-chip" data-type="excavatrice" onclick="selectType(this)">Excavatrice</button>
+  <button class="type-chip" data-type="grue" onclick="selectType(this)">Grue</button>
+  <button class="type-chip" data-type="bulldozer" onclick="selectType(this)">Bulldozer</button>
+  <button class="type-chip" data-type="chargeuse" onclick="selectType(this)">Chargeuse</button>
+  <button class="type-chip" data-type="compacteur" onclick="selectType(this)">Compacteur</button>
+  <button class="type-chip" data-type="nacelle" onclick="selectType(this)">Nacelle</button>
+  <button class="type-chip" data-type="tractopelle" onclick="selectType(this)">Tractopelle</button>
+  <button class="type-chip" data-type="camion" onclick="selectType(this)">Camion</button>
+</div>
     </div>
 
     <div class="filter-section">
