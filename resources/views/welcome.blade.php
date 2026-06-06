@@ -29,7 +29,6 @@ body { overflow-x: hidden; }
 .hero {
     position: relative;
     width: 100%;
-    /* Hauteur = ratio exact de l'image 1600x900 = 56.25% */
     aspect-ratio: 16 / 9;
     max-height: 90vh;
     min-height: 360px;
@@ -39,19 +38,17 @@ body { overflow-x: hidden; }
     background-color: #F5EFE0;
 }
 
-/* Image pleine — rien coupé, tout visible */
 .hero-bg-img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: fill;   /* fill = exactement les dimensions, zéro crop */
+    object-fit: fill;
     z-index: 1;
     pointer-events: none;
     display: block;
 }
 
-/* Fondu gauche léger pour lisibilité texte — transparent à droite */
 .hero-bg-mask {
     position: absolute;
     inset: 0;
@@ -157,11 +154,6 @@ body { overflow-x: hidden; }
 .stat-label { font-size: .78rem; color: #9992a4; font-weight: 400; letter-spacing: .3px; }
 .stat-sep { width: 1px; height: 36px; background: rgba(212,175,55,.3); align-self: center; }
 
-@media (max-width: 1024px) {
-    .hero { min-height: 300px; }
-    .hero-inner { padding: 40px 32px; }
-    .hero-left { max-width: 420px; }
-}
 @media (max-width: 768px) {
     .hero { min-height: 220px; }
     .hero-bg-mask { background: rgba(245,239,224,.70); }
@@ -170,6 +162,11 @@ body { overflow-x: hidden; }
     .hero-btns { flex-direction: column; align-items: flex-start; gap: 10px; }
     .hero-stats { gap: 20px; }
     .stat-sep { display: none; }
+}
+@media (max-width: 1024px) {
+    .hero { min-height: 300px; }
+    .hero-inner { padding: 40px 32px; }
+    .hero-left { max-width: 420px; }
 }
 
 /* ===== SHARED ===== */
@@ -218,7 +215,7 @@ body { overflow-x: hidden; }
 
 .cat-card {
     background: var(--cream); border: 1.5px solid rgba(212,175,55,.15); border-radius: 14px;
-    padding: 28px 20px 22px;
+    padding: 28px 16px 22px;
     display: flex; flex-direction: column; align-items: center; gap: 14px;
     cursor: pointer; text-decoration: none;
     transition: border-color .2s, transform .2s, box-shadow .2s;
@@ -229,16 +226,28 @@ body { overflow-x: hidden; }
     background: linear-gradient(135deg, rgba(212,175,55,.06) 0%, transparent 60%);
     opacity: 0; transition: opacity .2s;
 }
-.cat-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(212,175,55,.12); }
+.cat-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 14px 36px rgba(212,175,55,.14); }
 .cat-card:hover::before { opacity: 1; }
+
+/* ===== ICÔNES CIRCULAIRES — image remplit tout le cercle ===== */
 .cat-icon {
-    width: 64px; height: 64px; border-radius: 14px;
-    background: var(--gold-pale); border: 1.5px solid rgba(212,175,55,.25);
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
-    transition: border-color .2s;
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    background: var(--cream2);
+    border: none;
+    overflow: hidden;
+    transition: transform .2s;
+    flex-shrink: 0;
 }
-.cat-card:hover .cat-icon { border-color: var(--gold); }
-.cat-icon img { width: 44px; height: 44px; object-fit: contain; }
+.cat-card:hover .cat-icon { transform: scale(1.09); }
+.cat-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
 .cat-name { font-size: 0.88rem; font-weight: 600; color: var(--txt-dark); text-align: center; line-height: 1.3; }
 .cat-count {
     position: absolute; top: 12px; right: 12px;
@@ -311,14 +320,12 @@ body { overflow-x: hidden; }
 .machines-cta { text-align: center; margin-top: 40px; }
 
 /* ===================================================
-   À PROPOS — design exact comme preview image
+   À PROPOS
    =================================================== */
 .section-about {
     background: var(--cream);
     padding: 90px 0 80px;
 }
-
-/* Header centré */
 .about-header {
     text-align: center;
     margin-bottom: 52px;
@@ -327,7 +334,6 @@ body { overflow-x: hidden; }
 .about-header .section-title { margin-bottom: 10px; }
 .about-header .section-sub { max-width: 560px; }
 
-/* Mission / Vision — 2 cards côte à côte */
 .about-mv-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -366,7 +372,6 @@ body { overflow-x: hidden; }
 }
 .about-mv-desc { font-size: 0.9rem; color: var(--txt-mid); line-height: 1.7; }
 
-/* Nos valeurs — séparateur + 4 cards */
 .about-values-wrap {
     margin-bottom: 64px;
 }
@@ -404,8 +409,6 @@ body { overflow-x: hidden; }
 .about-val-title { font-size: 0.95rem; font-weight: 700; color: var(--txt-dark); margin-bottom: 8px; }
 .about-val-desc { font-size: 0.82rem; color: var(--txt-mid); line-height: 1.6; }
 
-/* L'équipe — 3 cards */
-.about-team-wrap {}
 .about-team-header {
     text-align: center;
     margin-bottom: 32px;
@@ -511,7 +514,7 @@ footer { background: var(--txt-dark); color: rgba(255,255,255,.75); padding: 60p
 
 @section('content')
 
-{{-- ===== HERO — Banner_Accueil.jpg pleine largeur ===== --}}
+{{-- ===== HERO ===== --}}
 <section class="hero" id="hero">
     <img
         src="{{ asset('images/Banner_Accueil.jpg') }}"
@@ -576,6 +579,7 @@ footer { background: var(--txt-dark); color: rgba(255,255,255,.75); padding: 60p
             </div>
         </div>
     </div>
+
 </section>
 
 {{-- ===== TRUST BAND ===== --}}
@@ -685,7 +689,7 @@ footer { background: var(--txt-dark); color: rgba(255,255,255,.75); padding: 60p
     </div>
 </section>
 
-{{-- ===== FEATURED MACHINES (STATIC) ===== --}}
+{{-- ===== FEATURED MACHINES ===== --}}
 <section class="section-machines">
     <div class="section-inner">
         <div class="section-header">
@@ -800,14 +804,12 @@ footer { background: var(--txt-dark); color: rgba(255,255,255,.75); padding: 60p
 <section class="section-about" id="a-propos">
     <div class="section-inner">
 
-        {{-- Header principal --}}
         <div class="about-header">
             <span class="section-tag">À propos de nous</span>
             <h2 class="section-title">La plateforme BTP <span class="accent">pensée pour le Maroc</span></h2>
             <p class="section-sub">Rentify est née d'un constat simple : la location d'engins de chantier au Maroc manquait d'une solution digitale fiable, rapide et sécurisée.</p>
         </div>
 
-        {{-- Mission / Vision --}}
         <div class="about-mv-grid">
             <div class="about-mv-card">
                 <div class="about-mv-icon">
@@ -831,7 +833,6 @@ footer { background: var(--txt-dark); color: rgba(255,255,255,.75); padding: 60p
             </div>
         </div>
 
-        {{-- Nos valeurs --}}
         <div class="about-values-wrap">
             <div class="about-values-header">
                 <span class="section-tag">Nos valeurs</span>
@@ -879,7 +880,6 @@ footer { background: var(--txt-dark); color: rgba(255,255,255,.75); padding: 60p
             </div>
         </div>
 
-        {{-- L'équipe --}}
         <div class="about-team-wrap">
             <div class="about-team-header">
                 <span class="section-tag">L'équipe</span>
